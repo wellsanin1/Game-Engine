@@ -1,186 +1,413 @@
-// Game Engine.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
+/*This source code copyrighted by Lazy Foo' Productions (2004-2019)
+and may not be redistributed without written permission.*/
 
+//Using SDL, SDL OpenGL, GLEW, standard IO, and strings
 #include <SDL.h>
 #include <gl\glew.h>
 #include <SDL_opengl.h>
 #include <gl\glu.h>
 #include <stdio.h>
 #include <string>
-#include <enet/enet.h>
-#include "btBulletDynamicsCommon.h"
-#include <stdio.h>
 
-int main(int argc, char* args[])
-{	
+//Screen dimension constants
+const int SCREEN_WIDTH = 640;
+const int SCREEN_HEIGHT = 480;
 
-	///-----includes_end-----
+//Starts up SDL, creates window, and initializes OpenGL
+bool init();
 
-	int i;
-	///-----initialization_start-----
+//Initializes rendering program and clear color
+bool initGL();
 
-	///collision configuration contains default setup for memory, collision setup. Advanced users can create their own configuration.
-	btDefaultCollisionConfiguration* collisionConfiguration = new btDefaultCollisionConfiguration();
+//Input handler
+void handleKeys(unsigned char key, int x, int y);
 
-	///use the default collision dispatcher. For parallel processing you can use a diffent dispatcher (see Extras/BulletMultiThreaded)
-	btCollisionDispatcher* dispatcher = new btCollisionDispatcher(collisionConfiguration);
+//Per frame update
+void update();
 
-	///btDbvtBroadphase is a good general purpose broadphase. You can also try out btAxis3Sweep.
-	btBroadphaseInterface* overlappingPairCache = new btDbvtBroadphase();
+//Renders quad to the screen
+void render();
 
-	///the default constraint solver. For parallel processing you can use a different solver (see Extras/BulletMultiThreaded)
-	btSequentialImpulseConstraintSolver* solver = new btSequentialImpulseConstraintSolver;
+//Frees media and shuts down SDL
+void close();
 
-	btDiscreteDynamicsWorld* dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, overlappingPairCache, solver, collisionConfiguration);
+//Shader loading utility programs
+void printProgramLog(GLuint program);
+void printShaderLog(GLuint shader);
 
-	dynamicsWorld->setGravity(btVector3(0, -10, 0));
+//The window we'll be rendering to
+SDL_Window* gWindow = NULL;
 
-	///-----initialization_end-----
+//OpenGL context
+SDL_GLContext gContext;
 
-	//keep track of the shapes, we release memory at exit.
-	//make sure to re-use collision shapes among rigid bodies whenever possible!
-	btAlignedObjectArray<btCollisionShape*> collisionShapes;
+//Render flag
+bool gRenderQuad = true;
 
-	///create a few basic rigid bodies
+//Graphics program
+GLuint gProgramID = 0;
+GLint gVertexPos2DLocation = -1;
+GLuint gVBO = 0;
+GLuint gIBO = 0;
 
-	//the ground is a cube of side 100 at position y = -56.
-	//the sphere will hit it at y = -6, with center at -5
+bool init()
+{
+	//Initialization flag
+	bool success = true;
+
+	//Initialize SDL
+	if (SDL_Init(SDL_INIT_VIDEO) < 0)
 	{
-		btCollisionShape* groundShape = new btBoxShape(btVector3(btScalar(50.), btScalar(50.), btScalar(50.)));
-
-		collisionShapes.push_back(groundShape);
-
-		btTransform groundTransform;
-		groundTransform.setIdentity();
-		groundTransform.setOrigin(btVector3(0, -56, 0));
-
-		btScalar mass(0.);
-
-		//rigidbody is dynamic if and only if mass is non zero, otherwise static
-		bool isDynamic = (mass != 0.f);
-
-		btVector3 localInertia(0, 0, 0);
-		if (isDynamic)
-			groundShape->calculateLocalInertia(mass, localInertia);
-
-		//using motionstate is optional, it provides interpolation capabilities, and only synchronizes 'active' objects
-		btDefaultMotionState* myMotionState = new btDefaultMotionState(groundTransform);
-		btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, groundShape, localInertia);
-		btRigidBody* body = new btRigidBody(rbInfo);
-
-		//add the body to the dynamics world
-		dynamicsWorld->addRigidBody(body);
+		printf("SDL could not initialize! SDL Error: %s\n", SDL_GetError());
+		success = false;
 	}
-
+	else
 	{
-		//create a dynamic rigidbody
+		//Use OpenGL 3.1 core
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 
-		//btCollisionShape* colShape = new btBoxShape(btVector3(1,1,1));
-		btCollisionShape* colShape = new btSphereShape(btScalar(1.));
-		collisionShapes.push_back(colShape);
-
-		/// Create Dynamic Objects
-		btTransform startTransform;
-		startTransform.setIdentity();
-
-		btScalar mass(1.f);
-
-		//rigidbody is dynamic if and only if mass is non zero, otherwise static
-		bool isDynamic = (mass != 0.f);
-
-		btVector3 localInertia(0, 0, 0);
-		if (isDynamic)
-			colShape->calculateLocalInertia(mass, localInertia);
-
-		startTransform.setOrigin(btVector3(2, 10, 0));
-
-		//using motionstate is recommended, it provides interpolation capabilities, and only synchronizes 'active' objects
-		btDefaultMotionState* myMotionState = new btDefaultMotionState(startTransform);
-		btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, colShape, localInertia);
-		btRigidBody* body = new btRigidBody(rbInfo);
-
-		dynamicsWorld->addRigidBody(body);
-	}
-
-	/// Do some simulation
-
-	///-----stepsimulation_start-----
-	for (i = 0; i < 150; i++)
-	{
-		dynamicsWorld->stepSimulation(1.f / 60.f, 10);
-
-		//print positions of all objects
-		for (int j = dynamicsWorld->getNumCollisionObjects() - 1; j >= 0; j--)
+		//Create window
+		gWindow = SDL_CreateWindow("SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
+		if (gWindow == NULL)
 		{
-			btCollisionObject* obj = dynamicsWorld->getCollisionObjectArray()[j];
-			btRigidBody* body = btRigidBody::upcast(obj);
-			btTransform trans;
-			if (body && body->getMotionState())
+			printf("Window could not be created! SDL Error: %s\n", SDL_GetError());
+			success = false;
+		}
+		else
+		{
+			//Create context
+			gContext = SDL_GL_CreateContext(gWindow);
+			if (gContext == NULL)
 			{
-				body->getMotionState()->getWorldTransform(trans);
+				printf("OpenGL context could not be created! SDL Error: %s\n", SDL_GetError());
+				success = false;
 			}
 			else
 			{
-				trans = obj->getWorldTransform();
+				//Initialize GLEW
+				glewExperimental = GL_TRUE;
+				GLenum glewError = glewInit();
+				if (glewError != GLEW_OK)
+				{
+					printf("Error initializing GLEW! %s\n", glewGetErrorString(glewError));
+				}
+
+				//Use Vsync
+				if (SDL_GL_SetSwapInterval(1) < 0)
+				{
+					printf("Warning: Unable to set VSync! SDL Error: %s\n", SDL_GetError());
+				}
+
+				//Initialize OpenGL
+				if (!initGL())
+				{
+					printf("Unable to initialize OpenGL!\n");
+					success = false;
+				}
 			}
-			printf("world pos object %d = %f,%f,%f\n", j, float(trans.getOrigin().getX()), float(trans.getOrigin().getY()), float(trans.getOrigin().getZ()));
 		}
 	}
 
-	///-----stepsimulation_end-----
+	return success;
+}
 
-	//cleanup in the reverse order of creation/initialization
+bool initGL()
+{
+	//Success flag
+	bool success = true;
 
-	///-----cleanup_start-----
+	//Generate program
+	gProgramID = glCreateProgram();
 
-	//remove the rigidbodies from the dynamics world and delete them
-	for (i = dynamicsWorld->getNumCollisionObjects() - 1; i >= 0; i--)
+	//Create vertex shader
+	GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
+
+	//Get vertex source
+	const GLchar* vertexShaderSource[] =
 	{
-		btCollisionObject* obj = dynamicsWorld->getCollisionObjectArray()[i];
-		btRigidBody* body = btRigidBody::upcast(obj);
-		if (body && body->getMotionState())
+		"#version 140\nin vec2 LVertexPos2D; void main() { gl_Position = vec4( LVertexPos2D.x, LVertexPos2D.y, 0, 1 ); }"
+	};
+
+	//Set vertex source
+	glShaderSource(vertexShader, 1, vertexShaderSource, NULL);
+
+	//Compile vertex source
+	glCompileShader(vertexShader);
+
+	//Check vertex shader for errors
+	GLint vShaderCompiled = GL_FALSE;
+	glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &vShaderCompiled);
+	if (vShaderCompiled != GL_TRUE)
+	{
+		printf("Unable to compile vertex shader %d!\n", vertexShader);
+		printShaderLog(vertexShader);
+		success = false;
+	}
+	else
+	{
+		//Attach vertex shader to program
+		glAttachShader(gProgramID, vertexShader);
+
+
+		//Create fragment shader
+		GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+
+		//Get fragment source
+		const GLchar* fragmentShaderSource[] =
 		{
-			delete body->getMotionState();
+			"#version 140\nout vec4 LFragment; void main() { LFragment = vec4( 1.0, 1.0, 1.0, 1.0 ); }"
+		};
+
+		//Set fragment source
+		glShaderSource(fragmentShader, 1, fragmentShaderSource, NULL);
+
+		//Compile fragment source
+		glCompileShader(fragmentShader);
+
+		//Check fragment shader for errors
+		GLint fShaderCompiled = GL_FALSE;
+		glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &fShaderCompiled);
+		if (fShaderCompiled != GL_TRUE)
+		{
+			printf("Unable to compile fragment shader %d!\n", fragmentShader);
+			printShaderLog(fragmentShader);
+			success = false;
 		}
-		dynamicsWorld->removeCollisionObject(obj);
-		delete obj;
+		else
+		{
+			//Attach fragment shader to program
+			glAttachShader(gProgramID, fragmentShader);
+
+
+			//Link program
+			glLinkProgram(gProgramID);
+
+			//Check for errors
+			GLint programSuccess = GL_TRUE;
+			glGetProgramiv(gProgramID, GL_LINK_STATUS, &programSuccess);
+			if (programSuccess != GL_TRUE)
+			{
+				printf("Error linking program %d!\n", gProgramID);
+				printProgramLog(gProgramID);
+				success = false;
+			}
+			else
+			{
+				//Get vertex attribute location
+				gVertexPos2DLocation = glGetAttribLocation(gProgramID, "LVertexPos2D");
+				if (gVertexPos2DLocation == -1)
+				{
+					printf("LVertexPos2D is not a valid glsl program variable!\n");
+					success = false;
+				}
+				else
+				{
+					//Initialize clear color
+					glClearColor(0.f, 0.f, 0.f, 1.f);
+
+					//VBO data
+					GLfloat vertexData[] =
+					{
+						-0.5f, -0.5f,
+						 0.5f, -0.5f,
+						 0.5f,  0.5f,
+						-0.5f,  0.5f
+					};
+
+					//IBO data
+					GLuint indexData[] = { 0, 1, 2, 3 };
+
+					//Create VBO
+					glGenBuffers(1, &gVBO);
+					glBindBuffer(GL_ARRAY_BUFFER, gVBO);
+					glBufferData(GL_ARRAY_BUFFER, 2 * 4 * sizeof(GLfloat), vertexData, GL_STATIC_DRAW);
+
+					//Create IBO
+					glGenBuffers(1, &gIBO);
+					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, gIBO);
+					glBufferData(GL_ELEMENT_ARRAY_BUFFER, 4 * sizeof(GLuint), indexData, GL_STATIC_DRAW);
+				}
+			}
+		}
 	}
 
-	//delete collision shapes
-	for (int j = 0; j < collisionShapes.size(); j++)
+	return success;
+}
+
+void handleKeys(unsigned char key, int x, int y)
+{
+	//Toggle quad
+	if (key == 'q')
 	{
-		btCollisionShape* shape = collisionShapes[j];
-		collisionShapes[j] = 0;
-		delete shape;
+		gRenderQuad = !gRenderQuad;
+	}
+}
+
+void update()
+{
+	//No per frame update needed
+}
+
+void render()
+{
+	//Clear color buffer
+	glClear(GL_COLOR_BUFFER_BIT);
+
+	//Render quad
+	if (gRenderQuad)
+	{
+		//Bind program
+		glUseProgram(gProgramID);
+
+		//Enable vertex position
+		glEnableVertexAttribArray(gVertexPos2DLocation);
+
+		//Set vertex data
+		glBindBuffer(GL_ARRAY_BUFFER, gVBO);
+		glVertexAttribPointer(gVertexPos2DLocation, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), NULL);
+
+		//Set index data and render
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, gIBO);
+		glDrawElements(GL_TRIANGLE_FAN, 4, GL_UNSIGNED_INT, NULL);
+
+		//Disable vertex position
+		glDisableVertexAttribArray(gVertexPos2DLocation);
+
+		//Unbind program
+		glUseProgram(NULL);
+	}
+}
+
+void close()
+{
+	//Deallocate program
+	glDeleteProgram(gProgramID);
+
+	//Destroy window	
+	SDL_DestroyWindow(gWindow);
+	gWindow = NULL;
+
+	//Quit SDL subsystems
+	SDL_Quit();
+}
+
+void printProgramLog(GLuint program)
+{
+	//Make sure name is shader
+	if (glIsProgram(program))
+	{
+		//Program log length
+		int infoLogLength = 0;
+		int maxLength = infoLogLength;
+
+		//Get info string length
+		glGetProgramiv(program, GL_INFO_LOG_LENGTH, &maxLength);
+
+		//Allocate string
+		char* infoLog = new char[maxLength];
+
+		//Get info log
+		glGetProgramInfoLog(program, maxLength, &infoLogLength, infoLog);
+		if (infoLogLength > 0)
+		{
+			//Print Log
+			printf("%s\n", infoLog);
+		}
+
+		//Deallocate string
+		delete[] infoLog;
+	}
+	else
+	{
+		printf("Name %d is not a program\n", program);
+	}
+}
+
+void printShaderLog(GLuint shader)
+{
+	//Make sure name is shader
+	if (glIsShader(shader))
+	{
+		//Shader log length
+		int infoLogLength = 0;
+		int maxLength = infoLogLength;
+
+		//Get info string length
+		glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &maxLength);
+
+		//Allocate string
+		char* infoLog = new char[maxLength];
+
+		//Get info log
+		glGetShaderInfoLog(shader, maxLength, &infoLogLength, infoLog);
+		if (infoLogLength > 0)
+		{
+			//Print Log
+			printf("%s\n", infoLog);
+		}
+
+		//Deallocate string
+		delete[] infoLog;
+	}
+	else
+	{
+		printf("Name %d is not a shader\n", shader);
+	}
+}
+
+int main(int argc, char* args[])
+{
+	//Start up SDL and create window
+	if (!init())
+	{
+		printf("Failed to initialize!\n");
+	}
+	else
+	{
+		//Main loop flag
+		bool quit = false;
+
+		//Event handler
+		SDL_Event e;
+
+		//Enable text input
+		SDL_StartTextInput();
+
+		//While application is running
+		while (!quit)
+		{
+			//Handle events on queue
+			while (SDL_PollEvent(&e) != 0)
+			{
+				//User requests quit
+				if (e.type == SDL_QUIT)
+				{
+					quit = true;
+				}
+				//Handle keypress with current mouse position
+				else if (e.type == SDL_TEXTINPUT)
+				{
+					int x = 0, y = 0;
+					SDL_GetMouseState(&x, &y);
+					handleKeys(e.text.text[0], x, y);
+				}
+			}
+
+			//Render quad
+			render();
+
+			//Update screen
+			SDL_GL_SwapWindow(gWindow);
+		}
+
+		//Disable text input
+		SDL_StopTextInput();
 	}
 
-	//delete dynamics world
-	delete dynamicsWorld;
-
-	//delete solver
-	delete solver;
-
-	//delete broadphase
-	delete overlappingPairCache;
-
-	//delete dispatcher
-	delete dispatcher;
-
-	delete collisionConfiguration;
-
-	//next line is optional: it will be cleared by the destructor when the array goes out of scope
-	collisionShapes.clear();
+	//Free resources and close SDL
+	close();
 
 	return 0;
 }
-
-// Run program: Ctrl + F5 or Debug > Start Without Debugging menu
-// Debug program: F5 or Debug > Start Debugging menu
-
-// Tips for Getting Started: 
-//   1. Use the Solution Explorer window to add/manage files
-//   2. Use the Team Explorer window to connect to source control
-//   3. Use the Output window to see build output and other messages
-//   4. Use the Error List window to view errors
-//   5. Go to Project > Add New Item to create new code files, or Project > Add Existing Item to add existing code files to the project
-//   6. In the future, to open this project again, go to File > Open > Project and select the .sln file
