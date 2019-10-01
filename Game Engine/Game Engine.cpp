@@ -8,6 +8,7 @@ and may not be redistributed without written permission.*/
 #include <gl\glu.h>
 #include <stdio.h>
 #include <string>
+#include <iostream>
 
 //Screen dimension constants
 const int SCREEN_WIDTH = 640;
@@ -46,7 +47,7 @@ bool gRenderQuad = true;
 
 //Graphics program
 GLuint gProgramID = 0;
-GLint gVertexPos2DLocation = -1;
+GLint gVertexPos3DLocation = -1;
 GLuint gVBO = 0;
 GLuint gIBO = 0;
 
@@ -127,7 +128,7 @@ bool initGL()
 	//Get vertex source
 	const GLchar* vertexShaderSource[] =
 	{
-		"#version 140\nin vec2 LVertexPos2D; void main() { gl_Position = vec4( LVertexPos2D.x, LVertexPos2D.y, 0, 1 ); }"
+		"#version 140\nin vec3 LVertexPos3D; void main() { gl_Position = vec4(LVertexPos3D.x, LVertexPos3D.y, LVertexPos3D.z, 1); }"
 	};
 
 	//Set vertex source
@@ -196,10 +197,10 @@ bool initGL()
 			else
 			{
 				//Get vertex attribute location
-				gVertexPos2DLocation = glGetAttribLocation(gProgramID, "LVertexPos2D");
-				if (gVertexPos2DLocation == -1)
+				gVertexPos3DLocation = glGetAttribLocation(gProgramID, "LVertexPos3D");
+				if (gVertexPos3DLocation == -1)
 				{
-					printf("LVertexPos2D is not a valid glsl program variable!\n");
+					printf("LVertexPos3D is not a valid glsl program variable!\n");
 					success = false;
 				}
 				else
@@ -207,14 +208,32 @@ bool initGL()
 					//Initialize clear color
 					glClearColor(0.f, 0.f, 0.f, 1.f);
 
-					//VBO data
+					////VBO data
 					GLfloat vertexData[] =
 					{
-						-0.5f, -0.5f,
-						 0.5f, -0.5f,
-						 0.5f,  0.5f,
-						-0.5f,  0.5f
+						-0.5f, -0.5f, 0.0f, 1.0f,
+
+						 0.5f, -0.5f, 1.0f, 1.0f,
+
+						 0.5f,  0.5f, 0.0f, 1.0f,
+
+						-0.5f,  0.5f, 0.0f, 1.0f,
 					};
+				/*	GLfloat vertexData[] =
+					{
+						20.0f, 150.0f, 0.0f, 1.0f,
+						220.0f, 150.0f, 0.0f, 1.0f,
+						200.0f, 160.0f, 0.0f, 1.0f,
+						200.0f, 160.0f, 0.0f, 1.0f
+					};*/
+
+					/*GLfloat vertexData[] =
+					{
+						0.2f, 0.15f, 0.0f, 1.0f,
+						0.22f, 0.15f, 0.0f, 1.0f,
+						0.2f, 0.16f, 0.0f, 1.0f
+					};*/
+
 
 					//IBO data
 					GLuint indexData[] = { 0, 1, 2, 3 };
@@ -262,18 +281,19 @@ void render()
 		glUseProgram(gProgramID);
 
 		//Enable vertex position
-		glEnableVertexAttribArray(gVertexPos2DLocation);
+		glEnableVertexAttribArray(gVertexPos3DLocation);
 
 		//Set vertex data
 		glBindBuffer(GL_ARRAY_BUFFER, gVBO);
-		glVertexAttribPointer(gVertexPos2DLocation, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), NULL);
+		glVertexAttribPointer(gVertexPos3DLocation, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), NULL);
 
 		//Set index data and render
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, gIBO);
+
 		glDrawElements(GL_TRIANGLE_FAN, 4, GL_UNSIGNED_INT, NULL);
 
 		//Disable vertex position
-		glDisableVertexAttribArray(gVertexPos2DLocation);
+		glDisableVertexAttribArray(gVertexPos3DLocation);
 
 		//Unbind program
 		glUseProgram(NULL);
