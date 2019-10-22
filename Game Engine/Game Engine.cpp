@@ -42,7 +42,9 @@ static unsigned int NormalMatLoc;
 
 static unsigned int
 vertexShaderId,
-fragmentShaderId;
+fragmentShaderId,
+vao[1],
+buffer[1];
 
 //Render flag
 bool gRenderQuad = true;
@@ -262,8 +264,8 @@ bool OpenGL()
 				else
 				{
 					//Get vertex attribute location
-					gVertexPos3DLocation = glGetAttribLocation(gProgramID, "LVertexPos3D");
-					if (gVertexPos3DLocation == -100000)
+					gVertexPos3DLocation = glGetAttribLocation(gProgramID, "squareCoords");
+					if (gVertexPos3DLocation == -1)
 					{
 						printf("LVertexPos3D is not a valid glsl program variable!\n");
 						return false;
@@ -276,31 +278,41 @@ bool OpenGL()
 
 
 						//VBO data
-						GLfloat vertexData[] =
-						{
-							-0.5f, -0.5f ,  0.5f
-							, -0.5f , 0.5f, 0.5f 
-							,-0.5f,  0.5f , 0.5f
-						};
+						//GLfloat vertexData[] =
+						//{
+						//	-0.5f, -0.5f ,  0.5f
+						//	, -0.5f , 0.5f, 0.5f 
+						//	,-0.5f,  0.5f , 0.5f
+						//};
 
 					
 						//IBO data
-						GLuint indexData[] = { 0, 1, 2, 4};
+						GLuint indexData[] = { 0, 1, 2, 3};
 
-						//Create VBO
-						glGenBuffers(1, &gVBO);
-						glBindBuffer(GL_ARRAY_BUFFER, gVBO);
-						glBufferData(GL_ARRAY_BUFFER, 2 * 4 * sizeof(GLfloat), squareVertices, GL_STATIC_DRAW);
+						glGenVertexArrays(1, vao);
+						glGenBuffers(1, buffer);
+						glBindVertexArray(vao[0]);
+						glBindBuffer(GL_ARRAY_BUFFER, buffer[0]);
+						glBufferData(GL_ARRAY_BUFFER, sizeof(squareVertices), squareVertices, GL_STATIC_DRAW);
 
-						//Create IBO
-						glGenBuffers(1, &gIBO);
-						glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, gIBO);
-						glBufferData(GL_ELEMENT_ARRAY_BUFFER, 4 * sizeof(GLuint), indexData, GL_STATIC_DRAW);
+						glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(squareVertices[0]), 0);
+						glEnableVertexAttribArray(0);
+						glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(squareVertices[0]), (GLvoid*)sizeof(squareVertices[0].coords));
+						glEnableVertexAttribArray(1);
+
+						////Create VBO
+						//glGenBuffers(1, &gVBO);
+						//glBindBuffer(GL_ARRAY_BUFFER, gVBO);
+						//glBufferData(GL_ARRAY_BUFFER, 2 * 4 * sizeof(GLfloat), squareVertices, GL_STATIC_DRAW);
+
+						////Create IBO
+						//glGenBuffers(1, &gIBO);
+						//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, gIBO);
+						//glBufferData(GL_ELEMENT_ARRAY_BUFFER, 4 * sizeof(GLuint), indexData, GL_STATIC_DRAW);
 					}
 				}
 			}
 		}
-
 		return success;
 }
 
