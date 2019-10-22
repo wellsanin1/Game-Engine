@@ -28,6 +28,15 @@ SDL_Window* gWindow = NULL;
 //OpenGL context
 SDL_GLContext gContext;
 
+static glm::mat4 projMat = glm::mat4(1.0);
+static unsigned int projMatLoc;
+
+static glm::mat4 modelViewMat = glm::mat4(1.0);
+static unsigned int modelViewMatLoc;
+
+static glm::mat3 normalMat = glm::mat3(1.0);
+static unsigned int NormalMatLoc;
+
 //Render flag
 bool gRenderQuad = true;
 
@@ -36,6 +45,8 @@ GLuint gProgramID = 0;
 GLint gVertexPos3DLocation = -1;
 GLuint gVBO = 0;
 GLuint gIBO = 0;
+
+
 
 bool OpenGL();
 
@@ -55,11 +66,8 @@ void update()
 
 bool Initialise()
 {
-	static glm::mat4 projMat = glm::mat4(1.0);
-	int projMatLoc;
-	projMatLoc = glGetUniformLocation(gProgramID, "projMat");
-	projMat = glm::frustum(-5.0, 5.0, -5.0, 5.0, 5.0, 100.0);
-	glUniformMatrix4fv(projMatLoc, 1, GL_FALSE, glm::value_ptr(projMat));
+
+
 
 
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0) 
@@ -108,6 +116,8 @@ bool Initialise()
 		}
 	}
 	
+
+
 	printf("SDL Initialised \n");
 	printf("OpenGL version supported by this platform (%s): \n", glGetString(GL_VERSION));
 	return true;
@@ -129,6 +139,12 @@ void closeSDL()
 
 bool OpenGL()
 {
+		projMatLoc = glGetUniformLocation(gProgramID, "projMat");
+		projMat = glm::frustum(-5.0, 5.0, -5.0, 5.0, 5.0, 100.0);
+		glUniformMatrix4fv(projMatLoc, 1, GL_FALSE, glm::value_ptr(projMat));
+		modelViewMatLoc = glGetUniformLocation(gProgramID, "modelViewMat");
+		normalMat = glm::transpose(glm::inverse(glm::mat3(modelViewMat)));
+
 		//Success flag
 		bool success = true;
 
@@ -221,6 +237,8 @@ bool OpenGL()
 						//Initialize clear color
 						glClearColor(0.f, 0.f, 0.f, 1.f);
 
+
+
 						//VBO data
 						GLfloat vertexData[] =
 						{
@@ -228,7 +246,8 @@ bool OpenGL()
 							, -0.5f , 0.5f, 0.5f 
 							,-0.5f,  0.5f , 0.5f
 						};
-						
+
+					
 						//IBO data
 						GLuint indexData[] = { 0, 1, 2 , 4};
 
