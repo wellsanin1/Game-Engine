@@ -2,6 +2,9 @@
 and may not be redistributed without written permission.*/
 
 //Using SDL, SDL OpenGL, GLEW, standard IO, and strings
+
+#define _CRT_SECURE_NO_WARNINGS
+
 #include <SDL.h>
 #include <gl\glew.h>
 #include <SDL_opengl.h>
@@ -37,6 +40,10 @@ static unsigned int modelViewMatLoc;
 static glm::mat3 normalMat = glm::mat3(1.0);
 static unsigned int NormalMatLoc;
 
+static unsigned int
+vertexShaderId,
+fragmentShaderId;
+
 //Render flag
 bool gRenderQuad = true;
 
@@ -46,12 +53,21 @@ GLint gVertexPos3DLocation = -1;
 GLuint gVBO = 0;
 GLuint gIBO = 0;
 
+struct Vertex
+{
+	float coords[4];
+	float colors[4];
+};
 
+static Vertex squareVertices[] =
+{
+   { { 20.0, 20.0, 0.0, 1.0 }, { 0.0, 0.0, 0.0, 1.0 } },
+   { { 80.0, 20.0, 0.0, 1.0 }, { 0.0, 0.0, 0.0, 1.0 } },
+   { { 20.0, 80.0, 0.0, 1.0 }, { 0.0, 0.0, 0.0, 1.0 } },
+   { { 80.0, 80.0, 0.0, 1.0 }, { 0.0, 0.0, 0.0, 1.0 } }
+};
 
 bool OpenGL();
-
-
-
 
 
 void eventListner()
@@ -136,6 +152,21 @@ void closeSDL()
 	SDL_Quit();
 }
 
+char* readTextFile(char* aTextFile)
+{
+	FILE* filePointer = fopen(aTextFile, "rb");
+	char* content = NULL;
+	long numVal = 0;
+
+	fseek(filePointer, 0L, SEEK_END);
+	numVal = ftell(filePointer);
+	fseek(filePointer, 0L, SEEK_SET);
+	content = (char*)malloc((numVal + 1) * sizeof(char));
+	fread(content, 1, numVal, filePointer);
+	content[numVal] = '\0';
+	fclose(filePointer);
+	return content;
+}
 
 bool OpenGL()
 {
@@ -152,33 +183,38 @@ bool OpenGL()
 		gProgramID = glCreateProgram();
 
 		//Create vertex shader
-		GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
+		//GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
 
 		//Get vertex source
-		const GLchar* vertexShaderSource[] =
-		{
-			"#version 140\nin vec3 LVertexPos3D; void main() { gl_Position = vec4( LVertexPos3D.x, LVertexPos3D.y, LVertexPos3D.z, 1 ); }"
-		};
+		char* vertexShader = readTextFile((char*)"vertexShader.glsl");
+		GLuint vertexShaderId = glCreateShader(GL_VERTEX_SHADER);
+		glShaderSource(vertexShaderId, 1, (const char**) &vertexShader, NULL);
+		glCompileShader(vertexShaderId);
 
-		//Set vertex source
-		glShaderSource(vertexShader, 1, vertexShaderSource, NULL);
+		//printf("test");
 
-		//Compile vertex source
-		glCompileShader(vertexShader);
+		//const GLchar* vertexShaderSource[] =
+		//{
+		//	"#version 140\nin vec3 LVertexPos3D; void main() { gl_Position = vec4( LVertexPos3D.x, LVertexPos3D.y, LVertexPos3D.z, 1 ); }"
+		//};
+		////Set vertex source
+		//glShaderSource(vertexShader, 1, vertexShaderSource, NULL);
+		////Compile vertex source
+		//glCompileShader(vertexShader);
 
 		//Check vertex shader for errors
 		GLint vShaderCompiled = GL_FALSE;
-		glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &vShaderCompiled);
+		glGetShaderiv(vertexShaderId, GL_COMPILE_STATUS, &vShaderCompiled);
 		if (vShaderCompiled != GL_TRUE)
 		{
-			printf("Unable to compile vertex shader %d!\n", vertexShader);
+			printf("Unable to compile vertex shader %d!\n", vertexShaderId);
 			//printShaderLog(vertexShader);
 			return false;
 		}
 		else
 		{
 			//Attach vertex shader to program
-			glAttachShader(gProgramID, vertexShader);
+			glAttachShader(gProgramID, vertexShaderId);
 
 
 			//Create fragment shader
@@ -227,7 +263,7 @@ bool OpenGL()
 				{
 					//Get vertex attribute location
 					gVertexPos3DLocation = glGetAttribLocation(gProgramID, "LVertexPos3D");
-					if (gVertexPos3DLocation == -1)
+					if (gVertexPos3DLocation == -100000)
 					{
 						printf("LVertexPos3D is not a valid glsl program variable!\n");
 						return false;
@@ -249,12 +285,12 @@ bool OpenGL()
 
 					
 						//IBO data
-						GLuint indexData[] = { 0, 1, 2 , 4};
+						GLuint indexData[] = { 0, 1, 2, 4};
 
 						//Create VBO
 						glGenBuffers(1, &gVBO);
 						glBindBuffer(GL_ARRAY_BUFFER, gVBO);
-						glBufferData(GL_ARRAY_BUFFER, 2 * 4 * sizeof(GLfloat), vertexData, GL_STATIC_DRAW);
+						glBufferData(GL_ARRAY_BUFFER, 2 * 4 * sizeof(GLfloat), squareVertices, GL_STATIC_DRAW);
 
 						//Create IBO
 						glGenBuffers(1, &gIBO);
@@ -301,6 +337,7 @@ void RenderScene()
 		//Unbind program
 		glUseProgram(NULL);
 	}
+	glFlush();
 }
 
 void InputHandler()
