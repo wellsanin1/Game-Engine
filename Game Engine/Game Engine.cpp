@@ -10,6 +10,10 @@ and may not be redistributed without written permission.*/
 #include <string>
 #include <vector>
 #include <iostream>
+#include <glm/glm/mat4x4.hpp>
+#include <glm/glm/gtc/matrix_transform.hpp>
+#include <glm/glm/gtc/type_ptr.hpp>
+
 #include "EventSystem.h"
 
 
@@ -35,6 +39,10 @@ GLuint gIBO = 0;
 
 bool OpenGL();
 
+
+
+
+
 void eventListner()
 {
 	
@@ -47,6 +55,13 @@ void update()
 
 bool Initialise()
 {
+	static glm::mat4 projMat = glm::mat4(1.0);
+	int projMatLoc;
+	projMatLoc = glGetUniformLocation(gProgramID, "projMat");
+	projMat = glm::frustum(-5.0, 5.0, -5.0, 5.0, 5.0, 100.0);
+	glUniformMatrix4fv(projMatLoc, 1, GL_FALSE, glm::value_ptr(projMat));
+
+
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0) 
 	{
 		SDL_Log("Unable to initialize SDL: %s", SDL_GetError());
@@ -209,14 +224,13 @@ bool OpenGL()
 						//VBO data
 						GLfloat vertexData[] =
 						{
-							-0.5f, -0.5f ,
-							 0.5f, -0.5f ,
-							 0.5f,  0.5f ,
-							-0.5f,  0.5f ,
+							-0.5f, -0.5f ,  0.5f
+							, -0.5f , 0.5f, 0.5f 
+							,-0.5f,  0.5f , 0.5f
 						};
 						
 						//IBO data
-						GLuint indexData[] = { 0, 1, 2, 3 };
+						GLuint indexData[] = { 0, 1, 2 , 4};
 
 						//Create VBO
 						glGenBuffers(1, &gVBO);
@@ -260,7 +274,7 @@ void RenderScene()
 
 		//Set index data and render
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, gIBO);
-		glDrawElements(GL_TRIANGLE_FAN, 4, GL_UNSIGNED_INT, NULL);
+		glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_INT, NULL);
 
 		//Disable vertex position
 		glDisableVertexAttribArray(gVertexPos3DLocation);
