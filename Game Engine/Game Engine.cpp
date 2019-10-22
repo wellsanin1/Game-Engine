@@ -31,13 +31,8 @@ SDL_Window* gWindow = NULL;
 //OpenGL context
 SDL_GLContext gContext;
 
-static glm::mat4 projMat = glm::mat4(1.0);
 static unsigned int projMatLoc;
-
-static glm::mat4 modelViewMat = glm::mat4(1.0);
 static unsigned int modelViewMatLoc;
-
-static glm::mat3 normalMat = glm::mat3(1.0);
 static unsigned int NormalMatLoc;
 
 static unsigned int
@@ -51,10 +46,26 @@ bool gRenderQuad = true;
 
 //Graphics program
 GLuint gProgramID = 0;
-GLint gVertexPos3DLocation = -1;
 GLuint gVBO = 0;
-GLuint gIBO = 0;
 
+static enum buffer { SQUARE_VERTICES };
+static enum object { SQUARE };
+
+struct Matrix4x4
+{
+	float entries[16];
+};
+
+static const Matrix4x4 IDENTITY_MATRIX4x4 =
+{
+   {
+	  1.0, 0.0, 0.0, 0.0,
+	  0.0, 1.0, 0.0, 0.0,
+	  0.0, 0.0, 1.0, 0.0,
+	  0.0, 0.0, 0.0, 1.0
+   }
+};
+	
 struct Vertex
 {
 	float coords[4];
@@ -172,20 +183,16 @@ char* readTextFile(char* aTextFile)
 
 bool OpenGL()
 {
-		projMatLoc = glGetUniformLocation(gProgramID, "projMat");
+
+		/*projMatLoc = glGetUniformLocation(gProgramID, "projMat");
 		projMat = glm::frustum(-5.0, 5.0, -5.0, 5.0, 5.0, 100.0);
 		glUniformMatrix4fv(projMatLoc, 1, GL_FALSE, glm::value_ptr(projMat));
 		modelViewMatLoc = glGetUniformLocation(gProgramID, "modelViewMat");
 		normalMat = glm::transpose(glm::inverse(glm::mat3(modelViewMat)));
-
-		//Success flag
-		bool success = true;
-
+*/
 		//Generate program
 		gProgramID = glCreateProgram();
 
-		//Create vertex shader
-		//GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
 
 		//Get vertex source
 		char* vertexShader = readTextFile((char*)"vertexShader.glsl");
@@ -193,24 +200,12 @@ bool OpenGL()
 		glShaderSource(vertexShaderId, 1, (const char**) &vertexShader, NULL);
 		glCompileShader(vertexShaderId);
 
-		//printf("test");
-
-		//const GLchar* vertexShaderSource[] =
-		//{
-		//	"#version 140\nin vec3 LVertexPos3D; void main() { gl_Position = vec4( LVertexPos3D.x, LVertexPos3D.y, LVertexPos3D.z, 1 ); }"
-		//};
-		////Set vertex source
-		//glShaderSource(vertexShader, 1, vertexShaderSource, NULL);
-		////Compile vertex source
-		//glCompileShader(vertexShader);
-
 		//Check vertex shader for errors
 		GLint vShaderCompiled = GL_FALSE;
 		glGetShaderiv(vertexShaderId, GL_COMPILE_STATUS, &vShaderCompiled);
 		if (vShaderCompiled != GL_TRUE)
 		{
 			printf("Unable to compile vertex shader %d!\n", vertexShaderId);
-			//printShaderLog(vertexShader);
 			return false;
 		}
 		else
@@ -219,36 +214,24 @@ bool OpenGL()
 			glAttachShader(gProgramID, vertexShaderId);
 
 
-			//Create fragment shader
-			GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-
-			//Get fragment source
-			const GLchar* fragmentShaderSource[] =
-			{
-				"#version 140\nout vec4 LFragment; void main() { LFragment = vec4( 1.0, 1.0, 1.0, 1.0 ); }"
-			};
-
-			//Set fragment source
-			glShaderSource(fragmentShader, 1, fragmentShaderSource, NULL);
-
-			//Compile fragment source
-			glCompileShader(fragmentShader);
+			//Get Fragment Source
+			char* fragmentShader = readTextFile((char*)"fragmentShader.glsl");
+			GLuint fragmentShaderId = glCreateShader(GL_FRAGMENT_SHADER);
+			glShaderSource(fragmentShaderId, 1, (const char**)& fragmentShader, NULL);
+			glCompileShader(fragmentShaderId);
 
 			//Check fragment shader for errors
 			GLint fShaderCompiled = GL_FALSE;
-			glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &fShaderCompiled);
+			glGetShaderiv(fragmentShaderId, GL_COMPILE_STATUS, &fShaderCompiled);
 			if (fShaderCompiled != GL_TRUE)
 			{
 				printf("Unable to compile fragment shader %d!\n", fragmentShader);
-				//printShaderLog(fragmentShader);
 				return false;
 			}
 			else
 			{
 				//Attach fragment shader to program
-				glAttachShader(gProgramID, fragmentShader);
-
-
+				glAttachShader(gProgramID, fragmentShaderId);
 				//Link program
 				glLinkProgram(gProgramID);
 
@@ -258,62 +241,65 @@ bool OpenGL()
 				if (programSuccess != GL_TRUE)
 				{
 					printf("Error linking program %d!\n", gProgramID);
-					//printProgramLog(gProgramID);
 					return false;
 				}
 				else
 				{
 					//Get vertex attribute location
-					gVertexPos3DLocation = glGetAttribLocation(gProgramID, "squareCoords");
-					if (gVertexPos3DLocation == -1)
+					GLint SquareCoords = glGetAttribLocation(gProgramID, "squareCoords");
+					GLint SquareColours = glGetAttribLocation(gProgramID, "squareColors");
+					if (SquareCoords == -1 || SquareColours == -1)
 					{
-						printf("LVertexPos3D is not a valid glsl program variable!\n");
+						printf("Program has a non valid variable \n");
 						return false;
 					}
 					else
 					{
 						//Initialize clear color
-						glClearColor(0.f, 0.f, 0.f, 1.f);
-
-
-
-						//VBO data
-						//GLfloat vertexData[] =
-						//{
-						//	-0.5f, -0.5f ,  0.5f
-						//	, -0.5f , 0.5f, 0.5f 
-						//	,-0.5f,  0.5f , 0.5f
-						//};
-
-					
-						//IBO data
-						GLuint indexData[] = { 0, 1, 2, 3};
+						glClearColor(1.0, 1.0, 1.0, 0.0);
 
 						glGenVertexArrays(1, vao);
 						glGenBuffers(1, buffer);
-						glBindVertexArray(vao[0]);
-						glBindBuffer(GL_ARRAY_BUFFER, buffer[0]);
+						glBindVertexArray(vao[SQUARE]);
+						glBindBuffer(GL_ARRAY_BUFFER, buffer[SQUARE_VERTICES]);
 						glBufferData(GL_ARRAY_BUFFER, sizeof(squareVertices), squareVertices, GL_STATIC_DRAW);
 
 						glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(squareVertices[0]), 0);
 						glEnableVertexAttribArray(0);
 						glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(squareVertices[0]), (GLvoid*)sizeof(squareVertices[0].coords));
 						glEnableVertexAttribArray(1);
-
-						////Create VBO
-						//glGenBuffers(1, &gVBO);
-						//glBindBuffer(GL_ARRAY_BUFFER, gVBO);
-						//glBufferData(GL_ARRAY_BUFFER, 2 * 4 * sizeof(GLfloat), squareVertices, GL_STATIC_DRAW);
-
-						////Create IBO
-						//glGenBuffers(1, &gIBO);
-						//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, gIBO);
-						//glBufferData(GL_ELEMENT_ARRAY_BUFFER, 4 * sizeof(GLuint), indexData, GL_STATIC_DRAW);
 					}
 				}
 			}
 		}
-		return success;
+
+		///////////////////////////////////////
+
+		// Obtain projection matrix uniform location and set value.
+		Matrix4x4 projMat =
+		{
+		   {
+			  0.02, 0.0,  0.0, -1.0,
+			  0.0,  0.02, 0.0, -1.0,
+			  0.0,  0.0, -1.0,  0.0,
+			  0.0,  0.0,  0.0,  1.0
+		   }
+		};
+		projMatLoc = glGetUniformLocation(gProgramID, "projMat");
+		glUniformMatrix4fv(projMatLoc, 1, GL_TRUE, projMat.entries);
+		///////////////////////////////////////
+
+		// Obtain modelview matrix uniform location and set value.
+		Matrix4x4 modelViewMat = {	1.0, 0.0, 0.0, 0.0,
+									0.0, 1.0, 0.0, 0.0,
+									0.0, 0.0, 1.0, 0.0,
+									0.0, 0.0, 0.0, 1.0
+									};
+		modelViewMatLoc = glGetUniformLocation(gProgramID, "modelViewMat");
+		glUniformMatrix4fv(modelViewMatLoc, 1, GL_TRUE, modelViewMat.entries);
+		///////////////////////////////////////
+
+		return true;
 }
 
 void ErrorHandler()
@@ -332,21 +318,8 @@ void RenderScene()
 		//Bind program
 		glUseProgram(gProgramID);
 
-		//Enable vertex position
-		glEnableVertexAttribArray(gVertexPos3DLocation);
-
-		//Set vertex data
-		glBindBuffer(GL_ARRAY_BUFFER, gVBO);
-		glVertexAttribPointer(gVertexPos3DLocation, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), NULL);
-
-		//Set index data and render
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, gIBO);
 		glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_INT, NULL);
 
-		//Disable vertex position
-		glDisableVertexAttribArray(gVertexPos3DLocation);
-
-		//Unbind program
 		glUseProgram(NULL);
 	}
 	glFlush();
