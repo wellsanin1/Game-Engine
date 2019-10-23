@@ -1,392 +1,173 @@
-/*This source code copyrighted by Lazy Foo' Productions (2004-2019)
-and may not be redistributed without written permission.*/
+/*-------------------------------------------------------------------------
+This source file is a part of OGRE
+(Object-oriented Graphics Rendering Engine)
+For the latest info, see http://www.ogre3d.org/
 
-//Using SDL, SDL OpenGL, GLEW, standard IO, and strings
 
-#define _CRT_SECURE_NO_WARNINGS
+Copyright (c) 2000-2013 Torus Knot Software Ltd
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
 
-#include <SDL.h>
-#include <gl\glew.h>
-#include <SDL_opengl.h>
-#include <gl\glu.h>
-#include <stdio.h>
-#include <string>
-#include <vector>
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE
+-------------------------------------------------------------------------*/
+
+//! [fullsource]
+
+
+#include "Ogre.h"
+#include "OgreApplicationContext.h"
+#include "OgreInput.h"
+#include "OgreRTShaderSystem.h"
 #include <iostream>
-#include <glm/glm/mat4x4.hpp>
-#include <glm/glm/gtc/matrix_transform.hpp>
-#include <glm/glm/gtc/type_ptr.hpp>
 
-#include "EventSystem.h"
+using namespace Ogre;
+using namespace OgreBites;
 
-
-
-//Screen dimension constants
-const int SCREEN_WIDTH = 640;
-const int SCREEN_HEIGHT = 480;
-
-//The window we'll be rendering to
-SDL_Window* gWindow = NULL;
-
-//OpenGL context
-SDL_GLContext gContext;
-
-static unsigned int projMatLoc;
-static unsigned int modelViewMatLoc;
-static unsigned int NormalMatLoc;
-
-static unsigned int
-vertexShaderId,
-fragmentShaderId,
-vao[1],
-buffer[1];
-
-//Render flag
-bool gRenderQuad = true;
-
-//Graphics program
-GLuint gProgramID = 0;
-GLuint gVBO = 0;
-
-static enum buffer { SQUARE_VERTICES };
-static enum object { SQUARE };
-
-struct Matrix4x4
+class BasicTutorial1
+	: public ApplicationContext
+	, public InputListener
 {
-	float entries[16];
+public:
+	BasicTutorial1();
+	virtual ~BasicTutorial1() {}
+
+	void setup();
+	bool keyPressed(const KeyboardEvent& evt);
 };
 
-static const Matrix4x4 IDENTITY_MATRIX4x4 =
-{
-   {
-	  1.0, 0.0, 0.0, 0.0,
-	  0.0, 1.0, 0.0, 0.0,
-	  0.0, 0.0, 1.0, 0.0,
-	  0.0, 0.0, 0.0, 1.0
-   }
-};
-	
-struct Vertex
-{
-	float coords[4];
-	float colors[4];
-};
 
-static Vertex squareVertices[] =
+BasicTutorial1::BasicTutorial1()
+	: ApplicationContext("OgreTutorialApp")
 {
-   { { 20.0, 20.0, 0.0, 1.0 }, { 0.0, 0.0, 0.0, 1.0 } },
-   { { 80.0, 20.0, 0.0, 1.0 }, { 0.0, 0.0, 0.0, 1.0 } },
-   { { 20.0, 80.0, 0.0, 1.0 }, { 0.0, 0.0, 0.0, 1.0 } },
-   { { 80.0, 80.0, 0.0, 1.0 }, { 0.0, 0.0, 0.0, 1.0 } }
-};
-
-bool OpenGL();
-
-
-void eventListner()
-{
-	
 }
 
-void update()
+
+void BasicTutorial1::setup()
 {
-	//No per frame update needed
+	// do not forget to call the base first
+	ApplicationContext::setup();
+	addInputListener(this);
+
+	// get a pointer to the already created root
+	Root* root = getRoot();
+	SceneManager* scnMgr = root->createSceneManager();
+
+	// register our scene with the RTSS
+	RTShader::ShaderGenerator* shadergen = RTShader::ShaderGenerator::getSingletonPtr();
+	shadergen->addSceneManager(scnMgr);
+
+	// -- tutorial section start --
+	//! [turnlights]
+	scnMgr->setAmbientLight(ColourValue(0.5, 0.5, 0.5));
+	//! [turnlights]
+
+	//! [newlight]
+	Light* light = scnMgr->createLight("MainLight");
+	SceneNode* lightNode = scnMgr->getRootSceneNode()->createChildSceneNode();
+	lightNode->attachObject(light);
+	//! [newlight]
+
+	//! [lightpos]
+	lightNode->setPosition(20, 80, 50);
+	//! [lightpos]
+
+	//! [camera]
+	SceneNode* camNode = scnMgr->getRootSceneNode()->createChildSceneNode();
+
+	// create the camera
+	Camera* cam = scnMgr->createCamera("myCam");
+	cam->setNearClipDistance(5); // specific to this sample
+	cam->setAutoAspectRatio(true);
+	camNode->attachObject(cam);
+	camNode->setPosition(0, 0, 140);
+
+	// and tell it to render into the main window
+	getRenderWindow()->addViewport(cam);
+	//! [camera]
+
+	//! [entity1]
+	Entity* ogreEntity = scnMgr->createEntity("ogrehead.mesh");
+	//! [entity1]
+
+	//! [entity1node]
+	SceneNode* ogreNode = scnMgr->getRootSceneNode()->createChildSceneNode();
+	//! [entity1node]
+
+	//! [entity1nodeattach]
+	ogreNode->attachObject(ogreEntity);
+	//! [entity1nodeattach]
+
+	//! [cameramove]
+	camNode->setPosition(0, 47, 222);
+	//! [cameramove]
+
+	//! [entity2]
+	Entity* ogreEntity2 = scnMgr->createEntity("ogrehead.mesh");
+	SceneNode* ogreNode2 = scnMgr->getRootSceneNode()->createChildSceneNode(Vector3(84, 48, 0));
+	ogreNode2->attachObject(ogreEntity2);
+	//! [entity2]
+
+	//! [entity3]
+	Entity* ogreEntity3 = scnMgr->createEntity("ogrehead.mesh");
+	SceneNode* ogreNode3 = scnMgr->getRootSceneNode()->createChildSceneNode();
+	ogreNode3->setPosition(0, 104, 0);
+	ogreNode3->setScale(2, 1.2, 1);
+	ogreNode3->attachObject(ogreEntity3);
+	//! [entity3]
+
+	//! [entity4]
+	Entity* ogreEntity4 = scnMgr->createEntity("ogrehead.mesh");
+	SceneNode* ogreNode4 = scnMgr->getRootSceneNode()->createChildSceneNode();
+	ogreNode4->setPosition(-84, 48, 0);
+	ogreNode4->roll(Degree(-90));
+	ogreNode4->attachObject(ogreEntity4);
+	//! [entity4]
+
+	// -- tutorial section end --
 }
 
-bool Initialise()
+
+bool BasicTutorial1::keyPressed(const KeyboardEvent& evt)
 {
-
-
-
-
-	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0) 
+	if (evt.keysym.sym == SDLK_ESCAPE)
 	{
-		SDL_Log("Unable to initialize SDL: %s", SDL_GetError());
-		return false;
+		getRoot()->queueEndRendering();
 	}
-
-	gWindow = SDL_CreateWindow("A SDL Screen", 100, 100, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_OPENGL);
-	if (gWindow == NULL)
-	{
-		printf("Window could not be created! SDL Error: %s\n", SDL_GetError());
-		return false;
-	}
-	else
-	{
-		gContext = SDL_GL_CreateContext(gWindow);
-		if (gContext == NULL)
-		{
-			printf("OpenGL context could not be created! SDL Error: %s\n", SDL_GetError());
-			return false;
-		}
-		else 
-		{
-			glewExperimental = GL_TRUE;
-			GLenum glewError = glewInit();
-			if (glewError != GLEW_OK)
-			{
-				printf("Error initializing GLEW! %s\n", glewGetErrorString(glewError));
-				return false;
-			}
-
-			//Use Vsync
-			if (SDL_GL_SetSwapInterval(1) < 0)
-			{
-				printf("Warning: Unable to set VSync! SDL Error: %s\n", SDL_GetError());
-				return false;
-			}
-
-			//Initialize OpenGL
-			if (!OpenGL())
-			{
-				printf("Unable to initialize OpenGL!\n");
-				return false;
-			}
-		}
-	}
-	
-
-
-	printf("SDL Initialised \n");
-	printf("OpenGL version supported by this platform (%s): \n", glGetString(GL_VERSION));
 	return true;
 }
 
-void closeSDL()
+
+int main(int argc, char** argv)
 {
-	//Deallocate program
-	glDeleteProgram(gProgramID);
-
-	//Destroy window	
-	SDL_DestroyWindow(gWindow);
-	gWindow = NULL;
-
-	//Quit SDL subsystems
-	SDL_Quit();
-}
-
-char* readTextFile(char* aTextFile)
-{
-	FILE* filePointer = fopen(aTextFile, "rb");
-	char* content = NULL;
-	long numVal = 0;
-
-	fseek(filePointer, 0L, SEEK_END);
-	numVal = ftell(filePointer);
-	fseek(filePointer, 0L, SEEK_SET);
-	content = (char*)malloc((numVal + 1) * sizeof(char));
-	fread(content, 1, numVal, filePointer);
-	content[numVal] = '\0';
-	fclose(filePointer);
-	return content;
-}
-
-bool OpenGL()
-{
-
-		/*projMatLoc = glGetUniformLocation(gProgramID, "projMat");
-		projMat = glm::frustum(-5.0, 5.0, -5.0, 5.0, 5.0, 100.0);
-		glUniformMatrix4fv(projMatLoc, 1, GL_FALSE, glm::value_ptr(projMat));
-		modelViewMatLoc = glGetUniformLocation(gProgramID, "modelViewMat");
-		normalMat = glm::transpose(glm::inverse(glm::mat3(modelViewMat)));
-*/
-		//Generate program
-		gProgramID = glCreateProgram();
-
-
-		//Get vertex source
-		char* vertexShader = readTextFile((char*)"vertexShader.glsl");
-		GLuint vertexShaderId = glCreateShader(GL_VERTEX_SHADER);
-		glShaderSource(vertexShaderId, 1, (const char**) &vertexShader, NULL);
-		glCompileShader(vertexShaderId);
-
-		//Check vertex shader for errors
-		GLint vShaderCompiled = GL_FALSE;
-		glGetShaderiv(vertexShaderId, GL_COMPILE_STATUS, &vShaderCompiled);
-		if (vShaderCompiled != GL_TRUE)
-		{
-			printf("Unable to compile vertex shader %d!\n", vertexShaderId);
-			return false;
-		}
-		else
-		{
-			//Attach vertex shader to program
-			glAttachShader(gProgramID, vertexShaderId);
-
-
-			//Get Fragment Source
-			char* fragmentShader = readTextFile((char*)"fragmentShader.glsl");
-			GLuint fragmentShaderId = glCreateShader(GL_FRAGMENT_SHADER);
-			glShaderSource(fragmentShaderId, 1, (const char**)& fragmentShader, NULL);
-			glCompileShader(fragmentShaderId);
-
-			//Check fragment shader for errors
-			GLint fShaderCompiled = GL_FALSE;
-			glGetShaderiv(fragmentShaderId, GL_COMPILE_STATUS, &fShaderCompiled);
-			if (fShaderCompiled != GL_TRUE)
-			{
-				printf("Unable to compile fragment shader %d!\n", fragmentShader);
-				return false;
-			}
-			else
-			{
-				//Attach fragment shader to program
-				glAttachShader(gProgramID, fragmentShaderId);
-				//Link program
-				glLinkProgram(gProgramID);
-
-				//Check for errors
-				GLint programSuccess = GL_TRUE;
-				glGetProgramiv(gProgramID, GL_LINK_STATUS, &programSuccess);
-				if (programSuccess != GL_TRUE)
-				{
-					printf("Error linking program %d!\n", gProgramID);
-					return false;
-				}
-				else
-				{
-					//Get vertex attribute location
-					GLint SquareCoords = glGetAttribLocation(gProgramID, "squareCoords");
-					GLint SquareColours = glGetAttribLocation(gProgramID, "squareColors");
-					if (SquareCoords == -1 || SquareColours == -1)
-					{
-						printf("Program has a non valid variable \n");
-						return false;
-					}
-					else
-					{
-						//Initialize clear color
-						glClearColor(1.0, 1.0, 1.0, 0.0);
-
-						glGenVertexArrays(1, vao);
-						glGenBuffers(1, buffer);
-						glBindVertexArray(vao[SQUARE]);
-						glBindBuffer(GL_ARRAY_BUFFER, buffer[SQUARE_VERTICES]);
-						glBufferData(GL_ARRAY_BUFFER, sizeof(squareVertices), squareVertices, GL_STATIC_DRAW);
-
-						glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(squareVertices[0]), 0);
-						glEnableVertexAttribArray(0);
-						glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(squareVertices[0]), (GLvoid*)sizeof(squareVertices[0].coords));
-						glEnableVertexAttribArray(1);
-					}
-				}
-			}
-		}
-
-		///////////////////////////////////////
-
-		// Obtain projection matrix uniform location and set value.
-		Matrix4x4 projMat =
-		{
-		   {
-			  0.02, 0.0,  0.0, -1.0,
-			  0.0,  0.02, 0.0, -1.0,
-			  0.0,  0.0, -1.0,  0.0,
-			  0.0,  0.0,  0.0,  1.0
-		   }
-		};
-		projMatLoc = glGetUniformLocation(gProgramID, "projMat");
-		glUniformMatrix4fv(projMatLoc, 1, GL_TRUE, projMat.entries);
-		///////////////////////////////////////
-
-		// Obtain modelview matrix uniform location and set value.
-		Matrix4x4 modelViewMat = {	1.0, 0.0, 0.0, 0.0,
-									0.0, 1.0, 0.0, 0.0,
-									0.0, 0.0, 1.0, 0.0,
-									0.0, 0.0, 0.0, 1.0
-									};
-		modelViewMatLoc = glGetUniformLocation(gProgramID, "modelViewMat");
-		glUniformMatrix4fv(modelViewMatLoc, 1, GL_TRUE, modelViewMat.entries);
-		///////////////////////////////////////
-
-		return true;
-}
-
-void ErrorHandler()
-{
-
-}
-
-void RenderScene()
-{
-	//Clear color buffer
-	glClear(GL_COLOR_BUFFER_BIT);
-
-	//Render quad
-	if (gRenderQuad)
+	try
 	{
-		//Bind program
-		glUseProgram(gProgramID);
-
-		glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_INT, NULL);
-
-		glUseProgram(NULL);
+		BasicTutorial1 app;
+		app.initApp();
+		app.getRoot()->startRendering();
+		app.closeApp();
 	}
-	glFlush();
-}
-
-void InputHandler()
-{
-
-}
-
-int main(int argc, char* args[])
-{
-
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-
-	EventQueue* EQ = new EventQueue();
-	//Event* a = new Event(1, 1);
-	//Start up SDL and create window
-	if (!Initialise())
+	catch (const std::exception & e)
 	{
-		printf("Failed to initialize program!\n");
+		std::cerr << "Error occurred during execution: " << e.what() << '\n';
+		return 1;
 	}
-	else
-	{
-		//Main loop flag
-		bool quit = false;
-
-		//Event handler
-		SDL_Event e;
-
-		//Enable text input
-		SDL_StartTextInput();
-
-		//While application is running
-		while (!quit)
-		{
-			//Handle events on queue
-			while (SDL_PollEvent(&e) != 0)
-			{
-				//User requests quit
-				if (e.type == SDL_QUIT)
-				{
-					quit = true;
-				}
-				//Handle keypress with current mouse position
-				else if (e.type == SDL_TEXTINPUT)
-				{
-					int x = 0, y = 0;
-					SDL_GetMouseState(&x, &y);
-					//handleKeys(e.text.text[0], x, y);
-				}
-			}
-
-			//Render quad
-			RenderScene();
-
-			//Update screen
-			SDL_GL_SwapWindow(gWindow);
-		}
-		//Disable text input
-		SDL_StopTextInput();
-	}
-
-	//Free resources and close SDL
-	closeSDL();
 
 	return 0;
 }
+
+//! [fullsource]
