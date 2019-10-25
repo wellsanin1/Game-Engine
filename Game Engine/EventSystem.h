@@ -1,29 +1,17 @@
 #pragma once
-#include <vector>
-class Event
-{
-public:
-	Event(int EventID, int SystemID)
-	{
-		this->EventID = EventID;
-		this->SystemID = SystemID;
-	};
-	~Event();
-	int EventID;
-	int SystemID;
-};
+#include "Event.h"
 
 class EventQueue
 {
 public:
 	EventQueue() {};
 	~EventQueue();
-	void addevent(Event a)
+	void addevent(event a)
 	{
 		this->Queue.push_back(a);
 	};
 	void ClearEventQueue() { this->Queue.clear(); };
 	void RemoveEvent() {/*Put stuff here when Ideas are thought of*/ };
 private:
-	std::vector<Event> Queue;
+	std::vector<event> Queue;
 };

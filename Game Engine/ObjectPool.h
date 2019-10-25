@@ -1,52 +1,50 @@
-#include "Ogre.h"
+#include "PooledObject.h"
 #include <iostream>
 
-struct PooledObject
-{
-	Ogre::MovableObject* Obj;
-	Ogre::SceneNode* Node;
-	Ogre::String Name;
-};
 
 class ObjectPool
 {
 public:
-	ObjectPool() { PooledObject* PoolStorage[100]; };
+	ObjectPool();
 	PooledObject* PoolStorage[100];
 	virtual ~ObjectPool() {};
 	void StoreObject(Ogre::MovableObject* CreatedEntity, Ogre::SceneNode* CreatedNode);
 	PooledObject* GetObject(Ogre::String ObjectName);
 };
 
-PooledObject* ObjectPool::GetObject(Ogre::String ObjectName)
+ObjectPool::ObjectPool()
 {
 	int size = sizeof(PoolStorage) / sizeof(*PoolStorage);
-	for (int i = 1; i < size; i++)
+	for (int i = 0; i < size; i++)
 	{
-		if (&PoolStorage[i]->Name == &ObjectName)
-		{
-			return PoolStorage[i];
-		}
+		PoolStorage[i] = new PooledObject();
 	}
-	std::cerr << "Object with name" + ObjectName + " Does not exist";
-	PooledObject* ErrorReturn = new PooledObject();
-	return ErrorReturn;
 };
 
 void ObjectPool::StoreObject(Ogre::MovableObject* CreatedEntity, Ogre::SceneNode* CreatedNode)
 {
 	int size = sizeof(PoolStorage) / sizeof(*PoolStorage);
-	for (int i = 1; i < size; i++)
+	for (int i = 0; i < size; i++)
 	{
-		if (&PoolStorage[i]->Obj == NULL && &PoolStorage[i]->Node == NULL)
+		if (PoolStorage[i]->IsEmpty() == true)
 		{
-			PoolStorage[i]->Obj = CreatedEntity;
-			PoolStorage[i]->Node = CreatedNode;
-			PoolStorage[i]->Name = CreatedEntity->getName();
-			std::cerr << "Object " + CreatedEntity->getName() + " Stored";
+			PoolStorage[i]->FillObject(CreatedEntity, CreatedNode, CreatedEntity->getName());
 			return;
 		}
 	}
 	std::cerr << "Nothing Stored";
 	return;
+};
+
+PooledObject* ObjectPool::GetObject(Ogre::String ObjectName)
+{
+	int size = sizeof(PoolStorage) / sizeof(*PoolStorage);
+	for (int i = 0; i < size; i++)
+	{
+		if (PoolStorage[i]->Name == ObjectName)
+		{
+			return PoolStorage[i];
+		}
+	}
+	throw std::invalid_argument("Object with name " + ObjectName + " does not exist");
 };

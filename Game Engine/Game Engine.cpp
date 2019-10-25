@@ -2,6 +2,7 @@
 #include "OgreInput.h"
 #include "OgreRTShaderSystem.h"
 #include "ObjectPool.h"
+#include "EventSystem.h"
 #include <iostream>
 
 using namespace Ogre;
@@ -25,20 +26,16 @@ GameEngine::GameEngine():ApplicationContext("OgreTutorialApp")
 
 void GameEngine::setup()
 {
+	EventQueue EvntQueue;
 	ObjectPool ObjPool;
-	// do not forget to call the base first
 	ApplicationContext::setup();
 	addInputListener(this);
 
-	// get a pointer to the already created root
 	Root* root = getRoot();
 	SceneManager* scnMgr = root->createSceneManager();
 
-	// register our scene with the RTSS
 	RTShader::ShaderGenerator* shadergen = RTShader::ShaderGenerator::getSingletonPtr();
 	shadergen->addSceneManager(scnMgr);
-
-	// -- tutorial section start --
 
 	scnMgr->setAmbientLight(ColourValue(0.5, 0.5, 0.5));
 
@@ -50,29 +47,24 @@ void GameEngine::setup()
 
 	SceneNode* camNode = scnMgr->getRootSceneNode()->createChildSceneNode();
 
-	// create the camera
 	Camera* cam = scnMgr->createCamera("myCam");
-	cam->setNearClipDistance(5); // specific to this sample
+	cam->setNearClipDistance(5);
 	cam->setAutoAspectRatio(true);
 	camNode->attachObject(cam);
 	camNode->setPosition(0, 0, 140);
-
 	ObjPool.StoreObject(cam, camNode);
 
-	// and tell it to render into the main window
 	getRenderWindow()->addViewport(cam);
-	//! [camera]
 
-	Entity* a = scnMgr->createEntity("ogrehead.mesh");
+	Entity* a = scnMgr->createEntity("OgreHead1","ogrehead.mesh");
 	SceneNode* b = scnMgr->getRootSceneNode()->createChildSceneNode();
 	b->attachObject(a);
 	ObjPool.StoreObject(a, b);
+	ObjPool.GetObject("myCam")->Node->setPosition(0, 47, 222);
+	
+	//camNode->setPosition(0, 47, 222);
 
-	//! [cameramove]
-	camNode->setPosition(0, 47, 222);
-	//! [cameramove]
-
-	PooledObject* ObjectPoolGet = ObjPool.GetObject("Ogre");
+	PooledObject* ObjectPoolGet = ObjPool.GetObject("OgreHead1");
 }
 
 
