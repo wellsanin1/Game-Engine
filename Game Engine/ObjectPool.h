@@ -1,4 +1,5 @@
 #include "PooledObject.h"
+
 #include <iostream>
 
 
@@ -9,7 +10,10 @@ public:
 	PooledObject* PoolStorage[100];
 	virtual ~ObjectPool() {};
 	void StoreObject(Ogre::MovableObject* CreatedEntity, Ogre::SceneNode* CreatedNode);
+
+	void storeObjectMain();
 	PooledObject* GetObject(Ogre::String ObjectName);
+
 };
 
 ObjectPool::ObjectPool()
@@ -21,13 +25,28 @@ ObjectPool::ObjectPool()
 	}
 };
 
-void ObjectPool::StoreObject(Ogre::MovableObject* CreatedEntity, Ogre::SceneNode* CreatedNode)
+void StoreObject(Ogre::Camera* CreatedEntity, Ogre::SceneNode* CreatedNode)
+{
+
+}
+void StoreObject(Ogre::Entity* CreatedEntity, Ogre::SceneNode* CreatedNode)
+{
+
+}
+void StoreObject(Ogre::Light* CreatedEntity, Ogre::SceneNode* CreatedNode)
+{
+
+}
+
+//Put Fill object with generic data
+void ObjectPool::StoreObjectMain(Ogre::MovableObject* CreatedEntity, Ogre::SceneNode* CreatedNode)
 {
 	int size = sizeof(PoolStorage) / sizeof(*PoolStorage);
 	for (int i = 0; i < size; i++)
 	{
 		if (PoolStorage[i]->IsEmpty() == true)
 		{
+			CreatedNode->attachObject(CreatedEntity);
 			PoolStorage[i]->FillObject(CreatedEntity, CreatedNode, CreatedEntity->getName());
 			return;
 		}

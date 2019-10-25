@@ -2,7 +2,6 @@
 #include "OgreInput.h"
 #include "OgreRTShaderSystem.h"
 #include "ObjectPool.h"
-#include "EventSystem.h"
 #include <iostream>
 
 using namespace Ogre;
@@ -20,13 +19,12 @@ public:
 	bool keyPressed(const KeyboardEvent& evt);
 };
 
-GameEngine::GameEngine():ApplicationContext("OgreTutorialApp")
+GameEngine::GameEngine():ApplicationContext("GameEngine")
 {
 }
 
 void GameEngine::setup()
 {
-	EventQueue EvntQueue;
 	ObjectPool ObjPool;
 	ApplicationContext::setup();
 	addInputListener(this);
@@ -41,25 +39,28 @@ void GameEngine::setup()
 
 	Light* light = scnMgr->createLight("MainLight");
 	SceneNode* lightNode = scnMgr->getRootSceneNode()->createChildSceneNode();
-	lightNode->attachObject(light);
-	lightNode->setPosition(20, 80, 50);
+	ObjPool.GetObject("MainLight")->Node->setPosition(20, 80, 50);;
 	ObjPool.StoreObject(light, lightNode);
 
 	SceneNode* camNode = scnMgr->getRootSceneNode()->createChildSceneNode();
 
 	Camera* cam = scnMgr->createCamera("myCam");
+	ObjPool.GetObject("myCam")->Node->setPosition(0, 47, 222);
+
+	ObjPool.GetObject("myCam")->Obj->setAutoAspectRatio(true);
+
 	cam->setNearClipDistance(5);
 	cam->setAutoAspectRatio(true);
-	camNode->attachObject(cam);
-	camNode->setPosition(0, 0, 140);
 	ObjPool.StoreObject(cam, camNode);
 
 	getRenderWindow()->addViewport(cam);
 
 	Entity* a = scnMgr->createEntity("OgreHead1","ogrehead.mesh");
+
 	SceneNode* b = scnMgr->getRootSceneNode()->createChildSceneNode();
-	b->attachObject(a);
+
 	ObjPool.StoreObject(a, b);
+
 	ObjPool.GetObject("myCam")->Node->setPosition(0, 47, 222);
 	
 	//camNode->setPosition(0, 47, 222);
@@ -95,5 +96,3 @@ int main(int argc, char** argv)
 
 	return 0;
 }
-
-//! [fullsource]

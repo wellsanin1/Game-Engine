@@ -1,5 +1,8 @@
 #pragma once
 #include <vector>
+#include <Ogre.h>
+
+enum SubSystem{string};
 
 struct event
 {
@@ -7,7 +10,7 @@ public:
 	event(int EventID, int SystemID){};
 	~event();
 	int EventID;
-	int SystemID;
+	enum SubSystem Enum[10];
 };
 
 event::event(int EventID, int SystemID)
