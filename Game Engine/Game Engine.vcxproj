@@ -164,6 +164,7 @@
     <ClCompile Include="Game Engine.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Event.h" />
     <ClInclude Include="EventSystem.h" />
     <ClInclude Include="ObjectPool.h" />
     <ClInclude Include="PooledObject.h" />
