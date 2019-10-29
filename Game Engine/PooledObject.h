@@ -7,14 +7,12 @@ private:
 	{
 		StoredObj() {};
 		~StoredObj() {};
-		Camera Camera;
-		Light Light;
-		Entity Entity;
+		Ogre::Camera* Camera;
+		Ogre::Light* Light;
+		Ogre::Entity* entity;
 	};
 
-
 public:
-	Ogre::MovableObject* Obj;
 	Ogre::SceneNode* Node;
 	Ogre::String Name;
 	StoredObj StoredObject;
@@ -27,31 +25,28 @@ public:
 
 void PooledObject::FillObject(Ogre::Camera* Object, Ogre::SceneNode* ScnNode, Ogre::String ObjName)
 {
-	Obj = Object;
 	Node = ScnNode;
 	Name = ObjName;
 	StoredObject.Camera = Object;
-
 	Empty = false;
 }
 void PooledObject::FillObject(Ogre::Light* Object, Ogre::SceneNode* ScnNode, Ogre::String ObjName)
 {
-	Obj = Object;
 	Node = ScnNode;
 	Name = ObjName;
 	StoredObject.Light = Object;
+	Empty = false;
 }
 void PooledObject::FillObject(Ogre::Entity* Object, Ogre::SceneNode* ScnNode, Ogre::String ObjName)
 {
-	Obj = Object;
 	Node = ScnNode;
 	Name = ObjName;
-	StoredObject.Entity = Object;
+	StoredObject.entity = Object;
+	Empty = false;
 }
 
 void PooledObject::ClearObject()
 {
-	Obj = NULL;
 	Node = NULL;
 	Name = "";
 	Empty = true;

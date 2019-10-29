@@ -9,13 +9,12 @@ public:
 	ObjectPool();
 	PooledObject* PoolStorage[100];
 	virtual ~ObjectPool() {};
-	void StoreObject(Ogre::MovableObject* CreatedEntity, Ogre::SceneNode* CreatedNode);
-
-	void storeObjectMain();
+	void StoreObject(Ogre::Entity* CreatedEntity, Ogre::SceneNode* CreatedNode);
+	void StoreObject(Ogre::Light* CreatedEntity, Ogre::SceneNode* CreatedNode);
+	void StoreObject(Ogre::Camera* CreatedEntity, Ogre::SceneNode* CreatedNode);
 	PooledObject* GetObject(Ogre::String ObjectName);
 
 };
-
 ObjectPool::ObjectPool()
 {
 	int size = sizeof(PoolStorage) / sizeof(*PoolStorage);
@@ -25,21 +24,40 @@ ObjectPool::ObjectPool()
 	}
 };
 
-void StoreObject(Ogre::Camera* CreatedEntity, Ogre::SceneNode* CreatedNode)
-{
-
-}
-void StoreObject(Ogre::Entity* CreatedEntity, Ogre::SceneNode* CreatedNode)
-{
-
-}
-void StoreObject(Ogre::Light* CreatedEntity, Ogre::SceneNode* CreatedNode)
-{
-
-}
-
 //Put Fill object with generic data
-void ObjectPool::StoreObjectMain(Ogre::MovableObject* CreatedEntity, Ogre::SceneNode* CreatedNode)
+void ObjectPool::StoreObject(Ogre::Entity* CreatedEntity, Ogre::SceneNode* CreatedNode)
+{
+	int size = sizeof(PoolStorage) / sizeof(*PoolStorage);
+	for (int i = 0; i < size; i++)
+	{
+		if (PoolStorage[i]->IsEmpty() == true)
+		{
+			CreatedNode->attachObject(CreatedEntity);
+			PoolStorage[i]->FillObject(CreatedEntity, CreatedNode, CreatedEntity->getName());
+			return;
+		}
+	}
+	std::cerr << "Nothing Stored";
+	return;
+};
+
+void ObjectPool::StoreObject(Ogre::Light* CreatedEntity, Ogre::SceneNode* CreatedNode)
+{
+	int size = sizeof(PoolStorage) / sizeof(*PoolStorage);
+	for (int i = 0; i < size; i++)
+	{
+		if (PoolStorage[i]->IsEmpty() == true)
+		{
+			CreatedNode->attachObject(CreatedEntity);
+			PoolStorage[i]->FillObject(CreatedEntity, CreatedNode, CreatedEntity->getName());
+			return;
+		}
+	}
+	std::cerr << "Nothing Stored";
+	return;
+};
+
+void ObjectPool::StoreObject(Ogre::Camera* CreatedEntity, Ogre::SceneNode* CreatedNode)
 {
 	int size = sizeof(PoolStorage) / sizeof(*PoolStorage);
 	for (int i = 0; i < size; i++)

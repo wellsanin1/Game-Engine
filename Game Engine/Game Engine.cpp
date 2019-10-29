@@ -2,6 +2,7 @@
 #include "OgreInput.h"
 #include "OgreRTShaderSystem.h"
 #include "ObjectPool.h"
+#include "InputManager.h"
 #include <iostream>
 
 using namespace Ogre;
@@ -9,14 +10,11 @@ using namespace OgreBites;
 
 class GameEngine
 	: public ApplicationContext
-	, public InputListener
 {
 public:
 	GameEngine();
 	virtual ~GameEngine() {};
-
 	void setup();
-	bool keyPressed(const KeyboardEvent& evt);
 };
 
 GameEngine::GameEngine():ApplicationContext("GameEngine")
@@ -25,10 +23,10 @@ GameEngine::GameEngine():ApplicationContext("GameEngine")
 
 void GameEngine::setup()
 {
-	ObjectPool ObjPool;
-	ApplicationContext::setup();
-	addInputListener(this);
 
+	ObjectPool ObjPool;
+
+	ApplicationContext::setup();
 	Root* root = getRoot();
 	SceneManager* scnMgr = root->createSceneManager();
 
@@ -39,54 +37,43 @@ void GameEngine::setup()
 
 	Light* light = scnMgr->createLight("MainLight");
 	SceneNode* lightNode = scnMgr->getRootSceneNode()->createChildSceneNode();
-	ObjPool.GetObject("MainLight")->Node->setPosition(20, 80, 50);;
 	ObjPool.StoreObject(light, lightNode);
+	ObjPool.GetObject("MainLight")->Node->setPosition(20, 80, 50);;
 
 	SceneNode* camNode = scnMgr->getRootSceneNode()->createChildSceneNode();
-
 	Camera* cam = scnMgr->createCamera("myCam");
-	ObjPool.GetObject("myCam")->Node->setPosition(0, 47, 222);
-
-	ObjPool.GetObject("myCam")->Obj->setAutoAspectRatio(true);
-
-	cam->setNearClipDistance(5);
-	cam->setAutoAspectRatio(true);
 	ObjPool.StoreObject(cam, camNode);
-
-	getRenderWindow()->addViewport(cam);
-
-	Entity* a = scnMgr->createEntity("OgreHead1","ogrehead.mesh");
-
-	SceneNode* b = scnMgr->getRootSceneNode()->createChildSceneNode();
-
-	ObjPool.StoreObject(a, b);
-
 	ObjPool.GetObject("myCam")->Node->setPosition(0, 47, 222);
-	
-	//camNode->setPosition(0, 47, 222);
+	ObjPool.GetObject("myCam")->StoredObject.Camera->setAutoAspectRatio(true);
+	ObjPool.GetObject("myCam")->StoredObject.Camera->setNearClipDistance(5);
+	getRenderWindow()->addViewport(ObjPool.GetObject("myCam")->StoredObject.Camera);
 
-	PooledObject* ObjectPoolGet = ObjPool.GetObject("OgreHead1");
-}
-
-
-bool GameEngine::keyPressed(const KeyboardEvent& evt)
-{
-	if (evt.keysym.sym == SDLK_ESCAPE)
-	{
-		getRoot()->queueEndRendering();
-	}
-	return true;
+	Entity* OgreHead = scnMgr->createEntity("OgreHead","ogrehead.mesh");
+	SceneNode* OgreNode = scnMgr->getRootSceneNode()->createChildSceneNode();
+	ObjPool.StoreObject(OgreHead, OgreNode);
 }
 
 
 int main(int argc, char** argv)
 {
+	InputManager IM;
 	try
 	{
+		if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0) {
+			SDL_Log("Unable to initialize SDL: %s", SDL_GetError());
+			return 1;
+		}
 		GameEngine app;
 		app.initApp();
-		app.getRoot()->startRendering();
+		//Game Logic
+		while (1)
+		{
+			IM.InputRead();
+			app.getRoot()->renderOneFrame();
+			IM.ClearKeys();
+		}
 		app.closeApp();
+		SDL_Quit();
 	}
 	catch (const std::exception & e)
 	{
