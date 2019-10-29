@@ -161,14 +161,23 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Event.cpp" />
+    <ClCompile Include="EventSystem.cpp" />
     <ClCompile Include="Game Engine.cpp" />
+    <ClCompile Include="InputManager.cpp" />
+    <ClCompile Include="KeyInput.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="ObjectPool.cpp" />
+    <ClCompile Include="PooledObject.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Event.h" />
     <ClInclude Include="EventSystem.h" />
+    <ClInclude Include="GameEngine.h" />
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="KeyInput.h" />
     <ClInclude Include="ObjectPool.h" />
+    <ClInclude Include="PhysicsManager.h" />
     <ClInclude Include="PooledObject.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

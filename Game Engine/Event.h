@@ -5,16 +5,10 @@
 struct event
 {
 public:
-	enum EventType {Input};
-	enum SubSystem {Renderer,Audio,UI,Netcode,Physics};
-	event(EventType EventID, SubSystem Sub[10]);
+	enum EventSort {KeyPresses};
+	enum SubSystem {Renderer,Audio,Input,Netcode,Physics};
+	event(EventSort Event, std::vector<event::SubSystem> ListedSystems);
 	~event() {};
-	EventType EventID;
-	SubSystem SubSystemLink[10];
-};
-
-event::event(EventType EventID, SubSystem System[10])
-{
-	EventID = EventID;
-	std::memcpy(SubSystemLink, System, sizeof(SubSystemLink));
+	EventSort EventType;
+	std::vector<SubSystem> SubSystemList;
 };

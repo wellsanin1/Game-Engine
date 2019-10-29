@@ -11,25 +11,6 @@ public:
 	void RemoveEvent() {/*Put stuff here when Ideas are thought of*/ };
 	void GetNextEvent();
 	void GetEvent();
-private:
+	void PopEvent();
 	std::vector<event> Queue;
-};
-
-void EventQueue::ClearEventQueue()
-{
-	this->Queue.clear();
-}
-
-void EventQueue::AddEvent(event Evnt)
-{
-	Queue.push_back(Evnt);
-};
-
-void EventQueue::GetEvent()
-{
-
-};
-void EventQueue::GetNextEvent()
-{
-
 };

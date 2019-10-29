@@ -1,124 +1,143 @@
-#include "OgreApplicationContext.h"
-#include "OgreRTShaderSystem.h"
-#include "ObjectPool.h"
-#include "EventSystem.h"
-#include "InputManager.h"
-#include <iostream>
+#include "GameEngine.h"
 
-using namespace Ogre;
-using namespace OgreBites;
-
-EventQueue EQ;
-
-class GameEngine
-	: public ApplicationContext
+bool GameEngine::CheckQueue(event::SubSystem CurrentEvent)
 {
-public:
-	GameEngine();
-	virtual ~GameEngine() {};
-	void setup();
-	void Update();
-	void CheckInput();
-	void InitialiseSDL();
-	void Render();
-	void CloseSDL();
-};
+	bool Run = false;
+	for (int i = 0; i < EQ.Queue.size(); ++i)
+	{
+		if (Run == false)
+		{
+			std::vector<event::SubSystem> SystemList = EQ.Queue[i].SubSystemList;
+			for (int i = 0; i < SystemList.size(); ++i)
+			{
+				if (SystemList[i] == event::Input)
+				{
+					Run = true;
+					break;
+				}
+			}
+		}
+		else
+		{
+			break;
+		}
+	}
+	return Run;
+}
 
-GameEngine::GameEngine():ApplicationContext("GameEngine")
+GameEngine::GameEngine():OgreBites::ApplicationContext("GameEngine")
 {
 }
 
 void GameEngine::setup()
 {
+	OgreBites::ApplicationContext::setup();
+	Ogre::Root* root = getRoot();
+	Ogre::SceneManager* scnMgr = root->createSceneManager();
 
-	ObjectPool ObjPool;
-
-	ApplicationContext::setup();
-	Root* root = getRoot();
-	SceneManager* scnMgr = root->createSceneManager();
-
-	RTShader::ShaderGenerator* shadergen = RTShader::ShaderGenerator::getSingletonPtr();
+	Ogre::RTShader::ShaderGenerator* shadergen = Ogre::RTShader::ShaderGenerator::getSingletonPtr();
 	shadergen->addSceneManager(scnMgr);
 
-	scnMgr->setAmbientLight(ColourValue(0.5, 0.5, 0.5));
+	scnMgr->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
 
-	Light* light = scnMgr->createLight("MainLight");
-	SceneNode* lightNode = scnMgr->getRootSceneNode()->createChildSceneNode();
-	ObjPool.StoreObject(light, lightNode);
-	ObjPool.GetObject("MainLight")->Node->setPosition(20, 80, 50);;
+	Ogre::Light* light = scnMgr->createLight("MainLight");
+	Ogre::SceneNode* lightNode = scnMgr->getRootSceneNode()->createChildSceneNode();
+	OP.StoreObject(light, lightNode);
+	OP.GetObject("MainLight")->Node->setPosition(20, 80, 50);;
 
-	SceneNode* camNode = scnMgr->getRootSceneNode()->createChildSceneNode();
-	Camera* cam = scnMgr->createCamera("myCam");
-	ObjPool.StoreObject(cam, camNode);
-	ObjPool.GetObject("myCam")->Node->setPosition(0, 47, 222);
-	ObjPool.GetObject("myCam")->StoredObject.Camera->setAutoAspectRatio(true);
-	ObjPool.GetObject("myCam")->StoredObject.Camera->setNearClipDistance(5);
-	getRenderWindow()->addViewport(ObjPool.GetObject("myCam")->StoredObject.Camera);
+	Ogre::SceneNode* camNode = scnMgr->getRootSceneNode()->createChildSceneNode();
+	Ogre::Camera* cam = scnMgr->createCamera("myCam");
+	OP.StoreObject(cam, camNode);
+	OP.GetObject("myCam")->Node->setPosition(0, 47, 222);
+	OP.GetObject("myCam")->StoredObject.Camera->setAutoAspectRatio(true);
+	OP.GetObject("myCam")->StoredObject.Camera->setNearClipDistance(5);
+	getRenderWindow()->addViewport(OP.GetObject("myCam")->StoredObject.Camera);
 
-	Entity* OgreHead = scnMgr->createEntity("OgreHead","ogrehead.mesh");
-	SceneNode* OgreNode = scnMgr->getRootSceneNode()->createChildSceneNode();
-	ObjPool.StoreObject(OgreHead, OgreNode);
+	Ogre::Entity* OgreHead = scnMgr->createEntity("OgreHead","ogrehead.mesh");
+	Ogre::SceneNode* OgreNode = scnMgr->getRootSceneNode()->createChildSceneNode();
+	OP.StoreObject(OgreHead, OgreNode);
 }
 
 void GameEngine::CheckInput()
 {
-	InputManager IM;
+	//If needed then uncomment
+	/*if (CheckQueue(event::Input))
+	{*/
+
+	//Maybe goes here
+	//InputManager IM;
+
 	IM.InputRead();
+
 	int size = sizeof(IM.KeyArray) / sizeof(*IM.KeyArray);
-	for (int i = 0;i<size;++i)
+
+	//Push Input to queue
+
+	for (int i = 0; i < size; ++i)
 	{
-	/*	if (IM.KeyArray[i] != KeyManager::NONE)
+		std::vector<event::SubSystem> SubVector;
+		//hard coded temporerily
+		if (IM.KeyArray[i] != KeyManager::NONE && IM.KeyArray[i] != KeyManager::QUIT)
 		{
-			EventType A = INPUT;
-			event e(Input,);
-		}*/
+			std::cout << "TEST";
+			SubVector.push_back(event::Renderer);
+			SubVector.push_back(event::Audio);
+			SubVector.push_back(event::Input);
+			SubVector.push_back(event::Netcode);
+			SubVector.push_back(event::Physics);	
+		}
+		else if(IM.KeyArray[i] == KeyManager::QUIT)
+		{
+			std::cout << "Quitting Engine";
+			closeApp();
+		}
+
+		event::EventSort EventType = event::KeyPresses;
+		//event::SubSystem a = event::Renderer;
+		event Evnt(EventType, SubVector);
+		EQ.AddEvent(Evnt);
 	}
 	IM.ClearKeys();
+	//}
 }
 
 void GameEngine::Render()
 {
+	getRoot()->renderOneFrame();
+	//if (CheckQueue(event::Renderer))
+	//{
+	//getRoot()->renderOneFrame();
+	//}
+}
+
+void GameEngine::Quit()
+{
+	if(CheckQueue(event::Input))
+	{
+		closeApp();
+	}
 
 }
 
 void GameEngine::Update()
 {
 	CheckInput();
-	//Render();
-	getRoot()->renderOneFrame();
+	Render();
+	Quit();
 }
 
-void GameEngine::InitialiseSDL()
+void GameEngine::Initialise()
 {
+
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0) 
 	{
 		SDL_Log("Unable to initialize SDL: %s", SDL_GetError());
 		return;
 	}
+	initApp();
 }
-void GameEngine::CloseSDL()
+void GameEngine::Close()
 {
+	closeApp();
 	SDL_Quit();
-}
-
-int main(int argc, char** argv)
-{
-	try
-	{
-		GameEngine app;
-		app.InitialiseSDL();
-		app.initApp();
-		while (1)
-		{
-			app.Update();
-		}
-		app.closeApp();
-		app.CloseSDL();
-	}
-	catch (const std::exception & e)
-	{
-		std::cerr << "Error occurred during execution: " << e.what() << '\n';
-		return 1;
-	}
-	return 0;
 }
