@@ -2,19 +2,20 @@
 #include <vector>
 #include <Ogre.h>
 
-enum SubSystem{string};
-
 struct event
 {
+private:
+	enum EventType {Input};
+	enum SubSystem {Renderer,Audio,UI,Netcode,Physics};
 public:
-	event(int EventID, int SystemID){};
-	~event();
-	int EventID;
-	enum SubSystem Enum[10];
+	event(EventType EventID, SubSystem Sub[10]){};
+	~event() {};
+	EventType EventID;
+	SubSystem SubSystemLink[10];
 };
 
-event::event(int EventID, int SystemID)
+event::event(EventType EventID, SubSystem System[10])
 {
 	EventID = EventID;
-	SystemID = SystemID;
+	std::memcpy(SubSystemLink, System, sizeof(SubSystemLink));
 };

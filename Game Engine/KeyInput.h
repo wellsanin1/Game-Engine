@@ -21,7 +21,7 @@ public:
 	std::map<SDL_Keycode,KeyPressEnum> EnumMap;
 	KeyManager();
 	~KeyManager() {};
-	KeyPressEnum KeyArray[40];
+	KeyPressEnum KeyArray[20];
 	void AddInput(SDL_Keycode KeyCode);
 	void InputClearKeys();
 	void DisplayKeys();
@@ -29,11 +29,11 @@ public:
 
 KeyManager::KeyManager()
 {
-	EnumMap = { {::SDLK_UP,UP}
-				,{::SDLK_DOWN,DOWN}
-				,{::SDLK_LEFT,LEFT}
-				,{::SDLK_RIGHT,RIGHT}
-				,{::SDLK_ESCAPE,QUIT}
+	EnumMap = {{ SDLK_UP,UP}
+				,{SDLK_DOWN,DOWN}
+				,{SDLK_LEFT,LEFT}
+				,{SDLK_RIGHT,RIGHT}
+				,{SDLK_ESCAPE,QUIT}
 	};
 };
 

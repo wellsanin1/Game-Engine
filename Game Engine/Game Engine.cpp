@@ -1,7 +1,7 @@
 #include "OgreApplicationContext.h"
-#include "OgreInput.h"
 #include "OgreRTShaderSystem.h"
 #include "ObjectPool.h"
+#include "EventSystem.h"
 #include "InputManager.h"
 #include <iostream>
 
@@ -16,6 +16,16 @@ public:
 	virtual ~GameEngine() {};
 	void setup();
 };
+
+//void OgreView::resizeEvent(QResizeEvent*)
+//{
+//	if (NULL != m_render_window) {
+//		// Need to let Ogre know about the resize...
+//		m_render_window->resize(width(), height());
+//		// Alter the camera aspect ratio to match the viewport
+//		m_camera->setAspectRatio(Ogre::Real(width()) / Ogre::Real(height()));
+//	}
+//}
 
 GameEngine::GameEngine():ApplicationContext("GameEngine")
 {
@@ -56,13 +66,14 @@ void GameEngine::setup()
 
 int main(int argc, char** argv)
 {
-	InputManager IM;
+
 	try
 	{
 		if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0) {
 			SDL_Log("Unable to initialize SDL: %s", SDL_GetError());
 			return 1;
 		}
+		InputManager IM;
 		GameEngine app;
 		app.initApp();
 		//Game Logic
@@ -70,6 +81,7 @@ int main(int argc, char** argv)
 		{
 			IM.InputRead();
 			app.getRoot()->renderOneFrame();
+		
 			IM.ClearKeys();
 		}
 		app.closeApp();

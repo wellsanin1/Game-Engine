@@ -1,7 +1,6 @@
 #pragma once
 #include "KeyInput.h"
 
-
 class InputManager : KeyManager
 {
 public:
@@ -10,24 +9,24 @@ public:
 		int i = 0; 
 	};
 	~InputManager() {};
-	void GetKeyDown(SDL_Event Key) ;
-	void GetKeyUp(SDL_Event Key) ;
 	void GetKeyHeld() {};
 	void InputRead();
 	void ClearKeys();
+	KeyManager::KeyArray;
 };
 
 void InputManager::InputRead()
 {
 	SDL_Event event;
-	while (SDL_PollEvent(&event)) {
+	while (SDL_PollEvent(&event)) 
+	{
 		switch (event.type)
 		{
 		case SDL_KEYDOWN:
-			GetKeyDown(event);
+			AddInput(event.key.keysym.sym);
 			break;
 		case SDL_KEYUP:
-			GetKeyUp(event);
+			AddInput(event.key.keysym.sym);
 			break;
 		}
 	}
@@ -37,11 +36,4 @@ void InputManager::InputRead()
 void InputManager::ClearKeys()
 {
 	KeyManager::InputClearKeys();
-};
-
-void InputManager::GetKeyDown(SDL_Event Key)
-{
-};
-void InputManager::GetKeyUp(SDL_Event Key)
-{
 };
