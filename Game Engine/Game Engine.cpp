@@ -8,6 +8,8 @@
 using namespace Ogre;
 using namespace OgreBites;
 
+EventQueue EQ;
+
 class GameEngine
 	: public ApplicationContext
 {
@@ -15,17 +17,12 @@ public:
 	GameEngine();
 	virtual ~GameEngine() {};
 	void setup();
+	void Update();
+	void CheckInput();
+	void InitialiseSDL();
+	void Render();
+	void CloseSDL();
 };
-
-//void OgreView::resizeEvent(QResizeEvent*)
-//{
-//	if (NULL != m_render_window) {
-//		// Need to let Ogre know about the resize...
-//		m_render_window->resize(width(), height());
-//		// Alter the camera aspect ratio to match the viewport
-//		m_camera->setAspectRatio(Ogre::Real(width()) / Ogre::Real(height()));
-//	}
-//}
 
 GameEngine::GameEngine():ApplicationContext("GameEngine")
 {
@@ -63,35 +60,65 @@ void GameEngine::setup()
 	ObjPool.StoreObject(OgreHead, OgreNode);
 }
 
+void GameEngine::CheckInput()
+{
+	InputManager IM;
+	IM.InputRead();
+	int size = sizeof(IM.KeyArray) / sizeof(*IM.KeyArray);
+	for (int i = 0;i<size;++i)
+	{
+	/*	if (IM.KeyArray[i] != KeyManager::NONE)
+		{
+			EventType A = INPUT;
+			event e(Input,);
+		}*/
+	}
+	IM.ClearKeys();
+}
+
+void GameEngine::Render()
+{
+
+}
+
+void GameEngine::Update()
+{
+	CheckInput();
+	//Render();
+	getRoot()->renderOneFrame();
+}
+
+void GameEngine::InitialiseSDL()
+{
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0) 
+	{
+		SDL_Log("Unable to initialize SDL: %s", SDL_GetError());
+		return;
+	}
+}
+void GameEngine::CloseSDL()
+{
+	SDL_Quit();
+}
 
 int main(int argc, char** argv)
 {
-
 	try
 	{
-		if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0) {
-			SDL_Log("Unable to initialize SDL: %s", SDL_GetError());
-			return 1;
-		}
-		InputManager IM;
 		GameEngine app;
+		app.InitialiseSDL();
 		app.initApp();
-		//Game Logic
 		while (1)
 		{
-			IM.InputRead();
-			app.getRoot()->renderOneFrame();
-		
-			IM.ClearKeys();
+			app.Update();
 		}
 		app.closeApp();
-		SDL_Quit();
+		app.CloseSDL();
 	}
 	catch (const std::exception & e)
 	{
 		std::cerr << "Error occurred during execution: " << e.what() << '\n';
 		return 1;
 	}
-
 	return 0;
 }

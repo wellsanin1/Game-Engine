@@ -6,10 +6,7 @@ class EventQueue
 public:
 	EventQueue() {};
 	~EventQueue() {};
-	void AddEvent(event Evnt)
-	{
-		this->Queue.push_back(Evnt);
-	};
+	void AddEvent(event Evnt);
 	void ClearEventQueue();
 	void RemoveEvent() {/*Put stuff here when Ideas are thought of*/ };
 	void GetNextEvent();
@@ -22,9 +19,10 @@ void EventQueue::ClearEventQueue()
 {
 	this->Queue.clear();
 }
-void EventQueue::AddEvent(event a)
+
+void EventQueue::AddEvent(event Evnt)
 {
-	Queue.push_back(a);
+	Queue.push_back(Evnt);
 };
 
 void EventQueue::GetEvent()

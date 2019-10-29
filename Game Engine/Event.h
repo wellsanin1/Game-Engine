@@ -4,11 +4,10 @@
 
 struct event
 {
-private:
+public:
 	enum EventType {Input};
 	enum SubSystem {Renderer,Audio,UI,Netcode,Physics};
-public:
-	event(EventType EventID, SubSystem Sub[10]){};
+	event(EventType EventID, SubSystem Sub[10]);
 	~event() {};
 	EventType EventID;
 	SubSystem SubSystemLink[10];

@@ -168,7 +168,6 @@
     <ClInclude Include="EventSystem.h" />
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="KeyInput.h" />
-    <ClInclude Include="KeyPress.h" />
     <ClInclude Include="ObjectPool.h" />
     <ClInclude Include="PooledObject.h" />
   </ItemGroup>

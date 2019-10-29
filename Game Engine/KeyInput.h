@@ -4,9 +4,9 @@
 #include <SDL_events.h>
 #include <iostream>
 #include <map>
-//#include "KeyPress.h"
+
 class KeyManager {
-private:
+public:
 	enum KeyPressEnum
 	{
 		NONE,
@@ -17,7 +17,6 @@ private:
 		QUIT
 	};
 	KeyPressEnum MapConvert(SDL_Keycode KeyCode);
-public:
 	std::map<SDL_Keycode,KeyPressEnum> EnumMap;
 	KeyManager();
 	~KeyManager() {};
@@ -29,7 +28,7 @@ public:
 
 KeyManager::KeyManager()
 {
-	EnumMap = {{ SDLK_UP,UP}
+	EnumMap = {{SDLK_UP,UP}
 				,{SDLK_DOWN,DOWN}
 				,{SDLK_LEFT,LEFT}
 				,{SDLK_RIGHT,RIGHT}
