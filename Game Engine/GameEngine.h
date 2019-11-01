@@ -4,7 +4,7 @@
 #include "OgreRTShaderSystem.h"
 #include "ObjectPool.h"
 #include "EventSystem.h"
-#include "InputManager.h"
+#include "KeyManager.h"
 #include <iostream>
 
 class GameEngine : public EventQueue, public OgreBites::ApplicationContext
@@ -23,5 +23,5 @@ public:
 	EventQueue EQ;
 	ObjectPool OP;
 	//maybe goes in CheckInput();
-	InputManager IM;
+	KeyManager KM;
 };

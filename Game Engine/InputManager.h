@@ -10,5 +10,4 @@ public:
 	void InputRead();
 	void ClearKeys();
 	bool GetKey(KeyPressEnum Key);
-	KeyManager::KeyArray;
 };

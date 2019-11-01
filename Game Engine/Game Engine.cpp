@@ -66,38 +66,7 @@ void GameEngine::CheckInput()
 
 	//Maybe goes here
 	//InputManager IM;
-
-	IM.InputRead();
-
-	int size = sizeof(IM.KeyArray) / sizeof(*IM.KeyArray);
-
-	//Push Input to queue
-
-	for (int i = 0; i < size; ++i)
-	{
-		std::vector<event::SubSystem> SubVector;
-		//hard coded temporerily
-		if (IM.KeyArray[i] != KeyManager::NONE && IM.KeyArray[i] != KeyManager::QUIT)
-		{
-			std::cout << "TEST";
-			SubVector.push_back(event::Renderer);
-			SubVector.push_back(event::Audio);
-			SubVector.push_back(event::Input);
-			SubVector.push_back(event::Netcode);
-			SubVector.push_back(event::Physics);	
-		}
-		else if(IM.KeyArray[i] == KeyManager::QUIT)
-		{
-			std::cout << "Quitting Engine";
-			closeApp();
-		}
-
-		event::EventSort EventType = event::KeyPresses;
-		//event::SubSystem a = event::Renderer;
-		event Evnt(EventType, SubVector);
-		EQ.AddEvent(Evnt);
-	}
-	IM.ClearKeys();
+	KM.InputRead(&EQ);
 	//}
 }
 
