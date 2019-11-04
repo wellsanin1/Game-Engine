@@ -19,7 +19,8 @@ public:
 	void Close();
 	void Quit();
 	void Render();
-	bool CheckQueue(event::SubSystem CurrentEvent);
+	void renderOneFrame();
+	EventEnum CheckQueue(event::SubSystem CurrentEvent);
 	EventQueue EQ;
 	ObjectPool OP;
 	//maybe goes in CheckInput();

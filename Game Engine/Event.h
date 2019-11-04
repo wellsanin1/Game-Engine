@@ -1,21 +1,12 @@
 #pragma once
 #include <vector>
-#include "EventData.h"
+#include "EventEnum.h"
 #include <Ogre.h>
 
 struct event
 {
 public:
-	enum EventSort {KeyPresses};
-	enum SubSystem {Renderer,Audio,Input,Netcode,Physics};
-	union EventData {
-		EventData() {};
-		~EventData() {};
-		InputData Input;
-		PhysicsData Physics;
-	};
-
-	EventSort EventType;
+	enum SubSystem {NONE,TEST,Renderer,Audio,Input,Netcode,Physics};
+	EventEnum EventType = EventEnum::NONE;
 	std::vector<SubSystem> SubSystemList;
-	EventData EvntData;
 };

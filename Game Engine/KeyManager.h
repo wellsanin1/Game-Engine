@@ -2,7 +2,7 @@
 #include <SDL.h>
 #include <SDL_keyboard.h>
 #include <SDL_events.h>
-#include "KeyPressEnum.h"
+#include "EventEnum.h"
 #include "EventSystem.h"
 //#include "Event.h"
 #include <iostream>
@@ -10,8 +10,8 @@
 
 class KeyManager {
 public:
-	KeyPressEnum MapConvert(SDL_Keycode KeyCode);
-	std::map<SDL_Keycode,KeyPressEnum> EnumMap;
+	EventEnum MapConvert(SDL_Keycode KeyCode);
+	std::map<SDL_Keycode, EventEnum> EnumMap;
 	KeyManager();
 	~KeyManager() {};
 	void InputRead(EventQueue* EQ);

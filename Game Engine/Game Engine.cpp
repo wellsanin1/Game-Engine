@@ -1,32 +1,33 @@
 #include "GameEngine.h"
 
-bool GameEngine::CheckQueue(event::SubSystem CurrentEvent)
+EventEnum GameEngine::CheckQueue(event::SubSystem CurrentEvent)
 {
-	bool Run = false;
 	for (int i = 0; i < EQ.Queue.size(); ++i)
 	{
-		if (Run == false)
+		for (int j = 0; j < EQ.Queue[i].SubSystemList.size(); ++j)
 		{
-			std::vector<event::SubSystem> SystemList = EQ.Queue[i].SubSystemList;
-			for (int i = 0; i < SystemList.size(); ++i)
+			if (EQ.Queue[i].SubSystemList[j] == CurrentEvent)
 			{
-				if (SystemList[i] == event::Input)
+				EventEnum Store = EQ.Queue[i].EventType;
+				EQ.Queue[i].SubSystemList.erase(EQ.Queue[i].SubSystemList.begin() + j);
+				if (EQ.Queue[i].SubSystemList.empty())
 				{
-					Run = true;
-					break;
+					EQ.Queue.erase(EQ.Queue.begin() + j);
 				}
+				return Store;
 			}
 		}
-		else
-		{
-			break;
-		}
 	}
-	return Run;
+	return NONE;
 }
 
 GameEngine::GameEngine():OgreBites::ApplicationContext("GameEngine")
 {
+}
+
+void GameEngine::renderOneFrame()
+{
+
 }
 
 void GameEngine::setup()
@@ -53,39 +54,46 @@ void GameEngine::setup()
 	OP.GetObject("myCam")->StoredObject.Camera->setNearClipDistance(5);
 	getRenderWindow()->addViewport(OP.GetObject("myCam")->StoredObject.Camera);
 
-	Ogre::Entity* OgreHead = scnMgr->createEntity("OgreHead","ogrehead.mesh");
+	Ogre::Entity* OgreHead = scnMgr->createEntity("OgreHead", "ogrehead.mesh");
 	Ogre::SceneNode* OgreNode = scnMgr->getRootSceneNode()->createChildSceneNode();
 	OP.StoreObject(OgreHead, OgreNode);
 }
 
 void GameEngine::CheckInput()
 {
-	//If needed then uncomment
-	/*if (CheckQueue(event::Input))
-	{*/
-
-	//Maybe goes here
-	//InputManager IM;
 	KM.InputRead(&EQ);
-	//}
 }
 
 void GameEngine::Render()
 {
+	/*switch (CheckQueue(event::Renderer))
+	{
+	case NONE:
+		break;
+	case UP:
+		std::cout << "UP";
+		break;
+	case QUIT:
+		std::cout << "QUIT";
+		break;
+	}*/
+
 	getRoot()->renderOneFrame();
-	//if (CheckQueue(event::Renderer))
-	//{
-	//getRoot()->renderOneFrame();
-	//}
 }
 
 void GameEngine::Quit()
 {
-	if(CheckQueue(event::Input))
+	switch (CheckQueue(event::TEST))
 	{
-		closeApp();
+		case NONE:
+			break;
+		case UP:
+			std::cout << "UP";
+			break;
+		case QUIT:
+			std::cout << "QUIT";
+			break;
 	}
-
 }
 
 void GameEngine::Update()
@@ -97,7 +105,6 @@ void GameEngine::Update()
 
 void GameEngine::Initialise()
 {
-
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0) 
 	{
 		SDL_Log("Unable to initialize SDL: %s", SDL_GetError());
@@ -105,6 +112,7 @@ void GameEngine::Initialise()
 	}
 	initApp();
 }
+
 void GameEngine::Close()
 {
 	closeApp();

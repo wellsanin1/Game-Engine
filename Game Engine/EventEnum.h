@@ -1,5 +1,5 @@
 #pragma once
-enum KeyPressEnum
+enum EventEnum
 {
 	NONE,
 	UP,

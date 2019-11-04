@@ -10,27 +10,32 @@ KeyManager::KeyManager()
 	};
 };
 
-
-KeyPressEnum KeyManager::MapConvert(SDL_Keycode KeyCode)
+EventEnum KeyManager::MapConvert(SDL_Keycode KeyCode)
 {
-	KeyPressEnum KeyPressed = EnumMap.at(KeyCode);
-	return(KeyPressed);
+	std::map<SDL_Keycode,EventEnum>::const_iterator it = EnumMap.find(KeyCode);
+	if (it != EnumMap.end())
+	{
+		EventEnum KeyPressed = EnumMap.at(KeyCode);
+		return(KeyPressed);
+	}
+	return NONE;
+
 };
 
 event KeyManager::CreateEvent(SDL_Keycode KeyCode)
 {
-	KeyPressEnum KeyPressed = MapConvert(KeyCode);
-	std::vector<event::SubSystem> SubSystemVector;
-	SubSystemVector.push_back(event::Renderer);
-	SubSystemVector.push_back(event::Audio);
-	SubSystemVector.push_back(event::Input);
-	SubSystemVector.push_back(event::Netcode);
-	SubSystemVector.push_back(event::Physics);
-	//hard coded temporerily
-	InputData Input = { KeyPressed };
-	event::EventData Evntdata;
-	Evntdata.Input = Input;
-	return{event::KeyPresses,SubSystemVector,Evntdata};
+	EventEnum KeyPressed = MapConvert(KeyCode);
+	event E;
+	if (KeyPressed != NONE)
+	{
+		E.SubSystemList.push_back(event::Renderer);
+		//E.SubSystemList.push_back(event::Audio);
+		//E.SubSystemList.push_back(event::Input);
+		//E.SubSystemList.push_back(event::Netcode);
+		//E.SubSystemList.push_back(event::Physics);
+		E.EventType = KeyPressed;
+	}
+	return E;
 }
 
 void KeyManager::InputRead(EventQueue* EQ)

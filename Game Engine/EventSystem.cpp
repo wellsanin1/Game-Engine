@@ -7,7 +7,10 @@ void EventQueue::ClearEventQueue()
 
 void EventQueue::AddEvent(event Evnt)
 {
-	Queue.push_back(Evnt);
+	if (Evnt.EventType != NONE)
+	{
+		Queue.push_back(Evnt);
+	}
 };
 
 void EventQueue::GetEvent()
