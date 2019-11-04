@@ -1,5 +1,5 @@
 #include "Ogre.h"
-struct PooledObject
+struct GameObject
 {
 private:
 	bool Empty = true;
@@ -21,4 +21,5 @@ public:
 	void FillObject(Ogre::Light* Object, Ogre::SceneNode* ScnNode, Ogre::String ObjName);
 	void FillObject(Ogre::Entity* Object, Ogre::SceneNode* ScnNode, Ogre::String ObjName);
 	void ClearObject();
+	std::vector<float> Velocity;
 };

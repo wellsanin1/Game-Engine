@@ -1,5 +1,6 @@
 #pragma once
 #include "Event.h"
+#include <iostream>
 
 class EventQueue
 {
@@ -11,5 +12,6 @@ public:
 	void GetNextEvent();
 	void GetEvent();
 	void PopEvent();
+	EventEnum CheckQueue(event::SubSystem CurrentEvent);
 	std::vector<event> Queue;
 };

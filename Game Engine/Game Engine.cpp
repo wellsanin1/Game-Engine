@@ -1,26 +1,5 @@
 #include "GameEngine.h"
 
-EventEnum GameEngine::CheckQueue(event::SubSystem CurrentEvent)
-{
-	for (int i = 0; i < EQ.Queue.size(); ++i)
-	{
-		for (int j = 0; j < EQ.Queue[i].SubSystemList.size(); ++j)
-		{
-			if (EQ.Queue[i].SubSystemList[j] == CurrentEvent)
-			{
-				EventEnum Store = EQ.Queue[i].EventType;
-				EQ.Queue[i].SubSystemList.erase(EQ.Queue[i].SubSystemList.begin() + j);
-				if (EQ.Queue[i].SubSystemList.empty())
-				{
-					EQ.Queue.erase(EQ.Queue.begin() + j);
-				}
-				return Store;
-			}
-		}
-	}
-	return NONE;
-}
-
 GameEngine::GameEngine():OgreBites::ApplicationContext("GameEngine")
 {
 }
@@ -59,6 +38,16 @@ void GameEngine::setup()
 	OP.StoreObject(OgreHead, OgreNode);
 }
 
+void GameEngine::Physics()
+{
+
+}
+
+void GameEngine::Audio()
+{
+
+}
+
 void GameEngine::CheckInput()
 {
 	KM.InputRead(&EQ);
@@ -66,7 +55,7 @@ void GameEngine::CheckInput()
 
 void GameEngine::Render()
 {
-	/*switch (CheckQueue(event::Renderer))
+	/*switch (EQ.CheckQueue(event::Renderer))
 	{
 	case NONE:
 		break;
@@ -83,7 +72,7 @@ void GameEngine::Render()
 
 void GameEngine::Quit()
 {
-	switch (CheckQueue(event::TEST))
+	switch (EQ.CheckQueue(event::TEST))
 	{
 		case NONE:
 			break;

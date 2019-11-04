@@ -5,6 +5,7 @@
 #include "ObjectPool.h"
 #include "EventSystem.h"
 #include "KeyManager.h"
+#include "PhysicsManager.h"
 #include <iostream>
 
 class GameEngine : public EventQueue, public OgreBites::ApplicationContext
@@ -16,13 +17,15 @@ public:
 	void Update();
 	void CheckInput();
 	void Initialise();
+	void Physics();
 	void Close();
 	void Quit();
 	void Render();
+	void Audio();
 	void renderOneFrame();
-	EventEnum CheckQueue(event::SubSystem CurrentEvent);
 	EventQueue EQ;
 	ObjectPool OP;
+
 	//maybe goes in CheckInput();
 	KeyManager KM;
 };

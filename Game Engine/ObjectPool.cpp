@@ -5,7 +5,7 @@ ObjectPool::ObjectPool()
 	int size = sizeof(PoolStorage) / sizeof(*PoolStorage);
 	for (int i = 0; i < size; i++)
 	{
-		PoolStorage[i] = new PooledObject();
+		PoolStorage[i] = new GameObject();
 	}
 };
 
@@ -58,7 +58,7 @@ void ObjectPool::StoreObject(Ogre::Camera* CreatedEntity, Ogre::SceneNode* Creat
 	return;
 };
 
-PooledObject* ObjectPool::GetObject(Ogre::String ObjectName)
+GameObject* ObjectPool::GetObject(Ogre::String ObjectName)
 {
 	int size = sizeof(PoolStorage) / sizeof(*PoolStorage);
 	for (int i = 0; i < size; i++)

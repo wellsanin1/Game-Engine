@@ -29,6 +29,7 @@ event KeyManager::CreateEvent(SDL_Keycode KeyCode)
 	if (KeyPressed != NONE)
 	{
 		E.SubSystemList.push_back(event::Renderer);
+		E.SubSystemList.push_back(event::TEST);
 		//E.SubSystemList.push_back(event::Audio);
 		//E.SubSystemList.push_back(event::Input);
 		//E.SubSystemList.push_back(event::Netcode);
