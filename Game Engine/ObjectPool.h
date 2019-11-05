@@ -1,11 +1,12 @@
 #include "GameObject.h"
+#include "GameEngineDefinitions.h"
 #include <iostream>
 
 class ObjectPool
 {
 public:
 	ObjectPool();
-	GameObject* PoolStorage[100];
+	GameObject* PoolStorage[PoolSize];
 	virtual ~ObjectPool() {};
 	void StoreObject(Ogre::Entity* CreatedEntity, Ogre::SceneNode* CreatedNode);
 	void StoreObject(Ogre::Light* CreatedEntity, Ogre::SceneNode* CreatedNode);

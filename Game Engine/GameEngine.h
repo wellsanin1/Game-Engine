@@ -1,10 +1,10 @@
 #pragma once
-
 #include "OgreApplicationContext.h"
 #include "OgreRTShaderSystem.h"
 #include "ObjectPool.h"
 #include "EventSystem.h"
 #include "KeyManager.h"
+#include "AudioManager.h"
 //#include "PhysicsManager.h"
 #include <iostream>
 
@@ -18,15 +18,16 @@ public:
 	void CheckInput();
 	void Initialise();
 	void PhysicsUpdate();
-	void PhysicsEvents();
 	void Close();
 	void Quit();
 	void Render();
 	void Audio();
 	void renderOneFrame();
-	EventQueue EQ;
-	ObjectPool OP;
+	EventQueue EQ = EventQueue();
+	ObjectPool OP = ObjectPool();
+	AudioManager AM = AudioManager();
 	//PhysicsManager PM;
+	//Physics PMTESTING;
 	//maybe goes in CheckInput();
-	KeyManager KM;
+	KeyManager KM = KeyManager();
 };

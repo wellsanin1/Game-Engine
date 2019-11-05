@@ -1,4 +1,6 @@
+#pragma once
 #include "Ogre.h"
+//#include "btBulletDynamicsCommon.h"
 struct GameObject
 {
 private:
@@ -12,6 +14,7 @@ private:
 		Ogre::Entity* entity;
 	};
 public:
+	//btRigidBody RigidBody3d;
 	Ogre::SceneNode* Node;
 	Ogre::String Name;
 	StoredObj StoredObject;
