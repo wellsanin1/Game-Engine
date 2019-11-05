@@ -11,7 +11,6 @@ private:
 		Ogre::Light* Light;
 		Ogre::Entity* entity;
 	};
-
 public:
 	Ogre::SceneNode* Node;
 	Ogre::String Name;
@@ -21,5 +20,5 @@ public:
 	void FillObject(Ogre::Light* Object, Ogre::SceneNode* ScnNode, Ogre::String ObjName);
 	void FillObject(Ogre::Entity* Object, Ogre::SceneNode* ScnNode, Ogre::String ObjName);
 	void ClearObject();
-	std::vector<float> Velocity;
+	std::vector<float> Velocity = {0,0,0};
 };

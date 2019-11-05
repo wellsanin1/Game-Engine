@@ -40,7 +40,18 @@ void GameEngine::setup()
 
 void GameEngine::Physics()
 {
-
+	switch (EQ.CheckQueue(event::Physics))
+	{
+	case NONE:
+		break;
+	case UP:
+		std::cout << "UP";
+		//PM.Movement(&OP);
+		break;
+	case QUIT:
+		std::cout << "QUIT";
+		break;
+	}
 }
 
 void GameEngine::Audio()
@@ -100,6 +111,7 @@ void GameEngine::Initialise()
 		return;
 	}
 	initApp();
+	//PM.GetObjectPool(&OP);
 }
 
 void GameEngine::Close()
