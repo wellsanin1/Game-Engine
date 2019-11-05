@@ -38,7 +38,23 @@ void GameEngine::setup()
 	OP.StoreObject(OgreHead, OgreNode);
 }
 
-void GameEngine::Physics()
+void GameEngine::PhysicsUpdate()
+{
+	//switch (EQ.CheckQueue(event::Physics))
+	//{
+	//case NONE:
+	//	break;
+	//case UP:
+	//	std::cout << "UP";
+	//	//PM.Movement(&OP);
+	//	break;
+	//case QUIT:
+	//	std::cout << "QUIT";
+	//	break;
+	//}
+}
+
+void GameEngine::PhysicsEvents()
 {
 	switch (EQ.CheckQueue(event::Physics))
 	{
@@ -99,6 +115,8 @@ void GameEngine::Quit()
 void GameEngine::Update()
 {
 	CheckInput();
+	PhysicsUpdate();
+	PhysicsEvents();
 	Render();
 	Quit();
 }

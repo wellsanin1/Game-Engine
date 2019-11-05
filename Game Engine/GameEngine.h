@@ -17,7 +17,8 @@ public:
 	void Update();
 	void CheckInput();
 	void Initialise();
-	void Physics();
+	void PhysicsUpdate();
+	void PhysicsEvents();
 	void Close();
 	void Quit();
 	void Render();
