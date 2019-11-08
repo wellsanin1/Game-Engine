@@ -111,8 +111,7 @@ void GameEngine::Quit()
 			break;
 		case UP:
 			std::cout << "UP" << std::endl;
-			AM.CreateSound();
-			AM.PlaySound();
+			AM.PlaySound("rain.wav");
 			break;
 		case QUIT:
 			std::cout << "QUIT" << std::endl;

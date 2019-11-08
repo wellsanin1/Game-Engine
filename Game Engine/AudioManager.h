@@ -4,20 +4,17 @@
 #include <filesystem>
 #include "GameEngineDefinitions.h"
 //#include <FMODStudio/Public/FMOD/fmod_studio.hpp>
-#include <FMODStudio/Public/FMOD/fmod.hpp>
-#include <FMODStudio/Public/FMOD/fmod_errors.h>
+#include "AudioClip.h"
 //#include <>
 
 class AudioManager
 {
 public:
-	FMOD::Sound* SoundArray[SoundArraySize];
-	FMOD::Sound* Sound1;
+	AudioClip* SoundArray[SoundArraySize];
 	FMOD::System* FmodSystem = NULL;
 	AudioManager();
 	~AudioManager() {};
-	void PlaySound();
-	void CreateSound();
+	void PlaySound(std::string);
 	void Close();
 	void Loader();
 };

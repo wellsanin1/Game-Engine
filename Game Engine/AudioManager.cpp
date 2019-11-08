@@ -1,20 +1,29 @@
 #include "AudioManager.h"
 
-void AudioManager::PlaySound()
+void AudioManager::PlaySound(std::string Name)
 {
-	FmodSystem->playSound(Sound1, NULL, false, 0);
+	for (int i = 0;i < SoundArraySize;++i)
+	{
+		if (SoundArray[i]->Name == Name)
+		{
+			FmodSystem->playSound(SoundArray[i]->Clip, NULL, false, 0);
+			return;
+		}
+	}
+	std::cout << "Sound " + Name + " does not exist" << std::endl;
 }
-void AudioManager::CreateSound()
-{
-
-}
+//Loads all files from the folder Project/Media/Audio
 void AudioManager::Loader()
 {
-	std::string path = "Media/Audio";
+	const std::string path = "Media/Audio";
+	int i = 0;
 	for (const auto& entry : std::experimental::filesystem::directory_iterator(path))
 	{
-		const char* cstr = entry.path().string().c_str();
-		FmodSystem->createSound(cstr, FMOD_DEFAULT, 0, &Sound1);
+		std::string StringPath = entry.path().string();
+		FmodSystem->createSound(StringPath.c_str(), FMOD_DEFAULT, 0, &SoundArray[i]->Clip);
+		SoundArray[i]->Name = StringPath.erase(0, path.length() + 1);
+		std::cout << SoundArray[i]->Name << std::endl;
+		++i;
 	}
 	std::cout << "Audio File Load Finished" << std::endl;
 }
@@ -34,6 +43,11 @@ AudioManager::AudioManager()
 	{
 		printf("FMOD error! (%d) %s\n", result, FMOD_ErrorString(result));
 		exit(-1);
+	}
+	for (int i = 0 ; i<SoundArraySize ; ++i)
+	{
+		AudioClip* emptyclip = new AudioClip();
+		SoundArray[i] = emptyclip;
 	}
 }
 void AudioManager::Close()

@@ -171,6 +171,7 @@
     <ClCompile Include="GameObject.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AudioClip.h" />
     <ClInclude Include="AudioManager.h" />
     <ClInclude Include="Event.h" />
     <ClInclude Include="EventSystem.h" />
