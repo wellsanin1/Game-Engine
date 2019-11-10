@@ -20,26 +20,27 @@ void GameEngine::setup()
 
 	scnMgr->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
 
+	//LIGHT
 	Ogre::Light* light = scnMgr->createLight("MainLight");
 	Ogre::SceneNode* lightNode = scnMgr->getRootSceneNode()->createChildSceneNode();
-	OP.StoreObject(light, lightNode);
-	OP.GetObject("MainLight")->Node->setPosition(20, 80, 50);;
+	GameObject* GO1 = new GameObject();
+	btBoxShape* box1 = new btBoxShape(btVector3(0.0f, 0.0f, 0.0f));
+	GO1->initiate(box1, light, lightNode, "MainLight");
+	OP.StoreObject(GO1);
+	OP.GetObject("MainLight")->Transform.setOrigin(btVector3(20, 80, 50));
 
+
+	//Camera
 	Ogre::SceneNode* camNode = scnMgr->getRootSceneNode()->createChildSceneNode();
 	Ogre::Camera* cam = scnMgr->createCamera("myCam");
-	OP.StoreObject(cam, camNode);
-	OP.GetObject("myCam")->Node->setPosition(0, 47, 222);
+	GameObject* GO2 = new GameObject();
+	btBoxShape* box2 = new btBoxShape(btVector3(0.0f, 0.0f, 0.0f));
+	GO2->initiate(box2, cam, camNode, "myCam");
+	OP.StoreObject(GO2);
+	OP.GetObject("myCam")->Transform.setOrigin(btVector3(0, 47, 222));
 	OP.GetObject("myCam")->StoredObject.Camera->setAutoAspectRatio(true);
 	OP.GetObject("myCam")->StoredObject.Camera->setNearClipDistance(5);
 	getRenderWindow()->addViewport(OP.GetObject("myCam")->StoredObject.Camera);
-
-	Ogre::Entity* OgreHead = scnMgr->createEntity("OgreHead", "ogrehead.mesh");
-
-
-	//OP.GetObject("myCam")->Velocity = {0,1,0};
-
-	Ogre::SceneNode* OgreNode = scnMgr->getRootSceneNode()->createChildSceneNode();
-	OP.StoreObject(OgreHead, OgreNode);
 
 	/*
 	#######################################################################
@@ -48,40 +49,98 @@ void GameEngine::setup()
 	#######################################################################
 	#######################################################################
 	*/
+	//create the actual plane in Ogre3D
 
-	////create the actual plane in Ogre3D
-	//Ogre::Plane plane(Ogre::Vector3::UNIT_Y, 0);
-	//Ogre::MeshPtr planePtr = Ogre::MeshManager::getSingleton().createPlane("ground", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, plane, 1500, 1500, 20, 20, true, 1, 5, 5, Ogre::Vector3::UNIT_Z);
+	//create the actual plane in Ogre3D
+	Ogre::Plane plane(Ogre::Vector3::UNIT_Y, 0);
+	Ogre::MeshPtr planePtr = Ogre::MeshManager::getSingleton().createPlane("ground", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, plane, 1500, 1500, 20, 20, true, 1, 5, 5, Ogre::Vector3::UNIT_Z);
+	Ogre::Entity* entGround = scnMgr->createEntity("GroundEntity", "ground");
+	Ogre::SceneNode* groundNode = scnMgr->getRootSceneNode()->createChildSceneNode("groundNode");
 
-	//Ogre::Entity* entGround = scnMgr->createEntity("GroundEntity", "ground");
-	//Ogre::SceneNode* groundNode = scnMgr->getRootSceneNode()->createChildSceneNode("groundNode");
+	groundNode->attachObject(entGround);
 
-	//groundNode->attachObject(entGround);
+	//create the plane entity to the physics engine, and attach it to the node
 
-	////create the plane entity to the physics engine, and attach it to the node
+	btTransform groundTransform;
+	groundTransform.setIdentity();
+	groundTransform.setOrigin(btVector3(0, -50, 0));
 
-	//btTransform groundTransform;
-	//groundTransform.setIdentity();
-	//groundTransform.setOrigin(btVector3(0, -50, 0));
 
-	//btScalar groundMass(0.); //the mass is 0, because the ground is immovable (static)
-	//btVector3 localGroundInertia(0, 0, 0);
 
-	//btCollisionShape* groundShape = new btBoxShape(btVector3(btScalar(50.), btScalar(50.), btScalar(50.)));
-	//btDefaultMotionState* groundMotionState = new btDefaultMotionState(groundTransform);
+	btScalar groundMass(0.); //the mass is 0, because the ground is immovable (static)
+	btVector3 localGroundInertia(0, 0, 0);
 
-	//groundShape->calculateLocalInertia(groundMass, localGroundInertia);
+	btCollisionShape* groundShape = new btBoxShape(btVector3(btScalar(50.), btScalar(50.), btScalar(50.)));
+	btDefaultMotionState* groundMotionState = new btDefaultMotionState(groundTransform);
 
-	//btRigidBody::btRigidBodyConstructionInfo groundRBInfo(groundMass, groundMotionState, groundShape, localGroundInertia);
-	//btRigidBody* groundBody = new btRigidBody(groundRBInfo);
+	groundShape->calculateLocalInertia(groundMass, localGroundInertia);
+
+	btRigidBody::btRigidBodyConstructionInfo groundRBInfo(groundMass, groundMotionState, groundShape, localGroundInertia);
+	btRigidBody* groundBody = new btRigidBody(groundRBInfo);
+
+	GameObject* GO3 = new GameObject();
+	btBoxShape* box3 = new btBoxShape(btVector3(0.0f, 0.0f, 0.0f));
+	GO2->initiate(box3, entGround, groundNode, "myCam");
+	OP.StoreObject(GO3);
+
+	PMTESTING.collisionShapes.push_back(groundShape);
 
 	//add the body to the dynamics world
-	//PMTESTING->getDynamicsWorld()->addRigidBody(groundBody);
+	PMTESTING.dynamicsWorld->addRigidBody(groundBody);
+
+	PMTESTING.physicsAccessors.insert({std::string("groundNode"), groundBody });
+
+	/*
+	#######################################################################
+	#######################################################################
+	Below here lies more sample code
+	#######################################################################
+	#######################################################################
+	*/
+
+	//btTransform TEST2;
+	//btCollisionShape* newRigidShape = new btBoxShape(btVector3(15.0f, 15.0f, 15.0f));
+	//GameObject a;
+	//btBoxShape* box = new btBoxShape(btVector3(15.0f, 15.0f, 15.0f));
+	//a.initiate(box);
+
+	Ogre::Entity* entity = scnMgr->createEntity("Cube", "ogrehead.mesh");
+	Ogre::SceneNode* newNode = scnMgr->getRootSceneNode()->createChildSceneNode("CubeNode");
+	newNode->attachObject(entity);
+	//create the new shape, and tell the physics that is a Box
+	btCollisionShape* newRigidShape = new btBoxShape(btVector3(15.0f, 15.0f, 15.0f));
+	PMTESTING.collisionShapes.push_back(newRigidShape);
+
+	//set the initial position and transform. For this demo, we set the tranform to be none
+	btTransform startTransform;
+	startTransform.setIdentity();
+	startTransform.setRotation(btQuaternion(1.0f, 1.0f, 1.0f, 0));
+
+	//set the mass of the object. a mass of "0" means that it is an immovable object
+	btScalar mass = 10.f;
+	btVector3 localInertia(0, 0, 0);
+
+	startTransform.setOrigin({ 0,200,0 });
+	newRigidShape->calculateLocalInertia(mass, localInertia);
+
+	//actually contruct the body and add it to the dynamics world
+	btDefaultMotionState* myMotionState = new btDefaultMotionState(startTransform);
+
+	btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, newRigidShape, localInertia);
+	btRigidBody* body = new btRigidBody(rbInfo);
+	body->setRestitution(1);
+	body->setUserPointer(newNode);
+
+
+	PMTESTING.dynamicsWorld->addRigidBody(body);
+	PMTESTING.physicsAccessors.insert({std::string("CubeNode"), body });
+
 }
 
 void GameEngine::PhysicsUpdate()
 {
 	//PM.Update(OP.PoolStorage);
+	PMTESTING.PhysicsUpdate();
 
 }
 
@@ -138,7 +197,6 @@ void GameEngine::Initialise()
 	//PMTESTING.initialise();
 	initApp();
 	AM.Loader();
-
 	//PM.FindObjectPool(&OP);
 }
 

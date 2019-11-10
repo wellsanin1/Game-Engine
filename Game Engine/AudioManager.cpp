@@ -17,7 +17,7 @@ void AudioManager::Loader()
 {
 	const std::string path = "Media/Audio";
 	int i = 0;
-	for (const auto& entry : std::experimental::filesystem::directory_iterator(path))
+	for (const auto& entry : std::filesystem::directory_iterator(path))
 	{
 		std::string StringPath = entry.path().string();
 		FmodSystem->createSound(StringPath.c_str(), FMOD_DEFAULT, 0, &SoundArray[i]->Clip);

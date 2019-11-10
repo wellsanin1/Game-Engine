@@ -1,6 +1,7 @@
 #pragma once
 #include "Ogre.h"
-//#include "btBulletDynamicsCommon.h"
+#include "btBulletDynamicsCommon.h"
+
 struct GameObject
 {
 private:
@@ -14,14 +15,32 @@ private:
 		Ogre::Entity* entity;
 	};
 public:
-	//btRigidBody RigidBody3d;
+	//BULLET
+	btCollisionShape* CollisionShape;
+	btTransform Transform;
+	btScalar mass = (0); //0 is static
+	btVector3 localInertia = { 0, 0, 0 };
+	btDefaultMotionState* myMotionState; //initialise = new btDefaultMotionState(startTransform);
+	btRigidBody::btRigidBodyConstructionInfo* BodyInfo;
+	btRigidBody* RigidBody3d;
+
+	//OGRE
 	Ogre::SceneNode* Node;
 	Ogre::String Name;
-	StoredObj StoredObject;
 	bool IsEmpty() { return Empty; };
 	void FillObject(Ogre::Camera* Object, Ogre::SceneNode* ScnNode, Ogre::String ObjName);
 	void FillObject(Ogre::Light* Object, Ogre::SceneNode* ScnNode, Ogre::String ObjName);
 	void FillObject(Ogre::Entity* Object, Ogre::SceneNode* ScnNode, Ogre::String ObjName);
 	void ClearObject();
+
+	//Propriatory
+	StoredObj StoredObject;
 	std::vector<float> Velocity = {0,0,0};
+
+	void AssignRigidBody(btRigidBody* Rigidbody);
+	void AssignTransform();
+	void AssignCollisionShape(btCollisionShape* CollisionShape);
+	void initiate(btBoxShape* ColliderShape, Ogre::Entity* Object, Ogre::SceneNode* ScnNode, Ogre::String ObjName);
+	void initiate(btBoxShape* ColliderShape, Ogre::Light* Object, Ogre::SceneNode* ScnNode, Ogre::String ObjName);
+	void initiate(btBoxShape* ColliderShape, Ogre::Camera* Object, Ogre::SceneNode* ScnNode, Ogre::String ObjName);
 };

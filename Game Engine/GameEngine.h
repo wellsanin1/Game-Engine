@@ -5,7 +5,7 @@
 #include "EventSystem.h"
 #include "KeyManager.h"
 #include "AudioManager.h"
-//#include "PhysicsManager.h"
+#include "PhysicsManager.h"
 #include <iostream>
 
 class GameEngine : public EventQueue, public OgreBites::ApplicationContext
@@ -27,7 +27,7 @@ public:
 	ObjectPool OP = ObjectPool();
 	AudioManager AM = AudioManager();
 	//PhysicsManager PM;
-	//Physics PMTESTING;
+	Physics PMTESTING = Physics();
 	//maybe goes in CheckInput();
 	KeyManager KM = KeyManager();
 };
