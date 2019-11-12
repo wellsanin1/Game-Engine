@@ -125,6 +125,7 @@ void GameEngine::Update()
 	CheckInput();
 	PhysicsUpdate();
 	Render();
+	Game();
 	Audio();
 	Quit();
 }
