@@ -1,7 +1,6 @@
 #pragma once
 #include <vector>
 #include "EventEnum.h"
-#include <Ogre.h>
 
 struct event
 {

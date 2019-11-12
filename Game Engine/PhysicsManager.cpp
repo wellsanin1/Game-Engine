@@ -1,33 +1,13 @@
 #include "PhysicsManager.h"
 
-//void PhysicsManager::Movement(GameObject* ObjPool[PoolSize])
-//{
-//	for (int i = 0; i < PoolSize; ++i)
-//	{
-//		if (ObjPool[i]->IsEmpty() == false)
-//		{
-//			ObjPool[i]->Node->translate(ObjPool[i]->Velocity[0], ObjPool[i]->Velocity[1], ObjPool[i]->Velocity[2]);
-//		}
-//	}
-//}
-
-//void PhysicsManager::Collision(GameObject* ObjPool[PoolSize])
-//{
-//
-//}
-//void PhysicsManager::CreateRigidbody(GameObject* ObjPool[PoolSize])
-//{
-//
-//}
-
-//void Physics::dealloc()
-//{
-//	delete dynamicsWorld;
-//	delete solver;
-//	delete collisionConfiguration;
-//	delete dispatcher;
-//	delete overlappingPairCache;
-//}
+void Physics::dealloc()
+{
+	delete dynamicsWorld;
+	delete solver;
+	delete collisionConfiguration;
+	delete dispatcher;
+	delete overlappingPairCache;
+}
 
 Physics::Physics()
 {
@@ -36,7 +16,7 @@ Physics::Physics()
 	overlappingPairCache = new btDbvtBroadphase();
 	solver = new btSequentialImpulseConstraintSolver();
 	dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, overlappingPairCache, solver, collisionConfiguration);
-	dynamicsWorld->setGravity(btVector3(0, -9.81, 0));
+	dynamicsWorld->setGravity(btVector3(0, -Gravity, 0));
 }
 
 void Physics::PhysicsUpdate()
@@ -54,10 +34,10 @@ void Physics::PhysicsUpdate()
 				void* userPointer = body->getUserPointer();
 				if (userPointer) 
 				{
-					btQuaternion orientation = trans.getRotation();
+				/*	btQuaternion orientation = trans.getRotation();
 					Ogre::SceneNode* sceneNode = static_cast<Ogre::SceneNode*>(userPointer);
 					sceneNode->setPosition(Ogre::Vector3(trans.getOrigin().getX(), trans.getOrigin().getY(), trans.getOrigin().getZ()));
-					sceneNode->setOrientation(Ogre::Quaternion(orientation.getW(), orientation.getX(), orientation.getY(), orientation.getZ()));
+					sceneNode->setOrientation(Ogre::Quaternion(orientation.getW(), orientation.getX(), orientation.getY(), orientation.getZ()));*/
 				}
 			}
 		}

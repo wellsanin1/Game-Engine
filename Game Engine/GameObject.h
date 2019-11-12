@@ -1,7 +1,6 @@
 #pragma once
-#include "Ogre.h"
-#include "btBulletDynamicsCommon.h"
 #include "PhysicsManager.h"
+#include "Renderer.h"
 
 struct GameObject
 {
@@ -22,6 +21,7 @@ private:
 	void AddtoPhysicsSystem();
 	void InitiationAbstraction(Ogre::SceneNode* ScnNode,btBoxShape* ColliderShape, btTransform DefaultTransform, int ObjMass);
 	Physics* PM;
+	Renderer* R;
 public:
 	//BULLET
 	btCollisionShape* CollisionShape;
@@ -42,6 +42,11 @@ public:
 	void ClearObject();
 
 	//Propriatory
+
+	void CreateEntity(std::string EntityName, std::string MeshName);
+	void CreateLight(std::string LightName);
+	void CreateCamera(std::string CameraName);
+
 	StoredObj StoredObject;
 	std::vector<float> Velocity = {0,0,0};
 
@@ -49,7 +54,7 @@ public:
 	void initiate(btBoxShape* ColliderShape, Ogre::Light* Object, Ogre::SceneNode* ScnNode, Ogre::String ObjName, btTransform DefaultTransform, int ObjMass);
 	void initiate(btBoxShape* ColliderShape, Ogre::Camera* Object, Ogre::SceneNode* ScnNode, Ogre::String ObjName, btTransform DefaultTransform, int ObjMass);
 
-	GameObject(Physics* PhysicsManager);
+	GameObject(Physics* PhysicsManager,Renderer* renderer);
 	GameObject() {};
 	~GameObject() {};
 };

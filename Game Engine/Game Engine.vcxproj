@@ -181,6 +181,7 @@
     <ClCompile Include="ObjectPool.cpp" />
     <ClCompile Include="PhysicsManager.cpp" />
     <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="Renderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AudioClip.h" />
@@ -194,6 +195,7 @@
     <ClInclude Include="ObjectPool.h" />
     <ClInclude Include="PhysicsManager.h" />
     <ClInclude Include="GameObject.h" />
+    <ClInclude Include="Renderer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

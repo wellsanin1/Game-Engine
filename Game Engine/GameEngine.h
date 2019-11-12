@@ -1,19 +1,15 @@
 #pragma once
-#include "OgreApplicationContext.h"
-#include "OgreRTShaderSystem.h"
 #include "ObjectPool.h"
 #include "EventSystem.h"
 #include "KeyManager.h"
 #include "AudioManager.h"
-#include "PhysicsManager.h"
 #include <iostream>
 
-class GameEngine : public EventQueue, public OgreBites::ApplicationContext
+class GameEngine
 {
 public:
-	GameEngine();
+	GameEngine() {};
 	virtual ~GameEngine() {};
-	void setup();
 	void Update();
 	void CheckInput();
 	void Initialise();
@@ -24,14 +20,17 @@ public:
 	void Audio();
 	void renderOneFrame();
 	void Game();
+	void Start();
+
+
+	void CreateEntity(std::string Name, std::string MeshName);
+	void CreateLight(std::string Name);
+	void CreateCamera(std::string Name);
+
 	EventQueue EQ = EventQueue();
 	ObjectPool OP = ObjectPool();
-	Ogre::Root* root;
-	Ogre::SceneManager* scnMgr;
-	Ogre::RTShader::ShaderGenerator* shadergen;
+	Renderer R = Renderer();
 	AudioManager AM = AudioManager();
-	//PhysicsManager PM;
 	Physics PM = Physics();
-	//maybe goes in CheckInput();
 	KeyManager KM = KeyManager();
 };
