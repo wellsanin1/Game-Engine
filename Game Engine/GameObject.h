@@ -14,6 +14,10 @@ private:
 		Ogre::Light* Light;
 		Ogre::Entity* entity;
 	};
+	//Propriatory
+	void AssignRigidBody(btRigidBody* Rigidbody);
+	void AssignTransform();
+	void AssignCollisionShape(btCollisionShape* CollisionShape);
 public:
 	//BULLET
 	btCollisionShape* CollisionShape;
@@ -37,10 +41,7 @@ public:
 	StoredObj StoredObject;
 	std::vector<float> Velocity = {0,0,0};
 
-	void AssignRigidBody(btRigidBody* Rigidbody);
-	void AssignTransform();
-	void AssignCollisionShape(btCollisionShape* CollisionShape);
-	void initiate(btBoxShape* ColliderShape, Ogre::Entity* Object, Ogre::SceneNode* ScnNode, Ogre::String ObjName);
-	void initiate(btBoxShape* ColliderShape, Ogre::Light* Object, Ogre::SceneNode* ScnNode, Ogre::String ObjName);
-	void initiate(btBoxShape* ColliderShape, Ogre::Camera* Object, Ogre::SceneNode* ScnNode, Ogre::String ObjName);
+	void initiate(btBoxShape* ColliderShape, Ogre::Entity* Object, Ogre::SceneNode* ScnNode, Ogre::String ObjName,btTransform DefaultTransform);
+	void initiate(btBoxShape* ColliderShape, Ogre::Light* Object, Ogre::SceneNode* ScnNode, Ogre::String ObjName, btTransform DefaultTransform);
+	void initiate(btBoxShape* ColliderShape, Ogre::Camera* Object, Ogre::SceneNode* ScnNode, Ogre::String ObjName, btTransform DefaultTransform);
 };

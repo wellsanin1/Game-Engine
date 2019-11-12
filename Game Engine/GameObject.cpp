@@ -38,9 +38,11 @@ void GameObject::AssignTransform()
 void GameObject::AssignCollisionShape(btCollisionShape* CollisionShape)
 {
 	this->CollisionShape = CollisionShape;
+	this->CollisionShape->calculateLocalInertia(mass, localInertia);
 };
-void GameObject::initiate(btBoxShape* ColliderShape, Ogre::Entity* Object, Ogre::SceneNode* ScnNode, Ogre::String ObjName)
+void GameObject::initiate(btBoxShape* ColliderShape, Ogre::Entity* Object, Ogre::SceneNode* ScnNode, Ogre::String ObjName, btTransform DefaultTransform)
 {
+	Transform = DefaultTransform;
 	FillObject(Object,ScnNode, ObjName);
 	AssignTransform();
 	btCollisionShape* newRigidShape = ColliderShape;
@@ -49,7 +51,7 @@ void GameObject::initiate(btBoxShape* ColliderShape, Ogre::Entity* Object, Ogre:
 	btRigidBody* Bdy = new btRigidBody(BodyInfo);
 	AssignRigidBody(Bdy);
 }
-void GameObject::initiate(btBoxShape* ColliderShape, Ogre::Light* Object, Ogre::SceneNode* ScnNode, Ogre::String ObjName)
+void GameObject::initiate(btBoxShape* ColliderShape, Ogre::Light* Object, Ogre::SceneNode* ScnNode, Ogre::String ObjName,btTransform DefaultTransform)
 {
 	FillObject(Object, ScnNode, ObjName);
 	AssignTransform();
@@ -58,8 +60,9 @@ void GameObject::initiate(btBoxShape* ColliderShape, Ogre::Light* Object, Ogre::
 	btRigidBody::btRigidBodyConstructionInfo BodyInfo(mass, myMotionState, CollisionShape, localInertia);
 	btRigidBody* Bdy = new btRigidBody(BodyInfo);
 	AssignRigidBody(Bdy);
+
 }
-void GameObject::initiate(btBoxShape* ColliderShape, Ogre::Camera* Object, Ogre::SceneNode* ScnNode, Ogre::String ObjName)
+void GameObject::initiate(btBoxShape* ColliderShape, Ogre::Camera* Object, Ogre::SceneNode* ScnNode, Ogre::String ObjName, btTransform DefaultTransform)
 {
 	FillObject(Object, ScnNode, ObjName);
 	AssignTransform();
@@ -68,4 +71,5 @@ void GameObject::initiate(btBoxShape* ColliderShape, Ogre::Camera* Object, Ogre:
 	btRigidBody::btRigidBodyConstructionInfo BodyInfo(mass, myMotionState, CollisionShape, localInertia);
 	btRigidBody* Bdy = new btRigidBody(BodyInfo);
 	AssignRigidBody(Bdy);
+	RigidBody3d->setUserPointer(ScnNode);
 }

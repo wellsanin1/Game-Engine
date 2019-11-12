@@ -23,25 +23,47 @@ void GameEngine::setup()
 	//LIGHT
 	Ogre::Light* light = scnMgr->createLight("MainLight");
 	Ogre::SceneNode* lightNode = scnMgr->getRootSceneNode()->createChildSceneNode();
-	GameObject* GO1 = new GameObject();
 	btBoxShape* box1 = new btBoxShape(btVector3(0.0f, 0.0f, 0.0f));
-	GO1->initiate(box1, light, lightNode, "MainLight");
+	GameObject* GO1 = new GameObject();
+
+	btTransform startTransform2;
+	startTransform2.setIdentity();
+	startTransform2.setRotation(btQuaternion(1.0f, 1.0f, 1.0f, 0));
+	startTransform2.setOrigin(btVector3(20, 80, 50));
+
+	GO1->initiate(box1, light, lightNode, "MainLight",startTransform2);
 	OP.StoreObject(GO1);
-	OP.GetObject("MainLight")->Transform.setOrigin(btVector3(20, 80, 50));
 
 
 	//Camera
 	Ogre::SceneNode* camNode = scnMgr->getRootSceneNode()->createChildSceneNode();
 	Ogre::Camera* cam = scnMgr->createCamera("myCam");
+	btBoxShape* box2 = new btBoxShape(btVector3(0.f, 0.f, 0.f));
 	GameObject* GO2 = new GameObject();
-	btBoxShape* box2 = new btBoxShape(btVector3(0.0f, 0.0f, 0.0f));
-	GO2->initiate(box2, cam, camNode, "myCam");
+
+	btTransform startTransform1;
+	startTransform1.setIdentity();
+	startTransform1.setRotation(btQuaternion(1.0f, 1.0f, 1.0f, 0));
+	startTransform1.setOrigin(btVector3(0, 47, 222));
+
+	GO2->initiate(box2, cam, camNode, "myCam",startTransform1);
 	OP.StoreObject(GO2);
-	OP.GetObject("myCam")->Transform.setOrigin(btVector3(0, 47, 222));
+
+	//OP.GetObject("myCam")->RigidBody3d->setActivationState(DISABLE_DEACTIVATION);
+	//OP.GetObject("myCam")->Transform.setIdentity();
+	//OP.GetObject("myCam")->Transform.setOrigin(btVector3(0, 47, 222));
 	OP.GetObject("myCam")->StoredObject.Camera->setAutoAspectRatio(true);
 	OP.GetObject("myCam")->StoredObject.Camera->setNearClipDistance(5);
+
+
 	getRenderWindow()->addViewport(OP.GetObject("myCam")->StoredObject.Camera);
 
+	PMTESTING.collisionShapes.push_back(OP.GetObject("myCam")->CollisionShape);
+	PMTESTING.physicsAccessors.insert({std::string("myCam"), OP.GetObject("myCam")->RigidBody3d});
+	PMTESTING.dynamicsWorld->addRigidBody(OP.GetObject("myCam")->RigidBody3d);
+
+	/*PMTESTING.collisionShapes.push_back(OP.GetObject("MainLight")->CollisionShape);
+	PMTESTING.physicsAccessors.insert({ std::string("MainLight"), OP.GetObject("MainLight")->RigidBody3d });*/
 	/*
 	#######################################################################
 	#######################################################################
@@ -80,7 +102,7 @@ void GameEngine::setup()
 
 	GameObject* GO3 = new GameObject();
 	btBoxShape* box3 = new btBoxShape(btVector3(0.0f, 0.0f, 0.0f));
-	GO2->initiate(box3, entGround, groundNode, "myCam");
+	GO2->initiate(box3, entGround, groundNode, "myCam",groundTransform);
 	OP.StoreObject(GO3);
 
 	PMTESTING.collisionShapes.push_back(groundShape);
