@@ -2,8 +2,10 @@
 #include "btBulletDynamicsCommon.h"
 #include "Bullet3Common/b3Vector3.h"
 #include "GameEngineDefinitions.h"
-#include "ObjectPool.h"
+#include "ogre.h"
 #include <iostream>
+#include <vector>
+#include <map>
 
 
 class Physics {
@@ -18,6 +20,4 @@ public:
 	std::vector<btCollisionShape*> collisionShapes;
 	std::map<std::string, btRigidBody*> physicsAccessors;
 	void PhysicsUpdate();
-	//void initialise();
-	//void dealloc();
 };

@@ -27,7 +27,7 @@ public:
 	ObjectPool OP = ObjectPool();
 	AudioManager AM = AudioManager();
 	//PhysicsManager PM;
-	Physics PMTESTING = Physics();
+	Physics PM = Physics();
 	//maybe goes in CheckInput();
 	KeyManager KM = KeyManager();
 };

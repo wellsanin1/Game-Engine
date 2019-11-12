@@ -1,6 +1,7 @@
 #pragma once
 #include "Ogre.h"
 #include "btBulletDynamicsCommon.h"
+#include "PhysicsManager.h"
 
 struct GameObject
 {
@@ -18,6 +19,8 @@ private:
 	void AssignRigidBody(btRigidBody* Rigidbody);
 	void AssignTransform();
 	void AssignCollisionShape(btCollisionShape* CollisionShape);
+	void AddtoPhysicsSystem();
+	Physics* PM;
 public:
 	//BULLET
 	btCollisionShape* CollisionShape;
@@ -41,7 +44,11 @@ public:
 	StoredObj StoredObject;
 	std::vector<float> Velocity = {0,0,0};
 
-	void initiate(btBoxShape* ColliderShape, Ogre::Entity* Object, Ogre::SceneNode* ScnNode, Ogre::String ObjName,btTransform DefaultTransform);
-	void initiate(btBoxShape* ColliderShape, Ogre::Light* Object, Ogre::SceneNode* ScnNode, Ogre::String ObjName, btTransform DefaultTransform);
-	void initiate(btBoxShape* ColliderShape, Ogre::Camera* Object, Ogre::SceneNode* ScnNode, Ogre::String ObjName, btTransform DefaultTransform);
+	void initiate(btBoxShape* ColliderShape, Ogre::Entity* Object, Ogre::SceneNode* ScnNode, Ogre::String ObjName,btTransform DefaultTransform, int ObjMass);
+	void initiate(btBoxShape* ColliderShape, Ogre::Light* Object, Ogre::SceneNode* ScnNode, Ogre::String ObjName, btTransform DefaultTransform, int ObjMass);
+	void initiate(btBoxShape* ColliderShape, Ogre::Camera* Object, Ogre::SceneNode* ScnNode, Ogre::String ObjName, btTransform DefaultTransform, int ObjMass);
+
+	GameObject(Physics* PhysicsManager);
+	GameObject() {};
+	~GameObject() {};
 };

@@ -41,7 +41,7 @@ Physics::Physics()
 
 void Physics::PhysicsUpdate()
 {
-		dynamicsWorld->stepSimulation(1.0f / 60.0f); //suppose you have 60 frames per second
+		dynamicsWorld->stepSimulation(1.0f / (float)PhysicsPollRate); //suppose you have 60 frames per second
 		for (int i = 0; i < collisionShapes.size(); i++) 
 		{
 			btCollisionObject* obj = dynamicsWorld->getCollisionObjectArray()[i];
