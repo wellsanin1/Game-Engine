@@ -2,7 +2,7 @@
 #include "btBulletDynamicsCommon.h"
 #include "Bullet3Common/b3Vector3.h"
 #include "GameEngineDefinitions.h"
-//#include "ogre.h"
+#include "ogre.h"
 #include <iostream>
 #include <vector>
 #include <map>

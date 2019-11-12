@@ -17,20 +17,20 @@ public:
 	void Close();
 	void Quit();
 	void Render();
+	void Start();
 	void Audio();
 	void renderOneFrame();
 	void Game();
-	void Start();
 
 
 	void CreateEntity(std::string Name, std::string MeshName);
 	void CreateLight(std::string Name);
 	void CreateCamera(std::string Name);
 
-	EventQueue EQ = EventQueue();
+	EventQueue EQ;
 	ObjectPool OP = ObjectPool();
 	Renderer R = Renderer();
-	AudioManager AM = AudioManager();
+	AudioManager AM;
 	Physics PM = Physics();
 	KeyManager KM = KeyManager();
 };

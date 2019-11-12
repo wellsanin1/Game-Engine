@@ -34,10 +34,10 @@ void Physics::PhysicsUpdate()
 				void* userPointer = body->getUserPointer();
 				if (userPointer) 
 				{
-				/*	btQuaternion orientation = trans.getRotation();
+					btQuaternion orientation = trans.getRotation();
 					Ogre::SceneNode* sceneNode = static_cast<Ogre::SceneNode*>(userPointer);
 					sceneNode->setPosition(Ogre::Vector3(trans.getOrigin().getX(), trans.getOrigin().getY(), trans.getOrigin().getZ()));
-					sceneNode->setOrientation(Ogre::Quaternion(orientation.getW(), orientation.getX(), orientation.getY(), orientation.getZ()));*/
+					sceneNode->setOrientation(Ogre::Quaternion(orientation.getW(), orientation.getX(), orientation.getY(), orientation.getZ()));
 				}
 			}
 		}

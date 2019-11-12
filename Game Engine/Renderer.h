@@ -6,16 +6,13 @@
 class Renderer : public OgreBites::ApplicationContext
 {
 public:
-
-	Ogre::Root* root = new Ogre::Root();
+	Ogre::Root* root;
 	Ogre::SceneManager* scnMgr;
 	Ogre::RTShader::ShaderGenerator* shadergen;
-
 	Renderer();
 	~Renderer() {};
-
 	void Update();
-	void Setup();
+	void setup();
 	void Start();
 	void End();
 };

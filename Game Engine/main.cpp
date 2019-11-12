@@ -7,6 +7,7 @@ int main(int argc, char** argv)
 	{
 		GameEngine app;
 		app.Initialise();
+		app.Start();
 		while (1)
 		{
 			app.Update();

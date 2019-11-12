@@ -2,24 +2,24 @@
 
 void GameObject::FillObject(Ogre::Camera* Object, Ogre::SceneNode* ScnNode, Ogre::String ObjName)
 {
-	ScnNode->attachObject(Object);
 	Node = ScnNode;
+	ScnNode->attachObject(Object);
 	Name = ObjName;
 	StoredObject.Camera = Object;
 	Empty = false;
 }
 void GameObject::FillObject(Ogre::Light* Object, Ogre::SceneNode* ScnNode, Ogre::String ObjName)
 {
-	ScnNode->attachObject(Object);
 	Node = ScnNode;
+	ScnNode->attachObject(Object);
 	Name = ObjName;
 	StoredObject.Light = Object;
 	Empty = false;
 }
 void GameObject::FillObject(Ogre::Entity* Object, Ogre::SceneNode* ScnNode, Ogre::String ObjName)
 {
-	ScnNode->attachObject(Object);
 	Node = ScnNode;
+	ScnNode->attachObject(Object);
 	Name = ObjName;
 	StoredObject.entity = Object;
 	Empty = false;
@@ -33,9 +33,7 @@ void GameObject::CreateEntity(std::string EntityName,std::string MeshName)
 	OgreTransform.setIdentity();
 	OgreTransform.setRotation(btQuaternion(1, 1, 1, 0));
 	OgreTransform.setOrigin({ 0,200,0 });
-
-	GameObject* GO4 = new GameObject(PM, R);
-	GO4->initiate(new btBoxShape(btVector3(15.0f, 15.0f, 15.0f)), OgreEntity, OgreNode, EntityName, OgreTransform, 10);
+	initiate(new btBoxShape(btVector3(15.0f, 15.0f, 15.0f)), OgreEntity, OgreNode, EntityName, OgreTransform, 10);
 }
 void GameObject::CreateLight(std::string LightName)
 {
@@ -45,21 +43,17 @@ void GameObject::CreateLight(std::string LightName)
 	btTransform LightTransform;
 	LightTransform.setIdentity();
 	LightTransform.setOrigin({ 20, 50, 80 });
-
-	GameObject* GO1 = new GameObject(PM, R);
-	GO1->initiate(new btBoxShape(btVector3(0.0f, 0.0f, 0.0f)), light, lightNode, LightName, LightTransform, 0);
-
+	initiate(new btBoxShape(btVector3(0.0f, 0.0f, 0.0f)), light, lightNode, LightName, LightTransform, 0);
 }
 void GameObject::CreateCamera(std::string CameraName)
 {
 	Ogre::SceneNode* camNode = R->scnMgr->getRootSceneNode()->createChildSceneNode();
-	Ogre::Camera* cam = R->scnMgr->createCamera(Name);
+	Ogre::Camera* cam = R->scnMgr->createCamera(CameraName);
 
 	btTransform camTransform;
 	camTransform.setIdentity();
 	camTransform.setOrigin({ 0, 50, 200 });
-	GameObject* GO2 = new GameObject(PM, R);
-	GO2->initiate(new btBoxShape(btVector3(0.f, 0.f, 0.f)), cam, camNode, Name, camTransform, 0);
+	initiate(new btBoxShape(btVector3(0.f, 0.f, 0.f)), cam, camNode, CameraName, camTransform, 0);
 }
 void GameObject::ClearObject()
 {
@@ -101,7 +95,7 @@ void GameObject::initiate(btBoxShape* ColliderShape, Ogre::Camera* Object, Ogre:
 	FillObject(Object, ScnNode, ObjName);
 	InitiationAbstraction(ScnNode, ColliderShape, DefaultTransform, ObjMass);
 }
-GameObject::GameObject(Physics* PhysicsManager, Renderer* renderer)
+void GameObject::Subsystems(Physics* PhysicsManager, Renderer* renderer)
 {
 	PM = PhysicsManager;
 	R = renderer;

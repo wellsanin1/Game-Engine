@@ -1,8 +1,7 @@
 #include "Renderer.h"
 
-Renderer::Renderer()
+Renderer::Renderer() :OgreBites::ApplicationContext("GameEngine")
 {
-	initApp();
 }
 
 void Renderer::Update()
@@ -10,7 +9,7 @@ void Renderer::Update()
 
 }
 
-void Renderer::Setup()
+void Renderer::setup()
 {
 	OgreBites::ApplicationContext::setup();
 	root = getRoot();
@@ -22,9 +21,9 @@ void Renderer::Setup()
 
 void Renderer::Start()
 {
-	//LIGHT
 
 }
+
 
 void Renderer::End()
 {
