@@ -23,8 +23,12 @@ public:
 	void Render();
 	void Audio();
 	void renderOneFrame();
+	void Game();
 	EventQueue EQ = EventQueue();
 	ObjectPool OP = ObjectPool();
+	Ogre::Root* root;
+	Ogre::SceneManager* scnMgr;
+	Ogre::RTShader::ShaderGenerator* shadergen;
 	AudioManager AM = AudioManager();
 	//PhysicsManager PM;
 	Physics PM = Physics();

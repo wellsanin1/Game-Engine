@@ -49,54 +49,36 @@ void GameObject::AddtoPhysicsSystem()
 	PM->collisionShapes.push_back(CollisionShape);
 	PM->dynamicsWorld->addRigidBody(RigidBody3d);
 }
-
 void GameObject::initiate(btBoxShape* ColliderShape, Ogre::Entity* Object, Ogre::SceneNode* ScnNode, Ogre::String ObjName, btTransform DefaultTransform,int ObjMass)
 {
-	mass = ObjMass;
-	Transform = DefaultTransform;
 	FillObject(Object,ScnNode, ObjName);
-	AssignTransform();
-	btCollisionShape* newRigidShape = ColliderShape;
-	AssignCollisionShape(newRigidShape);
-	this->CollisionShape->calculateLocalInertia(mass, localInertia);
-	btRigidBody::btRigidBodyConstructionInfo BodyInfo(mass, myMotionState, CollisionShape, localInertia);
-	btRigidBody* Bdy = new btRigidBody(BodyInfo);
-	AssignRigidBody(Bdy);
-	RigidBody3d->setUserPointer(ScnNode);
-	AddtoPhysicsSystem();
-
+	InitiationAbstraction(ScnNode,ColliderShape,DefaultTransform,ObjMass);
 }
 void GameObject::initiate(btBoxShape* ColliderShape, Ogre::Light* Object, Ogre::SceneNode* ScnNode, Ogre::String ObjName, btTransform DefaultTransform, int ObjMass)
 {
-	mass = ObjMass;
-	Transform = DefaultTransform;
 	FillObject(Object, ScnNode, ObjName);
-	AssignTransform();
-	btCollisionShape* newRigidShape = ColliderShape;
-	AssignCollisionShape(newRigidShape);
-	this->CollisionShape->calculateLocalInertia(mass, localInertia);
-	btRigidBody::btRigidBodyConstructionInfo BodyInfo(mass, myMotionState, CollisionShape, localInertia);
-	btRigidBody* Bdy = new btRigidBody(BodyInfo);
-	AssignRigidBody(Bdy);
-	RigidBody3d->setUserPointer(ScnNode);
-	AddtoPhysicsSystem();
+	InitiationAbstraction(ScnNode, ColliderShape, DefaultTransform, ObjMass);
 }
 void GameObject::initiate(btBoxShape* ColliderShape, Ogre::Camera* Object, Ogre::SceneNode* ScnNode, Ogre::String ObjName, btTransform DefaultTransform, int ObjMass)
 {
-	mass = ObjMass;
-	Transform = DefaultTransform;
 	FillObject(Object, ScnNode, ObjName);
-	AssignTransform();
-	btCollisionShape* newRigidShape = ColliderShape;
-	AssignCollisionShape(newRigidShape);
-	this->CollisionShape->calculateLocalInertia(mass,localInertia);
-	btRigidBody::btRigidBodyConstructionInfo BodyInfo(mass, myMotionState, CollisionShape, localInertia);
-	btRigidBody* Bdy = new btRigidBody(BodyInfo);
-	AssignRigidBody(Bdy);
-	RigidBody3d->setUserPointer(ScnNode);
-	AddtoPhysicsSystem();
+	InitiationAbstraction(ScnNode, ColliderShape, DefaultTransform, ObjMass);
 }
 GameObject::GameObject(Physics* PhysicsManager)
 {
 	PM = PhysicsManager;
+}
+void GameObject::InitiationAbstraction(Ogre::SceneNode* ScnNode,btBoxShape* ColliderShape, btTransform DefaultTransform, int ObjMass)
+{
+	mass = ObjMass;
+	Transform = DefaultTransform;
+	AssignTransform();
+	btCollisionShape* newRigidShape = ColliderShape;
+	AssignCollisionShape(newRigidShape);
+	this->CollisionShape->calculateLocalInertia(mass, localInertia);
+	btRigidBody::btRigidBodyConstructionInfo BodyInfo(mass, myMotionState, CollisionShape, localInertia);
+	btRigidBody* Bdy = new btRigidBody(BodyInfo);
+	AssignRigidBody(Bdy);
+	RigidBody3d->setUserPointer(ScnNode);
+	AddtoPhysicsSystem();
 }

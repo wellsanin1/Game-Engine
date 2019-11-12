@@ -20,6 +20,7 @@ private:
 	void AssignTransform();
 	void AssignCollisionShape(btCollisionShape* CollisionShape);
 	void AddtoPhysicsSystem();
+	void InitiationAbstraction(Ogre::SceneNode* ScnNode,btBoxShape* ColliderShape, btTransform DefaultTransform, int ObjMass);
 	Physics* PM;
 public:
 	//BULLET

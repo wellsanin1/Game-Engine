@@ -13,14 +13,15 @@ void GameEngine::setup()
 {
 	//SETUP
 	OgreBites::ApplicationContext::setup();
-	Ogre::Root* root = getRoot();
-	Ogre::SceneManager* scnMgr = root->createSceneManager();
-
-	Ogre::RTShader::ShaderGenerator* shadergen = Ogre::RTShader::ShaderGenerator::getSingletonPtr();
+	root = getRoot();
+	scnMgr = root->createSceneManager();
+	shadergen = Ogre::RTShader::ShaderGenerator::getSingletonPtr();
 	shadergen->addSceneManager(scnMgr);
 	scnMgr->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
+}
 
-
+void GameEngine::Game()
+{
 	//LIGHT
 	Ogre::Light* light = scnMgr->createLight("MainLight");
 	Ogre::SceneNode* lightNode = scnMgr->getRootSceneNode()->createChildSceneNode();
@@ -30,11 +31,11 @@ void GameEngine::setup()
 	LightTransform.setOrigin({ 20, 50, 80 });
 
 	GameObject* GO1 = new GameObject(&PM);
-	GO1->initiate(new btBoxShape(btVector3(0.0f, 0.0f, 0.0f)), light, lightNode, "MainLight",LightTransform,0);
+	GO1->initiate(new btBoxShape(btVector3(0.0f, 0.0f, 0.0f)), light, lightNode, "MainLight", LightTransform, 0);
 	OP.StoreObject(GO1);
 
 
-	//Camera
+	//CAMERA
 	Ogre::SceneNode* camNode = scnMgr->getRootSceneNode()->createChildSceneNode();
 	Ogre::Camera* cam = scnMgr->createCamera("myCam");
 
@@ -42,7 +43,7 @@ void GameEngine::setup()
 	camTransform.setIdentity();
 	camTransform.setOrigin({ 0, 50, 200 });
 	GameObject* GO2 = new GameObject(&PM);
-	GO2->initiate(new btBoxShape(btVector3(0.f, 0.f, 0.f)), cam, camNode, "myCam", camTransform,0);
+	GO2->initiate(new btBoxShape(btVector3(0.f, 0.f, 0.f)), cam, camNode, "myCam", camTransform, 0);
 	OP.StoreObject(GO2);
 
 	OP.GetObject("myCam")->StoredObject.Camera->setAutoAspectRatio(true);
@@ -51,16 +52,7 @@ void GameEngine::setup()
 	getRenderWindow()->addViewport(OP.GetObject("myCam")->StoredObject.Camera);
 
 
-	/*
-	#######################################################################
-	#######################################################################
-	Below here lies sample code
-	#######################################################################
-	#######################################################################
-	*/
-	//create the actual plane in Ogre3D
-
-	//create the actual plane in Ogre3D
+	//PLANE
 	Ogre::Plane plane(Ogre::Vector3::UNIT_Y, 0);
 	Ogre::MeshPtr planePtr = Ogre::MeshManager::getSingleton().createPlane("ground", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, plane, 1500, 1500, 20, 20, true, 1, 5, 5, Ogre::Vector3::UNIT_Z);
 	Ogre::Entity* entGround = scnMgr->createEntity("GroundEntity", "ground");
@@ -72,16 +64,10 @@ void GameEngine::setup()
 	groundTransform.setOrigin(btVector3(0, -50, 0));
 	//GO2->initiate(box2, cam, camNode, "myCam", startTransform1);
 	GameObject* GO3 = new GameObject(&PM);
-	GO3->initiate(new btBoxShape(btVector3(50,50,50)), entGround, groundNode, "Ground" ,groundTransform,0);
+	GO3->initiate(new btBoxShape(btVector3(50, 50, 50)), entGround, groundNode, "Ground", groundTransform, 0);
 	OP.StoreObject(GO3);
 
-	/*
-	#######################################################################
-	#######################################################################
-	Below here lies more sample code
-	#######################################################################
-	#######################################################################
-	*/
+	//OGRE
 
 	Ogre::Entity* OgreEntity = scnMgr->createEntity("OgreHead", "ogrehead.mesh");
 	Ogre::SceneNode* OgreNode = scnMgr->getRootSceneNode()->createChildSceneNode("OgreNode");
@@ -91,9 +77,8 @@ void GameEngine::setup()
 	OgreTransform.setOrigin({ 0,200,0 });
 
 	GameObject* GO4 = new GameObject(&PM);
-	GO4->initiate(new btBoxShape(btVector3(15.0f, 15.0f, 15.0f)), OgreEntity, OgreNode, "OgreHead", OgreTransform,10);
+	GO4->initiate(new btBoxShape(btVector3(15.0f, 15.0f, 15.0f)), OgreEntity, OgreNode, "OgreHead", OgreTransform, 10);
 	OP.StoreObject(GO4);
-
 }
 
 void GameEngine::PhysicsUpdate()
@@ -102,8 +87,6 @@ void GameEngine::PhysicsUpdate()
 	PM.PhysicsUpdate();
 
 }
-
-
 
 void GameEngine::Audio()
 {
