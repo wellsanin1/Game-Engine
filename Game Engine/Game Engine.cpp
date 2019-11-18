@@ -1,31 +1,24 @@
 #include "GameEngine.h"
 
-
-
-void GameEngine::renderOneFrame()
-{
-
-}
-
-void GameEngine::CreateCamera(std::string Name)
+void GameEngine::CreateCamera(std::string Name, int PosX, int PosY, int PosZ)
 {
 	GameObject* a = new GameObject();
 	a->Subsystems(&PM, &R);
-	a->CreateCamera(Name);
+	a->CreateCamera(Name, PosX, PosY, PosZ);
 	OP.StoreObject(a);
 }
-void GameEngine::CreateEntity(std::string Name,std::string MeshName)
+void GameEngine::CreateEntity(std::string Name, std::string MeshName, int PosX, int PosY, int PosZ)
 {
 	GameObject* a = new GameObject();
 	a->Subsystems(&PM, &R);
-	a->CreateEntity(Name,MeshName);
+	a->CreateEntity(Name,MeshName,PosX,PosY,PosZ);
 	OP.StoreObject(a);
 }
-void GameEngine::CreateLight(std::string Name)
+void GameEngine::CreateLight(std::string Name, int PosX, int PosY, int PosZ)
 {
 	GameObject* a = new GameObject();
 	a->Subsystems(&PM, &R);
-	a->CreateLight(Name);
+	a->CreateLight(Name, PosX, PosY, PosZ);
 	OP.StoreObject(a);
 }
 void GameEngine::Game()
@@ -35,31 +28,16 @@ void GameEngine::Game()
 
 void GameEngine::Start()
 {
-	CreateCamera("myCam");
-
-	OP.GetObject("myCam")->StoredObject.Camera->setAutoAspectRatio(true);
-	OP.GetObject("myCam")->StoredObject.Camera->setNearClipDistance(5);
+	CreateCamera("myCam",0,50,200);
 	R.getRenderWindow()->addViewport(OP.GetObject("myCam")->StoredObject.Camera);
-	CreateLight("mainLight");
-	CreateEntity("OgreHead", "ogrehead.mesh");
-
-	//PLANE
-	//Ogre::Plane plane(Ogre::Vector3::UNIT_Y, 0);
-	//Ogre::MeshPtr planePtr = Ogre::MeshManager::getSingleton().createPlane("ground", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, plane, 1500, 1500, 20, 20, true, 1, 5, 5, Ogre::Vector3::UNIT_Z);
-	//Ogre::Entity* entGround = R.scnMgr->createEntity("GroundEntity", "ground");
-	//Ogre::SceneNode* groundNode = R.scnMgr->getRootSceneNode()->createChildSceneNode("groundNode");
-
-	//btTransform groundTransform;
-	//groundTransform.setIdentity();
-	//groundTransform.setOrigin(btVector3(0, -50, 0));
-	//GameObject* GO3 = new GameObject();
-	//GO3->initiate(new btBoxShape(btVector3(50, 50, 50)), entGround, groundNode, "Ground", groundTransform, 0);
-	//OP.StoreObject(GO3);
+	CreateLight("mainLight",20,50,80);
+	CreateEntity("OgreHead", "ogrehead.mesh",0,200,0);
+	CreateEntity("Barrel", "Barrel.mesh", 0, 100, 0);
 }
 
 void GameEngine::PhysicsUpdate()
 {
-	PM.PhysicsUpdate();
+	PM.PhysicsUpdate(&OP);
 }
 
 void GameEngine::Audio()
@@ -75,7 +53,7 @@ void GameEngine::CheckInput()
 void GameEngine::Render()
 {
 	R.Update();
-	//getRoot()->renderOneFrame();
+
 }
 
 void GameEngine::Quit()
@@ -90,6 +68,7 @@ void GameEngine::Quit()
 			break;
 		case QUIT:
 			std::cout << "QUIT" << std::endl;
+			AM.PlaySound("rain.wav");
 			break;
 	}
 }
@@ -113,11 +92,11 @@ void GameEngine::Initialise()
 		return;
 	}
 	AM.Loader();
+	Start();
 }
 
 void GameEngine::Close()
 {
-
 	SDL_Quit();
 	PM.dealloc();
 }

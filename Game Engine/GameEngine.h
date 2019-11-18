@@ -7,6 +7,8 @@
 
 class GameEngine
 {
+private:
+	bool Started = false;
 public:
 	GameEngine() {};
 	virtual ~GameEngine() {};
@@ -19,14 +21,10 @@ public:
 	void Render();
 	void Start();
 	void Audio();
-	void renderOneFrame();
 	void Game();
-
-
-	void CreateEntity(std::string Name, std::string MeshName);
-	void CreateLight(std::string Name);
-	void CreateCamera(std::string Name);
-
+	void CreateEntity(std::string Name, std::string MeshName, int PosX, int PosY, int PosZ);
+	void CreateLight(std::string Name, int PosX, int PosY, int PosZ);
+	void CreateCamera(std::string Name, int PosX, int PosY, int PosZ);
 	EventQueue EQ;
 	ObjectPool OP = ObjectPool();
 	Renderer R = Renderer();

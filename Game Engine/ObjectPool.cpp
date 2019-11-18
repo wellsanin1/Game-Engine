@@ -35,4 +35,19 @@ GameObject* ObjectPool::GetObject(Ogre::String ObjectName)
 		}
 	}
 	throw std::invalid_argument("Object with name " + ObjectName + " does not exist");
+	return nullptr;
+};
+
+GameObject* ObjectPool::GetObject(btRigidBody* RigidBody)
+{
+	int size = sizeof(PoolStorage) / sizeof(*PoolStorage);
+	for (int i = 0; i < size; i++)
+	{
+		if (PoolStorage[i]->RigidBody3d == RigidBody)
+		{
+			return PoolStorage[i];
+		}
+	}
+	throw std::invalid_argument("Object Rigidbody does not exist");
+	return nullptr;
 };

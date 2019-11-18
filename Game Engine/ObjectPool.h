@@ -14,5 +14,5 @@ public:
 	//void StoreObject(Ogre::Camera* CreatedEntity, Ogre::SceneNode* CreatedNode);
 	void StoreObject(GameObject* Object);
 	GameObject* GetObject(Ogre::String ObjectName);
-
+	GameObject* GetObject(btRigidBody* RigidBody);
 };

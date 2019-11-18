@@ -24,7 +24,31 @@ void GameObject::FillObject(Ogre::Entity* Object, Ogre::SceneNode* ScnNode, Ogre
 	StoredObject.entity = Object;
 	Empty = false;
 }
-void GameObject::CreateEntity(std::string EntityName,std::string MeshName)
+void GameObject::SetTransform(double x, double y, double z)
+{
+	//Transform.setOrigin({ x,y,z });
+	Node->setPosition(x,y,z);
+}
+std::vector<double> GameObject::GetTransform()
+{
+	std::vector<double> ReturnTransform;
+	btVector3 Origin = Transform.getOrigin();
+	ReturnTransform = {Origin.x,Origin.y,Origin.z};
+	return ReturnTransform;
+}
+
+void GameObject::SetOrientation(double w, double x, double y, double z)
+{
+	Node->setOrientation(Ogre::Quaternion(w, x, y, z));
+}
+
+std::vector<double> GameObject::GetOrientation()
+{
+
+}
+
+
+void GameObject::CreateEntity(std::string EntityName,std::string MeshName, int PosX, int PosY, int PosZ)
 {
 	Ogre::Entity* OgreEntity = R->scnMgr->createEntity(EntityName, MeshName);
 	Ogre::SceneNode* OgreNode = R->scnMgr->getRootSceneNode()->createChildSceneNode();
@@ -32,27 +56,27 @@ void GameObject::CreateEntity(std::string EntityName,std::string MeshName)
 	btTransform OgreTransform;
 	OgreTransform.setIdentity();
 	OgreTransform.setRotation(btQuaternion(1, 1, 1, 0));
-	OgreTransform.setOrigin({ 0,200,0 });
+	OgreTransform.setOrigin({ (btScalar)PosX,(btScalar)PosY,(btScalar)PosZ });
 	initiate(new btBoxShape(btVector3(15.0f, 15.0f, 15.0f)), OgreEntity, OgreNode, EntityName, OgreTransform, 10);
 }
-void GameObject::CreateLight(std::string LightName)
+void GameObject::CreateLight(std::string LightName, int PosX, int PosY, int PosZ)
 {
 	Ogre::Light* light = R->scnMgr->createLight(LightName);
 	Ogre::SceneNode* lightNode = R->scnMgr->getRootSceneNode()->createChildSceneNode();
-
 	btTransform LightTransform;
 	LightTransform.setIdentity();
-	LightTransform.setOrigin({ 20, 50, 80 });
+	LightTransform.setOrigin({ (btScalar)PosX,(btScalar)PosY,(btScalar)PosZ });
 	initiate(new btBoxShape(btVector3(0.0f, 0.0f, 0.0f)), light, lightNode, LightName, LightTransform, 0);
 }
-void GameObject::CreateCamera(std::string CameraName)
+void GameObject::CreateCamera(std::string CameraName, int PosX, int PosY, int PosZ)
 {
 	Ogre::SceneNode* camNode = R->scnMgr->getRootSceneNode()->createChildSceneNode();
 	Ogre::Camera* cam = R->scnMgr->createCamera(CameraName);
-
+	cam->setAutoAspectRatio(true);
+	cam->setNearClipDistance(NearCamClipDistance);
 	btTransform camTransform;
 	camTransform.setIdentity();
-	camTransform.setOrigin({ 0, 50, 200 });
+	camTransform.setOrigin({ (btScalar)PosX,(btScalar)PosY,(btScalar)PosZ });
 	initiate(new btBoxShape(btVector3(0.f, 0.f, 0.f)), cam, camNode, CameraName, camTransform, 0);
 }
 void GameObject::ClearObject()

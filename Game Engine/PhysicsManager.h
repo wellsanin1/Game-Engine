@@ -2,7 +2,7 @@
 #include "btBulletDynamicsCommon.h"
 #include "Bullet3Common/b3Vector3.h"
 #include "GameEngineDefinitions.h"
-#include "ogre.h"
+#include "ObjectPool.h"
 #include <iostream>
 #include <vector>
 #include <map>
@@ -19,6 +19,7 @@ public:
 	btDiscreteDynamicsWorld* dynamicsWorld;
 	std::vector<btCollisionShape*> collisionShapes;
 	std::map<std::string, btRigidBody*> physicsAccessors;
-	void PhysicsUpdate();
+	//ERROR IS HERE. Circular reference within this code.
+	void PhysicsUpdate(ObjectPool* OP);
 	void dealloc();
 };
