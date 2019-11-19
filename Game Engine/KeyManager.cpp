@@ -30,10 +30,6 @@ event KeyManager::CreateEvent(SDL_Keycode KeyCode)
 	{
 		E.SubSystemList.push_back(event::Renderer);
 		E.SubSystemList.push_back(event::TEST);
-		//E.SubSystemList.push_back(event::Audio);
-		//E.SubSystemList.push_back(event::Input);
-		//E.SubSystemList.push_back(event::Netcode);
-		//E.SubSystemList.push_back(event::Physics);
 		E.EventType = KeyPressed;
 	}
 	return E;
@@ -44,15 +40,11 @@ void KeyManager::InputRead(EventQueue* EQ)
 	SDL_Event event;
 	while (SDL_PollEvent(&event))
 	{
-		switch (event.type)
+		if (event.type == SDL_KEYDOWN)
 		{
-		case SDL_KEYDOWN:
 			EQ->AddEvent(CreateEvent(event.key.keysym.sym));
-			break;
-	/*	case SDL_KEYUP:
-			EQ->AddEvent(CreateEvent(event.key.keysym.sym));
-			break;*/
 		}
+		std::cout << std::endl;
 	}
 	return;
 };

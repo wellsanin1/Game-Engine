@@ -47,6 +47,23 @@ void GameEngine::Audio()
 void GameEngine::CheckInput()
 {
 	KM.InputRead(&EQ);
+	switch (EQ.CheckQueue(event::TEST))
+	{
+	case NONE:
+		break;
+	case UP:
+		std::cout << "UP" << std::endl;
+		OP.GetObject("OgreHead")->AddVelocity(0, -100, 0);
+		break;
+	case LEFT:
+		std::cout << "LEFT" << std::endl;
+		OP.GetObject("OgreHead")->AddVelocity(0, 100, 0);
+		break;
+	case QUIT:
+		std::cout << "QUIT" << std::endl;
+		//AM.PlaySound("rain.wav");
+		break;
+	}
 }
 
 void GameEngine::Render()
@@ -57,23 +74,7 @@ void GameEngine::Render()
 
 void GameEngine::Quit()
 {
-	switch (EQ.CheckQueue(event::TEST))
-	{
-		case NONE:
-			break;
-		case UP:
-			std::cout << "UP" << std::endl;
-			OP.GetObject("OgreHead")->SetVelocity(0,0,-100);
-			break;
-		case LEFT:
-			std::cout << "LEFT" << std::endl;
-			OP.GetObject("OgreHead")->SetVelocity(0, 100, 0);
-			break;
-		case QUIT:
-			std::cout << "QUIT" << std::endl;
-			//AM.PlaySound("rain.wav");
-			break;
-	}
+
 }
 
 void GameEngine::Update()
@@ -83,7 +84,6 @@ void GameEngine::Update()
 	Render();
 	Game();
 	Audio();
-	Quit();
 }
 
 void GameEngine::Initialise()
