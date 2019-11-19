@@ -51,7 +51,9 @@ public:
 	std::vector<double> GetTransform();
 	void SetOrientation(double w, double x, double y, double z);
 	std::vector<double> GetOrientation();
-	void SetMass(float NewMass);
+	void SetMass(float NewMass,Physics* PM);
+	void SetVelocity(float x, float y, float z);
+	void AddVelocity(float x, float y, float z);
 
 
 	void CreateEntity(Physics* PM, Renderer*R,std::string EntityName, std::string MeshName, int PosX, int PosY, int PosZ);
@@ -59,11 +61,7 @@ public:
 	void CreateCamera(Physics* PM, Renderer* R,std::string CameraName, int PosX, int PosY, int PosZ);
 
 	StoredObj StoredObject;
-	std::vector<float> Velocity = {0,0,0};
-
-	void initiate(Physics* PM, btBoxShape* ColliderShape, Ogre::Entity* Object, Ogre::SceneNode* ScnNode, Ogre::String ObjName,btTransform DefaultTransform, int ObjMass);
-	void initiate(Physics* PM, btBoxShape* ColliderShape, Ogre::Light* Object, Ogre::SceneNode* ScnNode, Ogre::String ObjName, btTransform DefaultTransform, int ObjMass);
-	void initiate(Physics* PM, btBoxShape* ColliderShape, Ogre::Camera* Object, Ogre::SceneNode* ScnNode, Ogre::String ObjName, btTransform DefaultTransform, int ObjMass);
+	float Velocity[3] = {0,0,0};
 
 	GameObject() {};
 	~GameObject() {};

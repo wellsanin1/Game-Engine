@@ -31,7 +31,7 @@ void GameEngine::Start()
 	CreateEntity("OgreHead", "ogrehead.mesh",0,200,0);
 	CreateEntity("Barrel", "Barrel.mesh", 0, 100, 0);
 	CreateEntity("penguin", "penguin.mesh", 0, 50, 0);
-	OP.GetObject("penguin")->SetMass(0);
+	OP.GetObject("penguin")->SetMass(0,&PM);
 }
 
 void GameEngine::PhysicsUpdate()
@@ -63,11 +63,15 @@ void GameEngine::Quit()
 			break;
 		case UP:
 			std::cout << "UP" << std::endl;
-
+			OP.GetObject("OgreHead")->SetVelocity(0,0,-100);
+			break;
+		case LEFT:
+			std::cout << "LEFT" << std::endl;
+			OP.GetObject("OgreHead")->SetVelocity(0, 100, 0);
 			break;
 		case QUIT:
 			std::cout << "QUIT" << std::endl;
-			AM.PlaySound("rain.wav");
+			//AM.PlaySound("rain.wav");
 			break;
 	}
 }
