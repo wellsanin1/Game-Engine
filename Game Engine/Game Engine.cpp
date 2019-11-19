@@ -3,22 +3,19 @@
 void GameEngine::CreateCamera(std::string Name, int PosX, int PosY, int PosZ)
 {
 	GameObject* a = new GameObject();
-	a->Subsystems(&PM, &R);
-	a->CreateCamera(Name, PosX, PosY, PosZ);
+	a->CreateCamera(&PM,&R,Name, PosX, PosY, PosZ);
 	OP.StoreObject(a);
 }
 void GameEngine::CreateEntity(std::string Name, std::string MeshName, int PosX, int PosY, int PosZ)
 {
 	GameObject* a = new GameObject();
-	a->Subsystems(&PM, &R);
-	a->CreateEntity(Name,MeshName,PosX,PosY,PosZ);
+	a->CreateEntity(&PM,&R,Name,MeshName,PosX,PosY,PosZ);
 	OP.StoreObject(a);
 }
 void GameEngine::CreateLight(std::string Name, int PosX, int PosY, int PosZ)
 {
 	GameObject* a = new GameObject();
-	a->Subsystems(&PM, &R);
-	a->CreateLight(Name, PosX, PosY, PosZ);
+	a->CreateLight(&PM,&R,Name, PosX, PosY, PosZ);
 	OP.StoreObject(a);
 }
 void GameEngine::Game()
@@ -33,6 +30,8 @@ void GameEngine::Start()
 	CreateLight("mainLight",20,50,80);
 	CreateEntity("OgreHead", "ogrehead.mesh",0,200,0);
 	CreateEntity("Barrel", "Barrel.mesh", 0, 100, 0);
+	CreateEntity("penguin", "penguin.mesh", 0, 50, 0);
+	OP.GetObject("penguin")->SetMass(0);
 }
 
 void GameEngine::PhysicsUpdate()

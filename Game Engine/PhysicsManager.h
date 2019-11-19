@@ -1,9 +1,13 @@
 #pragma once
+//Forward declare headers to avoid circular dependancy
+#include "PhysicsManager.fwd.h"
+#include "GameObject.fwd.h"
+#include "ObjectPool.fwd.h"
+
 #include "btBulletDynamicsCommon.h"
 #include "Bullet3Common/b3Vector3.h"
 #include "GameEngineDefinitions.h"
 #include "ObjectPool.h"
-#include <iostream>
 #include <vector>
 #include <map>
 

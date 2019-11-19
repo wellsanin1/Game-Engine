@@ -190,9 +190,12 @@
     <ClInclude Include="EventSystem.h" />
     <ClInclude Include="GameEngine.h" />
     <ClInclude Include="GameEngineDefinitions.h" />
+    <ClInclude Include="GameObject.fwd.h" />
     <ClInclude Include="KeyManager.h" />
     <ClInclude Include="EventEnum.h" />
+    <ClInclude Include="ObjectPool.fwd.h" />
     <ClInclude Include="ObjectPool.h" />
+    <ClInclude Include="PhysicsManager.fwd.h" />
     <ClInclude Include="PhysicsManager.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="Renderer.h" />
