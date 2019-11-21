@@ -70,8 +70,8 @@ void GameObject::SetVelocity(float x, float y, float z)
 void GameObject::AddVelocity(float x, float y, float z)
 {
 	Velocity[0] = Velocity[0] + x;
-	Velocity[1] = Velocity[0] + y;
-	Velocity[2] = Velocity[0] + z;
+	Velocity[1] = Velocity[1] + y;
+	Velocity[2] = Velocity[2] + z;
 	RigidBody3d->setLinearVelocity({ Velocity[0],Velocity[1],Velocity[2] });
 }
 void GameObject::CreateEntity(Physics*PM,Renderer* R,std::string EntityName,std::string MeshName, int PosX, int PosY, int PosZ)

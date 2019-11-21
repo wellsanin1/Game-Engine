@@ -14,5 +14,5 @@ public:
 	KeyManager();
 	~KeyManager() {};
 	void InputRead(EventQueue* EQ);
-	event CreateEvent(SDL_Keycode KeyCode);
+	event CreateEvent(EventEnum KeyPressed);
 };

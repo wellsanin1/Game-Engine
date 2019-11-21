@@ -25,5 +25,6 @@ public:
 	std::map<std::string, btRigidBody*> physicsAccessors;
 	//ERROR IS HERE. Circular reference within this code.
 	void PhysicsUpdate(ObjectPool* OP);
+	void CheckCollisions();
 	void dealloc();
 };

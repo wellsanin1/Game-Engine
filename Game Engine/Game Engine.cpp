@@ -22,13 +22,14 @@ void GameEngine::Game()
 {
 
 }
-
 void GameEngine::Start()
 {
 	CreateCamera("myCam",0,50,200);
 	R.getRenderWindow()->addViewport(OP.GetObject("myCam")->StoredObject.Camera);
 	CreateLight("mainLight",20,50,80);
+
 	CreateEntity("OgreHead", "ogrehead.mesh",0,200,0);
+
 	CreateEntity("Barrel", "Barrel.mesh", 0, 100, 0);
 	CreateEntity("penguin", "penguin.mesh", 0, 50, 0);
 	OP.GetObject("penguin")->SetMass(0,&PM);
@@ -47,22 +48,26 @@ void GameEngine::Audio()
 void GameEngine::CheckInput()
 {
 	KM.InputRead(&EQ);
-	switch (EQ.CheckQueue(event::TEST))
+
+
+	while (EventEnum Enum = EQ.CheckQueue(event::TEST))
 	{
-	case NONE:
-		break;
-	case UP:
-		std::cout << "UP" << std::endl;
-		OP.GetObject("OgreHead")->AddVelocity(0, -100, 0);
-		break;
-	case LEFT:
-		std::cout << "LEFT" << std::endl;
-		OP.GetObject("OgreHead")->AddVelocity(0, 100, 0);
-		break;
-	case QUIT:
-		std::cout << "QUIT" << std::endl;
-		//AM.PlaySound("rain.wav");
-		break;
+		switch (Enum)
+		{
+		case NONE:
+			break;
+		case UP:
+			std::cout << "UP" << std::endl;
+			OP.GetObject("OgreHead")->AddVelocity(0, -100, 0);
+			break;
+		case LEFT:
+			std::cout << "LEFT" << std::endl;
+			OP.GetObject("OgreHead")->AddVelocity(0, 100, 0);
+			break;
+		case QUIT:
+			std::cout << "QUIT" << std::endl;
+			break;
+		}
 	}
 }
 
