@@ -1,40 +1,109 @@
 #include "LUAHelper.h"
 
-LuaHelper::LuaHelper(const std::string& filename)
+LuaHelper::LuaHelper()
 {
-	L = luaL_newstate();
-	if (luaL_loadfile(L, filename.c_str()) || lua_pcall(L, 0, 0, 0)) {
-		std::cout << "Error: script not loaded (" << filename << ")" << std::endl;
-		L = 0;
+	luaL_dofile(F, "elements.lua");
+	luaL_openlibs(F);
+	lua_pcall(F, 0, 0, 0);
+	elementList = getElements((std::string)"elementList", F);
+	luabridge::LuaRef elementsRef = luabridge::getGlobal(F, "elementList");
+	std::string checker;
+	for (int i = 0; i < elementList.size(); i++)
+	{
+		luabridge::LuaRef entityCheck = elementsRef[elementList.at(i)];
+		checker = entityCheck["e_type"].cast<std::string>();
+		if (checker == "Camera")
+		{
+			LuaCamera *NewCamera = new LuaCamera();
+			NewCamera->Name = entityCheck["name"].cast<std::string>();
+			NewCamera->x = entityCheck["x"].cast<int>();
+			NewCamera->y = entityCheck["y"].cast<int>();
+			NewCamera->z = entityCheck["z"].cast<int>();
+			LuaGenStruct* NewGeneric = new LuaGenStruct();
+			NewGeneric->UnionType = checker;
+			NewGeneric->GenericStore.Camera = NewCamera;
+			entityList.push_back(NewGeneric);
+		}
+		if (checker == "Light")
+		{
+			LuaLight* NewLight = new LuaLight();
+			NewLight->Name = entityCheck["name"].cast<std::string>();
+			NewLight->x = entityCheck["x"].cast<int>();
+			NewLight->y = entityCheck["y"].cast<int>();
+			NewLight->z = entityCheck["z"].cast<int>();
+			LuaGenStruct* NewGeneric = new LuaGenStruct();
+			NewGeneric->UnionType = checker;
+			NewGeneric->GenericStore.Light = NewLight;
+			entityList.push_back(NewGeneric);
+		}
+		if (checker == "Entity")
+		{
+			LuaEntity* NewEntity = new LuaEntity();
+			NewEntity->Name = entityCheck["name"].cast<std::string>();
+			NewEntity->Mesh = entityCheck["mesh"].cast<std::string>();
+			NewEntity->x = entityCheck["x"].cast<int>();
+			NewEntity->y = entityCheck["y"].cast<int>();
+			NewEntity->z = entityCheck["z"].cast<int>();
+			LuaGenStruct* NewGeneric = new LuaGenStruct();
+			NewGeneric->UnionType = checker;
+			NewGeneric->GenericStore.Entity = NewEntity;
+			entityList.push_back(NewGeneric);
+		}
 	}
+	return;
 }
 
 LuaHelper::~LuaHelper()
 {
-	if (L) lua_close(L);
 }
 
-void LuaHelper::printError(const std::string& variableName, const std::string& reason)
+std::vector<std::string> LuaHelper::getElements(std::string& table, lua_State* L)
 {
-	std::cout << "Error: can't get [" << variableName << "]. " << reason << std::endl;
-}
+	std::string source =
+		"function getElements(table) "
+		"s = \"\""
+		"for k, v in pairs(_G[table]) do "
+		"    s = s..k..\"|\" "
+		"    end "
+		"return s "
+		"end";
 
-template<typename T>
-T LuaHelper::get(const std::string& variableName) 
-{
-	if (!L) {
-		printError(variableName, "Script is not loaded");
-		return lua_getdefault<T>();
+	/* We load the function using the loadstring function, then set up our
+	default preamble. We then use getGlobal to access the getElements
+	function, and pass in the name of the table we wish to explore (in this
+	case, elementList, or 'tab'). The second lua_pcall executes the function
+	we've loaded. */
+
+	luaL_loadstring(L, source.c_str());
+	lua_pcall(L, 0, 0, 0);
+	lua_getglobal(L, "getElements");
+	lua_pushstring(L, table.c_str());
+	lua_pcall(L, 1, 1, 0);
+
+	/* The return from the function will be a single string, so we'll need to
+	parse it.  This is why we added the separation character in the function
+	code. We simply iterate through ans, populating a temp string, and push
+	temp onto elements whenever the separation character is reached. */
+
+	std::string ans = lua_tostring(L, -1);
+	std::vector<std::string> elements;
+	std::string temp = "";
+	for (unsigned int i = 0; i < ans.size(); i++) {
+		if (ans.at(i) != '|') {
+			temp += ans.at(i);
+		}
+		else {
+			elements.push_back(temp);
+			temp = "";
+		}
 	}
 
-	T result;
-	if (lua_gettostack(variableName)) { // variable succesfully on top of stack
-		result = lua_get<T>(variableName);
-	}
-	else {
-		result = lua_getdefault<T>();
-	}
+	/* We clean up after ourselves as best we can. */
 
-	lua_pop(L, level + 1); // pop all existing elements from stack
-	return result;
+	int n = lua_gettop(L);
+	lua_pop(L, 1);
+
+	/* Lastly, return the list of elements. With thanks to Elias Daler.*/
+
+	return elements;
 }

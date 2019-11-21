@@ -1,45 +1,27 @@
 #pragma once
-#ifndef LUASCRIPT_H
-#define LUASCRIPT_H
+#ifndef LUAHelper_H
+#define LUAHelper_H
 
 #include <string>
 #include <vector>
 #include <iostream>
+#include "LuaStructs.h"
 
 extern "C" {
 # include "lua.h"
 # include "lauxlib.h"
 # include "lualib.h"
 }
+#include <LuaBridge/LuaBridge.h>
 
-class LuaHelper {
+class LuaHelper 
+{
+	std::vector<std::string> elementList;
+	std::vector<std::string> getElements(std::string& table, lua_State* L);
+	lua_State* F = luaL_newstate();
 public:
-	LuaHelper(const std::string& filename);
+	std::vector<LuaGenStruct*> entityList;
+	LuaHelper();
 	~LuaHelper();
-	void printError(const std::string& variableName, const std::string& reason);
-
-	template<typename T>
-	T get(const std::string& variableName) {
-		// will be implemented later in tutorial
-	}
-	bool lua_gettostack(const std::string& variableName) {
-		// will be explained later too
-	}
-	// Generic get
-	template<typename T>
-	T lua_get(const std::string& variableName) {
-		return 0;
-	}
-	// Generic default get
-	template<typename T>
-	T lua_getdefault(const std::string& variableName) {
-		return 0;
-	}
-	template<typename T>
-	T get(const std::string& variableName);
-
-	private:
-		lua_State* L;
 };
-
 #endif

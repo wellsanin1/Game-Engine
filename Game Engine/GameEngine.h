@@ -4,6 +4,7 @@
 #include "KeyManager.h"
 #include "AudioManager.h"
 #include <iostream>
+#include "LUAHelper.h"
 
 class GameEngine
 {
@@ -31,4 +32,5 @@ public:
 	AudioManager AM;
 	Physics PM = Physics();
 	KeyManager KM = KeyManager();
+	LuaHelper LH = LuaHelper();
 };

@@ -24,13 +24,26 @@ void GameEngine::Game()
 }
 void GameEngine::Start()
 {
-	CreateCamera("myCam",0,50,200);
-	R.getRenderWindow()->addViewport(OP.GetObject("myCam")->StoredObject.Camera);
-	CreateLight("mainLight",20,50,80);
-	CreateEntity("OgreHead", "ogrehead.mesh",0,200,0);
-	CreateEntity("Barrel", "Barrel.mesh", 0, 100, 0);
-	CreateEntity("penguin", "penguin.mesh", 0, 50, 0);
-	OP.GetObject("penguin")->SetMass(0,&PM);
+	for (int i = 0;i< LH.entityList.size();++i)
+	{
+		if (LH.entityList[i]->UnionType == "Entity")
+		{
+			LuaGenStruct::LuaGeneric GenEnt = LH.entityList[i]->GenericStore;
+			CreateEntity(GenEnt.Entity->Name, GenEnt.Entity->Mesh, GenEnt.Entity->x, GenEnt.Entity->y, GenEnt.Entity->z);
+		}
+		if (LH.entityList[i]->UnionType == "Camera")
+		{
+			LuaGenStruct::LuaGeneric GenEnt = LH.entityList[i]->GenericStore;
+			CreateCamera(GenEnt.Camera->Name,GenEnt.Camera->x, GenEnt.Camera->y, GenEnt.Camera->z);
+			R.getRenderWindow()->addViewport(OP.GetObject(GenEnt.Camera->Name)->StoredObject.Camera);
+		}
+		if (LH.entityList[i]->UnionType == "Light")
+		{
+			LuaGenStruct::LuaGeneric GenEnt = LH.entityList[i]->GenericStore;
+			CreateLight(GenEnt.Light->Name, GenEnt.Light->x, GenEnt.Light->y, GenEnt.Light->z);
+		}
+	}
+	OP.GetObject("penguin")->SetMass(0, &PM);
 }
 
 void GameEngine::PhysicsUpdate()
@@ -72,7 +85,6 @@ void GameEngine::CheckInput()
 void GameEngine::Render()
 {
 	R.Update();
-
 }
 
 void GameEngine::Quit()

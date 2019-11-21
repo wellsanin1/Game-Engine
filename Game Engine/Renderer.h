@@ -1,6 +1,5 @@
 #pragma once
 #include "OgreApplicationContext.h"
-#include "OgreRTShaderSystem.h"
 #include "Ogre.h"
 
 class Renderer : public OgreBites::ApplicationContext
