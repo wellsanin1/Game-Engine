@@ -27,9 +27,7 @@ void GameEngine::Start()
 	CreateCamera("myCam",0,50,200);
 	R.getRenderWindow()->addViewport(OP.GetObject("myCam")->StoredObject.Camera);
 	CreateLight("mainLight",20,50,80);
-
 	CreateEntity("OgreHead", "ogrehead.mesh",0,200,0);
-
 	CreateEntity("Barrel", "Barrel.mesh", 0, 100, 0);
 	CreateEntity("penguin", "penguin.mesh", 0, 50, 0);
 	OP.GetObject("penguin")->SetMass(0,&PM);

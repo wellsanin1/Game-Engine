@@ -35,7 +35,7 @@ void Physics::CheckCollisions()
 			if (pt.getDistance() < 0.0f)
 			{
 				btVector3 ptA = pt.getPositionWorldOnA();
-				btVector3 ptB = pt.getPositionWorldOnB;
+				btVector3 ptB = pt.getPositionWorldOnB();
 				btVector3 normalOnB = pt.m_normalWorldOnB;
 			}
 		}

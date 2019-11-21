@@ -26,7 +26,6 @@ void GameObject::FillObject(Ogre::Entity* Object, Ogre::SceneNode* ScnNode, Ogre
 }
 void GameObject::SetTransform(double x, double y, double z)
 {
-	//Transform.setOrigin({ x,y,z });
 	Node->setPosition(x,y,z);
 }
 std::vector<double> GameObject::GetTransform()
