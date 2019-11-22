@@ -5,6 +5,7 @@
 #include "AudioManager.h"
 #include <iostream>
 #include "LUAHelper.h"
+#include <LuaBridge/RefCountedPtr.h>
 
 class GameEngine
 {
@@ -23,8 +24,9 @@ public:
 	void Start();
 	void Audio();
 	void Game();
-	void LuaTestFunction();
 	void ExecuteLUA();
+	void LoadLevel(int Level);
+	void RegisterGameEngine();
 	EventQueue EQ;
 	ObjectPool OP = ObjectPool();
 	Renderer R = Renderer();

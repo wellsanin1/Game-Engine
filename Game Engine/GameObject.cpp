@@ -107,26 +107,6 @@ void GameObject::CreateCamera(Physics* PM, Renderer* R,std::string CameraName, i
 	InitiationAbstraction(PM, camNode, new btBoxShape(btVector3(0.0f, 0.0f, 0.0f)), NewTransform, 0);
 }
 
-void GameObject::register_lua(lua_State* L)
-{
-	using namespace luabridge;
-	getGlobalNamespace(L) //global namespace to lua
-		.beginNamespace(Name.c_str()) //our defined namespace (w.e we want to call it)
-		.beginClass<GameObject>("GameObject") //define class object
-		.addConstructor<void (*)(void)>() //reg. empty constructor
-		.addFunction("SetVelocity", &GameObject::SetVelocity) //reg. setName function
-		.addFunction("AddVelocity", &GameObject::AddVelocity) //reg. setName function
-		.addFunction("SetMass", &GameObject::SetMass) //reg. setName function
-		.endClass() //end class
-		.endNamespace(); //end namespace
-
-	GameObject* ThisObject = this;
-	LuaRef processFunc = getGlobal(L,Name.c_str());
-	if (processFunc.isFunction()) {
-		processFunc(&ThisObject);
-	}
-}
-
 void GameObject::ClearObject()
 {
 	Node = nullptr;

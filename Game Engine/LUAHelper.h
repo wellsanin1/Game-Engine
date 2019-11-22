@@ -26,6 +26,7 @@ public:
 	lua_State* L();
 	std::vector<LuaGenStruct*> entityList;
 	LuaHelper();
+	void Load(int Level);
 	~LuaHelper();
 	//Execute Lua File
 	void ExecuteFile(const char* file);

@@ -76,6 +76,5 @@ public:
 
 	GameObject() {};
 	~GameObject() {};
-	void register_lua(lua_State* L);
 
 };

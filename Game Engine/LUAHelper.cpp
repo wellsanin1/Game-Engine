@@ -2,7 +2,13 @@
 
 LuaHelper::LuaHelper()
 {
-	luaL_dofile(F, "elements.lua");
+
+}
+
+void LuaHelper::Load(int Level)
+{
+	std::string LevelString = std::string("Level")+std::string((char*)Level)+std::string(".lua");
+	luaL_dofile(F, LevelString.c_str());
 	luaL_openlibs(F);
 	lua_pcall(F, 0, 0, 0);
 	elementList = getElements((std::string)"elementList", F);
@@ -14,7 +20,7 @@ LuaHelper::LuaHelper()
 		checker = entityCheck["e_type"].cast<std::string>();
 		if (checker == "Camera")
 		{
-			LuaCamera *NewCamera = new LuaCamera();
+			LuaCamera* NewCamera = new LuaCamera();
 			NewCamera->Name = entityCheck["name"].cast<std::string>();
 			NewCamera->x = entityCheck["x"].cast<int>();
 			NewCamera->y = entityCheck["y"].cast<int>();
