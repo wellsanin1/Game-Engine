@@ -16,7 +16,7 @@ elementList = {
 	},
 	element3 = {
 		e_type = 'Entity',
-		name = 'ogrehead',
+		name = 'OgreHead',
 		mesh = 'ogrehead.mesh',
 		x = 0,
 		y = 200,

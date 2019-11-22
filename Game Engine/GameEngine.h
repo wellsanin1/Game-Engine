@@ -23,9 +23,8 @@ public:
 	void Start();
 	void Audio();
 	void Game();
-	void CreateEntity(std::string Name, std::string MeshName, int PosX, int PosY, int PosZ);
-	void CreateLight(std::string Name, int PosX, int PosY, int PosZ);
-	void CreateCamera(std::string Name, int PosX, int PosY, int PosZ);
+	void LuaTestFunction();
+	void ExecuteLUA();
 	EventQueue EQ;
 	ObjectPool OP = ObjectPool();
 	Renderer R = Renderer();
@@ -33,4 +32,6 @@ public:
 	Physics PM = Physics();
 	KeyManager KM = KeyManager();
 	LuaHelper LH = LuaHelper();
+	static void register_lua(lua_State* L);
+
 };

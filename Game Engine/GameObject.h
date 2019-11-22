@@ -3,6 +3,16 @@
 #include "GameObject.fwd.h"
 #include "PhysicsManager.fwd.h"
 
+
+#include "LuaStructs.h"
+extern "C" {
+# include "lua.h"
+# include "lauxlib.h"
+# include "lualib.h"
+}
+#include <LuaBridge/LuaBridge.h>
+#include <lua.hpp>
+
 #include "PhysicsManager.h"
 #include "Renderer.h"
 #include <vector>
@@ -30,7 +40,6 @@ private:
 	void FillObject(Ogre::Entity* Object, Ogre::SceneNode* ScnNode, Ogre::String ObjName);
 	//BULLET
 	btTransform Transform;
-
 public:
 	//BULLET
 	btCollisionShape* CollisionShape;
@@ -42,7 +51,7 @@ public:
 
 	//OGRE
 	Ogre::SceneNode* Node;
-	Ogre::String Name;
+
 	bool IsEmpty() { return Empty; };
 	void ClearObject();
 
@@ -63,6 +72,10 @@ public:
 	StoredObj StoredObject;
 	float Velocity[3] = {0,0,0};
 
+	std::string Name = "";
+
 	GameObject() {};
 	~GameObject() {};
+	void register_lua(lua_State* L);
+
 };

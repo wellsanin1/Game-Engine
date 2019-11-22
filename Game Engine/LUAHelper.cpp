@@ -55,6 +55,7 @@ LuaHelper::LuaHelper()
 
 LuaHelper::~LuaHelper()
 {
+	lua_close(F);
 }
 
 std::vector<std::string> LuaHelper::getElements(std::string& table, lua_State* L)
@@ -106,4 +107,45 @@ std::vector<std::string> LuaHelper::getElements(std::string& table, lua_State* L
 	/* Lastly, return the list of elements. With thanks to Elias Daler.*/
 
 	return elements;
+}
+
+//returns lua state object
+lua_State* LuaHelper::L()
+{
+	return F;
+}
+
+//helper function to report errors in evaluated lua scripts
+void LuaHelper::report_errors(int state)
+{
+	if (state != 0)
+	{
+		std::cerr << "ERR: " << lua_tostring(F, state) << std::endl;
+		lua_pop(F, 1); //remove error
+	}
+}
+
+//executes a lua script file
+void LuaHelper::ExecuteFile(const char* file)
+{
+	if (file == NULL)
+		return;
+
+	int state = luaL_dofile(F, file);
+	report_errors(state);
+}
+
+//execute a lua expression contained in string
+//
+//(could contain a full script with line breaks)
+void LuaHelper::ExecuteString(const char* expression)
+{
+	if (expression == NULL)
+	{
+		std::cerr << "ERR: null expression passed to script engine!" << std::endl;
+		return;
+	}
+
+	int state = luaL_dostring(F, expression);
+	report_errors(state);
 }

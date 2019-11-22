@@ -95,6 +95,7 @@ void GameObject::CreateLight(Physics* PM, Renderer* R,std::string LightName, int
 }
 void GameObject::CreateCamera(Physics* PM, Renderer* R,std::string CameraName, int PosX, int PosY, int PosZ)
 {
+	Name = "";
 	Ogre::SceneNode* camNode = R->scnMgr->getRootSceneNode()->createChildSceneNode();
 	Ogre::Camera* cam = R->scnMgr->createCamera(CameraName);
 	cam->setAutoAspectRatio(true);
@@ -105,6 +106,21 @@ void GameObject::CreateCamera(Physics* PM, Renderer* R,std::string CameraName, i
 	FillObject(cam, camNode, CameraName);
 	InitiationAbstraction(PM, camNode, new btBoxShape(btVector3(0.0f, 0.0f, 0.0f)), NewTransform, 0);
 }
+
+void GameObject::register_lua(lua_State* L)
+{
+	using namespace luabridge;
+	getGlobalNamespace(L) //global namespace to lua
+		.beginNamespace(Name.c_str()) //our defined namespace (w.e we want to call it)
+		.beginClass<GameObject>("GameObject") //define class object
+		.addConstructor<void (*)(void)>() //reg. empty constructor
+		.addFunction("SetVelocity", &GameObject::SetVelocity) //reg. setName function
+		.addFunction("AddVelocity", &GameObject::AddVelocity) //reg. setName function
+		.addFunction("SetMass", &GameObject::SetMass) //reg. setName function
+		.endClass() //end class
+		.endNamespace(); //end namespace
+}
+
 void GameObject::ClearObject()
 {
 	Node = nullptr;
