@@ -119,6 +119,12 @@ void GameObject::register_lua(lua_State* L)
 		.addFunction("SetMass", &GameObject::SetMass) //reg. setName function
 		.endClass() //end class
 		.endNamespace(); //end namespace
+
+	GameObject* ThisObject = this;
+	LuaRef processFunc = getGlobal(L,Name.c_str());
+	if (processFunc.isFunction()) {
+		processFunc(&ThisObject);
+	}
 }
 
 void GameObject::ClearObject()

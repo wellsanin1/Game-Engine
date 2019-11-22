@@ -6,7 +6,7 @@ void GameEngine::Game()
 }
 void GameEngine::LuaTestFunction()
 {
-	std::cout << "Hello fsdfsdf World"<<std::endl;
+	std::cout << "Hello World"<<std::endl;
 }
 void GameEngine::ExecuteLUA()
 {

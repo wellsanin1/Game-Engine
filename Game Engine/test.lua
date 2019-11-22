@@ -1,5 +1,7 @@
 a = Engine.GameEngine()
 a:LuaTestFunction()
 
-b = penguin.GameObject()
-b:SetVelocity(0,100,0)
+function penguin(object)
+   object:SetVelocity(0,100,0)
+   return object.value * a;
+end
