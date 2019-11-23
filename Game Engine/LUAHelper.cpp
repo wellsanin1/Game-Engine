@@ -2,13 +2,15 @@
 
 LuaHelper::LuaHelper()
 {
-	luaL_dofile(F, "test.lua");
+	luaL_dofile(F, "Game.lua");
 	luaL_openlibs(F);
+	register_lua(F);
 }
 
-void LuaHelper::Load(int Level)
+void LuaHelper::LoadEntities(int Level)
 {
-
+	entityList.clear();
+	elementList.clear();
 	std::string LevelString = std::string("Level") + std::to_string(Level)+std::string(".lua");
 	luaL_dofile(F, LevelString.c_str());
 	luaL_openlibs(F);
@@ -158,9 +160,14 @@ void LuaHelper::ExecuteString(const char* expression)
 	report_errors(state);
 }
 
+int LuaHelper::GetCurrentLevel()
+{
+	return CurrentLevel;
+}
+
 void LuaHelper::StartLevel(int Level)
 {
-	Load(Level);
+	LoadEntities(Level);
 	CurrentLevel = Level;
 }
 bool LuaHelper::IsFinished()

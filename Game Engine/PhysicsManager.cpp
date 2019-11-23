@@ -9,6 +9,17 @@ void Physics::dealloc()
 	delete overlappingPairCache;
 }
 
+void Physics::Restart()
+{
+	collisionConfiguration = new btDefaultCollisionConfiguration();
+	dispatcher = new btCollisionDispatcher(collisionConfiguration);
+	overlappingPairCache = new btDbvtBroadphase();
+	solver = new btSequentialImpulseConstraintSolver();
+	dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, overlappingPairCache, solver, collisionConfiguration);
+	dynamicsWorld->setGravity(btVector3(0, -Gravity, 0));
+	collisionShapes.clear();
+}
+
 Physics::Physics()
 {
 	collisionConfiguration = new btDefaultCollisionConfiguration();

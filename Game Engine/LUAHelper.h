@@ -12,6 +12,7 @@ extern "C" {
 # include "lauxlib.h"
 # include "lualib.h"
 }
+#include <LuaBridge/RefCountedPtr.h>
 #include <LuaBridge/LuaBridge.h>
 #include <lua.hpp>
 
@@ -26,7 +27,7 @@ public:
 	lua_State* L();
 	std::vector<LuaGenStruct*> entityList;
 	LuaHelper();
-	void Load(int Level);
+	void LoadEntities(int Level);
 	~LuaHelper();
 	void ExecuteFile(const char* file);
 	void ExecuteString(const char* expression);
@@ -35,12 +36,28 @@ public:
 
 //LEVEL MANAGEMENT
 
+void register_lua(lua_State* L)
+{
+	using namespace luabridge;
+	getGlobalNamespace(L)
+		.beginNamespace("Lua")
+		.beginClass<LuaHelper>("LuaHelper")
+		.addConstructor<void(*)(), luabridge::RefCountedPtr<LuaHelper>>()
+		.addFunction("StartLevel", &LuaHelper::StartLevel)
+		.addFunction("SetFinished", &LuaHelper::SetFinished)
+		.addFunction("IsFinished", &LuaHelper::IsFinished)
+		.addFunction("GetCurrentLevel", &LuaHelper::GetCurrentLevel)
+		.endClass()
+		.endNamespace();
+}
+
 public:
-	int CurrentLevel = 0;
+	int GetCurrentLevel();
 	void StartLevel(int Level);
 	bool IsFinished();
 	void SetFinished(bool Value);
 private:
+	int CurrentLevel = 0;
 	bool Finished = false;
 };
 #endif

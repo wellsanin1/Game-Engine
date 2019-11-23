@@ -8,81 +8,56 @@ void GameEngine::ExecuteLUA()
 }
 void GameEngine::LoadLevel(int Level)
 {
-	LH.Load(Level);
+	LH.LoadEntities(Level);
+	OP.ClearPool(&R,&PM);
 	for (int i = 0; i < LH.entityList.size(); ++i)
 	{
 		if (LH.entityList[i]->UnionType == "Entity")
 		{
 			LuaGenStruct::LuaGeneric GenEnt = LH.entityList[i]->GenericStore;
-			OP.CreateEntity(GenEnt.Entity->Name, GenEnt.Entity->Mesh, GenEnt.Entity->x, GenEnt.Entity->y, GenEnt.Entity->z, &PM, &R);
+			OP.CreateEntity(GenEnt.Entity->Name, GenEnt.Entity->Mesh, GenEnt.Entity->x, GenEnt.Entity->y, GenEnt.Entity->z, &PM, &R,&LH);
 		}
 		if (LH.entityList[i]->UnionType == "Camera")
 		{
 			LuaGenStruct::LuaGeneric GenEnt = LH.entityList[i]->GenericStore;
-			OP.CreateCamera(GenEnt.Camera->Name, GenEnt.Camera->x, GenEnt.Camera->y, GenEnt.Camera->z, &PM, &R);
+			OP.CreateCamera(GenEnt.Camera->Name, GenEnt.Camera->x, GenEnt.Camera->y, GenEnt.Camera->z, &PM, &R, &LH);
+			R.getRenderWindow()->removeAllViewports();
 			R.getRenderWindow()->addViewport(OP.GetObject(GenEnt.Camera->Name)->StoredObject.Camera);
 		}
 		if (LH.entityList[i]->UnionType == "Light")
 		{
 			LuaGenStruct::LuaGeneric GenEnt = LH.entityList[i]->GenericStore;
-			OP.CreateLight(GenEnt.Light->Name, GenEnt.Light->x, GenEnt.Light->y, GenEnt.Light->z, &PM, &R);
+			OP.CreateLight(GenEnt.Light->Name, GenEnt.Light->x, GenEnt.Light->y, GenEnt.Light->z, &PM, &R, &LH);
 		}
 	}
-	//OP.GetObject("penguin")->SetMass(0, &PM);
-}
-void GameEngine::register_lua(lua_State* L)
-{
-	using namespace luabridge;
-	getGlobalNamespace(L) //global namespace to lua
-		.beginNamespace("Engine") //our defined namespace (w.e we want to call it)
-		.beginClass<GameEngine>("GameEngine") //define class object
-		.addConstructor<void(*)(), luabridge::RefCountedPtr<GameEngine> /* creation policy */ >()
-		.addFunction("StartLevel", &GameEngine::StartLevel) //reg. setName function
-		.addFunction("LevelFinished", &GameEngine::LevelFinished) //reg. setName function
-		.endClass() //end class
-		.endNamespace(); //end namespace
-// lookup script function in global table
 }
 void GameEngine::Start()
 {
+	register_lua(LH.L());
 	LoadLevel(0);
 }
-
 void GameEngine::Game()
 {
 }
-
 void GameEngine::PhysicsUpdate()
 {
 	PM.PhysicsUpdate(&OP);
 }
-
 void GameEngine::Audio()
 {
 	//AM.PlaySound("rain.wav");
 }
-
-void GameEngine::StartLevel(int Level)
+LuaHelper* GameEngine::GetLevelManager()
 {
-	LH.StartLevel(Level);
-	LoadLevel(Level);
+	return &LH;
 }
-
-bool GameEngine::LevelFinished()
+GameObject* GameEngine::GetGameObjectWithName(std::string Name)
 {
-	return LH.IsFinished();
+	return OP.GetObject(Name);
 }
-
-void GameEngine::SetLevelFinished()
-{
-	LH.SetFinished(true);
-}
-
 void GameEngine::CheckInput()
 {
 	KM.InputRead(&EQ);
-
-
 	while (EventEnum Enum = EQ.CheckQueue(event::TEST))
 	{
 		switch (Enum)
@@ -91,11 +66,10 @@ void GameEngine::CheckInput()
 			break;
 		case UP:
 			std::cout << "UP" << std::endl;
-			OP.GetObject("OgreHead")->AddVelocity(0, -100, 0);
+			LH.SetFinished(true);
 			break;
 		case LEFT:
 			std::cout << "LEFT" << std::endl;
-			OP.GetObject("OgreHead")->AddVelocity(0, 100, 0);
 			break;
 		case QUIT:
 			std::cout << "QUIT" << std::endl;

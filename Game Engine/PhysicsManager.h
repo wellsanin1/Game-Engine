@@ -22,9 +22,8 @@ public:
 	btSequentialImpulseConstraintSolver* solver;
 	btDiscreteDynamicsWorld* dynamicsWorld;
 	std::vector<btCollisionShape*> collisionShapes;
-	std::map<std::string, btRigidBody*> physicsAccessors;
-	//ERROR IS HERE. Circular reference within this code.
 	void PhysicsUpdate(ObjectPool* OP);
 	void CheckCollisions();
 	void dealloc();
+	void Restart();
 };

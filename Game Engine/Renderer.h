@@ -1,6 +1,7 @@
 #pragma once
 #include "OgreApplicationContext.h"
 #include "Ogre.h"
+#include <iostream>
 
 class Renderer : public OgreBites::ApplicationContext
 {
@@ -14,4 +15,5 @@ public:
 	void setup();
 	void Start();
 	void End();
+	void Restart();
 };

@@ -29,3 +29,10 @@ void Renderer::End()
 {
 	closeApp();
 }
+
+void Renderer::Restart()
+{
+	scnMgr = root->createSceneManager();
+	shadergen->addSceneManager(scnMgr);
+	scnMgr->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
+}

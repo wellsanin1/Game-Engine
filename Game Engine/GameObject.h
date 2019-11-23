@@ -12,7 +12,9 @@ extern "C" {
 }
 #include <LuaBridge/LuaBridge.h>
 #include <lua.hpp>
+#include <LuaBridge/RefCountedPtr.h>
 
+#include "LUAHelper.h"
 #include "PhysicsManager.h"
 #include "Renderer.h"
 #include <vector>
@@ -34,12 +36,17 @@ private:
 	void AssignTransform();
 	void AssignCollisionShape(btCollisionShape* CollisionShape);
 	void AddtoPhysicsSystem(Physics* PM);
-	void InitiationAbstraction(Physics* PM,Ogre::SceneNode* ScnNode,btBoxShape* ColliderShape, btTransform DefaultTransform, int ObjMass);
+	void InitiationAbstraction(Ogre::SceneNode* ScnNode,btBoxShape* ColliderShape, btTransform DefaultTransform, int ObjMass);
 	void FillObject(Ogre::Camera* Object, Ogre::SceneNode* ScnNode, Ogre::String ObjName);
 	void FillObject(Ogre::Light* Object, Ogre::SceneNode* ScnNode, Ogre::String ObjName);
 	void FillObject(Ogre::Entity* Object, Ogre::SceneNode* ScnNode, Ogre::String ObjName);
 	//BULLET
 	btTransform Transform;
+
+	Physics* _PM;
+	Renderer* _R;
+	LuaHelper* _LH;
+
 public:
 	//BULLET
 	btCollisionShape* CollisionShape;
@@ -60,14 +67,14 @@ public:
 	std::vector<double> GetTransform();
 	void SetOrientation(double w, double x, double y, double z);
 	std::vector<double> GetOrientation();
-	void SetMass(float NewMass,Physics* PM);
+	void SetMass(float NewMass);
 	void SetVelocity(float x, float y, float z);
 	void AddVelocity(float x, float y, float z);
 
-
-	void CreateEntity(Physics* PM, Renderer*R,std::string EntityName, std::string MeshName, int PosX, int PosY, int PosZ);
-	void CreateLight(Physics* PM, Renderer* R,std::string LightName, int PosX, int PosY, int PosZ);
-	void CreateCamera(Physics* PM, Renderer* R,std::string CameraName, int PosX, int PosY, int PosZ);
+	void CreateEntity(Physics* PM, Renderer* R, LuaHelper* LH, std::string EntityName, std::string MeshName, int PosX, int PosY, int PosZ);
+	void CreateLight(Physics* PM, Renderer* R, LuaHelper* LH, std::string LightName, int PosX, int PosY, int PosZ);
+	void CreateCamera(Physics* PM, Renderer* R, LuaHelper* LH, std::string CameraName, int PosX, int PosY, int PosZ);
+	void AttachSystems(Physics*PM,Renderer*R,LuaHelper*LH);
 
 	StoredObj StoredObject;
 	float Velocity[3] = {0,0,0};
@@ -77,4 +84,17 @@ public:
 	GameObject() {};
 	~GameObject() {};
 
+	//LUA Interface
+	void register_lua(lua_State* L)
+	{
+		using namespace luabridge;
+		getGlobalNamespace(L)
+			.beginNamespace("GObject")
+			.beginClass<GameObject>("GameObject")
+			.addConstructor<void(*)(), luabridge::RefCountedPtr<GameObject>>()
+			.addFunction("SetMass", &GameObject::SetMass)
+			.addFunction("SetVelocity", &GameObject::SetVelocity)
+			.endClass()
+			.endNamespace();
+	}
 };

@@ -25,9 +25,6 @@ public:
 	void Game();
 	void Audio();
 
-	void StartLevel(int Level);
-	bool LevelFinished();
-	void SetLevelFinished();
 	void ExecuteLUA();
 	void LoadLevel(int Level);
 	EventQueue EQ;
@@ -37,6 +34,22 @@ public:
 	Physics PM = Physics();
 	KeyManager KM = KeyManager();
 	LuaHelper LH = LuaHelper();
-	void register_lua(lua_State* L);
 
+	//LUA interface
+	void register_lua(lua_State* L)
+	{
+		using namespace luabridge;
+		getGlobalNamespace(L)
+			.beginNamespace("Engine")
+			.beginClass<GameEngine>("GameEngine")
+			.addConstructor<void(*)(), luabridge::RefCountedPtr<GameEngine>>()
+			.addFunction("GetLevelManager", &GameEngine::GetLevelManager)
+			.addFunction("GetGameObjectWithName", &GameEngine::GetGameObjectWithName)
+			.endClass()
+			.endNamespace();
+	}
+
+	//LUA interface functions
+	LuaHelper* GetLevelManager();
+	GameObject* GetGameObjectWithName(std::string Name);
 };

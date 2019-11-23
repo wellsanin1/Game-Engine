@@ -9,6 +9,23 @@ ObjectPool::ObjectPool()
 	}
 };
 
+void ObjectPool::Reinitialise()
+{
+	int size = sizeof(PoolStorage) / sizeof(*PoolStorage);
+	for (int i = 0; i < size; i++)
+	{
+		PoolStorage[i] = new GameObject();
+	}
+}
+
+void ObjectPool::ClearPool(Renderer *R, Physics*PM)
+{
+	std::fill(PoolStorage, PoolStorage + PoolSize, nullptr);
+	R->Restart();
+	PM->Restart();
+	Reinitialise();
+}
+
 void ObjectPool::StoreObject(GameObject* Object)
 {
 	int size = sizeof(PoolStorage) / sizeof(*PoolStorage);
@@ -52,35 +69,21 @@ GameObject* ObjectPool::GetObject(btRigidBody* RigidBody)
 	return nullptr;
 };
 
-void ObjectPool::CreateCamera(std::string Name, int PosX, int PosY, int PosZ,Physics* PM,Renderer* R)
+void ObjectPool::CreateCamera(std::string Name, int PosX, int PosY, int PosZ,Physics* PM,Renderer* R, LuaHelper* LH)
 {
 	GameObject* a = new GameObject();
-	a->CreateCamera(PM, R, Name, PosX, PosY, PosZ);
+	a->CreateCamera(PM, R, LH, Name, PosX, PosY, PosZ);
 	StoreObject(a);
 }
-void ObjectPool::CreateEntity(std::string Name, std::string MeshName, int PosX, int PosY, int PosZ, Physics* PM, Renderer* R)
+void ObjectPool::CreateEntity(std::string Name, std::string MeshName, int PosX, int PosY, int PosZ, Physics* PM, Renderer* R,LuaHelper* LH)
 {
 	GameObject* a = new GameObject();
-	a->CreateEntity(PM, R, Name, MeshName, PosX, PosY, PosZ);
+	a->CreateEntity(PM, R, LH, Name, MeshName, PosX, PosY, PosZ);
 	StoreObject(a);
 }
-void ObjectPool::CreateLight(std::string Name, int PosX, int PosY, int PosZ, Physics* PM, Renderer* R)
+void ObjectPool::CreateLight(std::string Name, int PosX, int PosY, int PosZ, Physics* PM, Renderer* R,LuaHelper* LH)
 {
 	GameObject* a = new GameObject();
-	a->CreateLight(PM, R, Name, PosX, PosY, PosZ);
+	a->CreateLight(PM,R,LH,Name, PosX, PosY, PosZ);
 	StoreObject(a);
-}
-
-void ObjectPool::register_lua(lua_State* L)
-{
-	using namespace luabridge;
-	getGlobalNamespace(L) //global namespace to lua
-		.beginNamespace("Pool") //our defined namespace (w.e we want to call it)
-		.beginClass<ObjectPool>("ObjectPool") //define class object
-		.addConstructor<void (*)(void)>() //reg. empty constructor
-		.addFunction("CreateCamera", &ObjectPool::CreateCamera) //reg. setName function
-		.addFunction("CreateEntity", &ObjectPool::CreateEntity) //reg. setName function
-		.addFunction("CreateLight", &ObjectPool::CreateLight) //reg. setName function
-		.endClass() //end class
-		.endNamespace(); //end namespace
 }

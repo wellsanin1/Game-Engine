@@ -45,17 +45,17 @@ std::vector<double> GameObject::GetOrientation()
 
 }
 
-void GameObject::SetMass(float NewMass, Physics* PM)
+void GameObject::SetMass(float NewMass)
 {
-	PM->dynamicsWorld->removeRigidBody(RigidBody3d);
+	_PM->dynamicsWorld->removeRigidBody(RigidBody3d);
 	mass = NewMass;
 	CollisionShape->calculateLocalInertia(mass,localInertia);
 	btRigidBody::btRigidBodyConstructionInfo BodyInfo(mass, myMotionState, CollisionShape, localInertia);
 	btRigidBody* RB = new btRigidBody(BodyInfo);
 	AssignRigidBody(RB);
 	RigidBody3d->setUserPointer(Node);
-	AddtoPhysicsSystem(PM);
-	PM->dynamicsWorld->addRigidBody(RigidBody3d);
+	AddtoPhysicsSystem(_PM);
+	_PM->dynamicsWorld->addRigidBody(RigidBody3d);
 }
 
 void GameObject::SetVelocity(float x, float y, float z)
@@ -73,38 +73,49 @@ void GameObject::AddVelocity(float x, float y, float z)
 	Velocity[2] = Velocity[2] + z;
 	RigidBody3d->setLinearVelocity({ Velocity[0],Velocity[1],Velocity[2] });
 }
-void GameObject::CreateEntity(Physics*PM,Renderer* R,std::string EntityName,std::string MeshName, int PosX, int PosY, int PosZ)
+void GameObject::CreateEntity(Physics*PM,Renderer*R,LuaHelper* LH,std::string EntityName,std::string MeshName, int PosX, int PosY, int PosZ)
 {
-	Ogre::Entity* OgreEntity = R->scnMgr->createEntity(EntityName, MeshName);
-	Ogre::SceneNode* OgreNode = R->scnMgr->getRootSceneNode()->createChildSceneNode();
+	AttachSystems(PM,R,LH);
+	Ogre::Entity* OgreEntity = _R->scnMgr->createEntity(EntityName, MeshName);
+	Ogre::SceneNode* OgreNode = _R->scnMgr->getRootSceneNode()->createChildSceneNode();
 	btTransform NewTransform;
 	NewTransform.setIdentity();
 	NewTransform.setOrigin({ (btScalar)PosX,(btScalar)PosY,(btScalar)PosZ });
 	FillObject(OgreEntity, OgreNode, EntityName);
-	InitiationAbstraction(PM, OgreNode, new btBoxShape(btVector3(15.0f, 15.0f, 15.0f)), NewTransform, 10);
+	InitiationAbstraction(OgreNode, new btBoxShape(btVector3(15.0f, 15.0f, 15.0f)), NewTransform, 10);
 }
-void GameObject::CreateLight(Physics* PM, Renderer* R,std::string LightName, int PosX, int PosY, int PosZ)
+void GameObject::CreateLight(Physics* PM, Renderer* R, LuaHelper* LH, std::string LightName, int PosX, int PosY, int PosZ)
 {
-	Ogre::Light* light = R->scnMgr->createLight(LightName);
-	Ogre::SceneNode* lightNode = R->scnMgr->getRootSceneNode()->createChildSceneNode();
+	AttachSystems(PM, R,LH);
+	Ogre::Light* light = _R->scnMgr->createLight(LightName);
+	Ogre::SceneNode* lightNode = _R->scnMgr->getRootSceneNode()->createChildSceneNode();
 	btTransform NewTransform;
 	NewTransform.setIdentity();
 	NewTransform.setOrigin({ (btScalar)PosX,(btScalar)PosY,(btScalar)PosZ });
 	FillObject(light, lightNode, LightName);
-	InitiationAbstraction(PM, lightNode, new btBoxShape(btVector3(0.0f, 0.0f, 0.0f)), NewTransform, 0);
+	InitiationAbstraction(lightNode, new btBoxShape(btVector3(0.0f, 0.0f, 0.0f)), NewTransform, 0);
 }
-void GameObject::CreateCamera(Physics* PM, Renderer* R,std::string CameraName, int PosX, int PosY, int PosZ)
+void GameObject::CreateCamera(Physics* PM, Renderer* R, LuaHelper* LH, std::string CameraName, int PosX, int PosY, int PosZ)
 {
+	AttachSystems(PM, R,LH);
 	Name = "";
-	Ogre::SceneNode* camNode = R->scnMgr->getRootSceneNode()->createChildSceneNode();
-	Ogre::Camera* cam = R->scnMgr->createCamera(CameraName);
+	Ogre::SceneNode* camNode = _R->scnMgr->getRootSceneNode()->createChildSceneNode();
+	Ogre::Camera* cam = _R->scnMgr->createCamera(CameraName);
 	cam->setAutoAspectRatio(true);
 	cam->setNearClipDistance(NearCamClipDistance);
 	btTransform NewTransform;
 	NewTransform.setIdentity();
 	NewTransform.setOrigin({ (btScalar)PosX,(btScalar)PosY,(btScalar)PosZ });
 	FillObject(cam, camNode, CameraName);
-	InitiationAbstraction(PM, camNode, new btBoxShape(btVector3(0.0f, 0.0f, 0.0f)), NewTransform, 0);
+	InitiationAbstraction(camNode, new btBoxShape(btVector3(0.0f, 0.0f, 0.0f)), NewTransform, 0);
+}
+
+void GameObject::AttachSystems(Physics* PM, Renderer* R,LuaHelper* LH)
+{
+	_PM = PM;
+	_R = R;
+	_LH = LH;
+	register_lua(_LH->L());
 }
 
 void GameObject::ClearObject()
@@ -129,12 +140,12 @@ void GameObject::AssignCollisionShape(btCollisionShape* CollisionShape)
 	this->CollisionShape->calculateLocalInertia(mass, localInertia);
 };
 
-void GameObject::AddtoPhysicsSystem(Physics * PM)
+void GameObject::AddtoPhysicsSystem(Physics * _PM)
 {
-	PM->collisionShapes.push_back(CollisionShape);
-	PM->dynamicsWorld->addRigidBody(RigidBody3d);
+	_PM->collisionShapes.push_back(CollisionShape);
+	_PM->dynamicsWorld->addRigidBody(RigidBody3d);
 }
-void GameObject::InitiationAbstraction(Physics * PM,Ogre::SceneNode* ScnNode,btBoxShape* ColliderShape, btTransform DefaultTransform, int ObjMass)
+void GameObject::InitiationAbstraction(Ogre::SceneNode* ScnNode,btBoxShape* ColliderShape, btTransform DefaultTransform, int ObjMass)
 {
 	mass = ObjMass;
 	Transform = DefaultTransform;
@@ -146,5 +157,5 @@ void GameObject::InitiationAbstraction(Physics * PM,Ogre::SceneNode* ScnNode,btB
 	btRigidBody* Bdy = new btRigidBody(BodyInfo);
 	AssignRigidBody(Bdy);
 	RigidBody3d->setUserPointer(ScnNode);
-	AddtoPhysicsSystem(PM);
+	AddtoPhysicsSystem(_PM);
 }
