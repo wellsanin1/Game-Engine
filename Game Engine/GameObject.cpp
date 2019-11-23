@@ -35,7 +35,6 @@ std::vector<double> GameObject::GetTransform()
 	ReturnTransform = {Origin.getX(),Origin.getY(),Origin.getZ()};
 	return ReturnTransform;
 }
-
 void GameObject::SetOrientation(double w, double x, double y, double z)
 {
 	Node->setOrientation(Ogre::Quaternion(w, x, y, z));
@@ -72,6 +71,14 @@ void GameObject::AddVelocity(float x, float y, float z)
 	Velocity[1] = Velocity[1] + y;
 	Velocity[2] = Velocity[2] + z;
 	RigidBody3d->setLinearVelocity({ Velocity[0],Velocity[1],Velocity[2] });
+}
+bool GameObject::IsColliding()
+{
+	if (!CollidedObjects.empty())
+	{
+		return true;
+	}
+	return false;
 }
 void GameObject::CreateEntity(Physics*PM,Renderer*R,LuaHelper* LH,std::string EntityName,std::string MeshName, int PosX, int PosY, int PosZ)
 {
@@ -116,6 +123,11 @@ void GameObject::AttachSystems(Physics* PM, Renderer* R,LuaHelper* LH)
 	_R = R;
 	_LH = LH;
 	register_lua(_LH->L());
+}
+
+GameObject GameObject::CollideObject()
+{
+	return GameObject();
 }
 
 void GameObject::ClearObject()

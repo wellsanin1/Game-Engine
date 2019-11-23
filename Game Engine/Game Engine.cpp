@@ -6,9 +6,9 @@ void GameEngine::ExecuteLUA()
 		processFunc(this);
 	}
 }
-void GameEngine::LoadLevel(int Level)
+void GameEngine::LoadEntitiesIntoEngine(int Level)
 {
-	LH.LoadEntities(Level);
+	LH.LoadEntityData(Level);
 	OP.ClearPool(&R,&PM);
 	for (int i = 0; i < LH.entityList.size(); ++i)
 	{
@@ -34,7 +34,7 @@ void GameEngine::LoadLevel(int Level)
 void GameEngine::Start()
 {
 	register_lua(LH.L());
-	LoadLevel(0);
+	LoadEntitiesIntoEngine(0);
 }
 void GameEngine::Game()
 {

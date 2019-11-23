@@ -55,7 +55,7 @@ public:
 	btDefaultMotionState* myMotionState; //initialise = new btDefaultMotionState(startTransform);
 	btRigidBody::btRigidBodyConstructionInfo* BodyInfo;
 	btRigidBody* RigidBody3d;
-
+	std::vector<GameObject*> CollidedObjects;
 	//OGRE
 	Ogre::SceneNode* Node;
 
@@ -70,11 +70,14 @@ public:
 	void SetMass(float NewMass);
 	void SetVelocity(float x, float y, float z);
 	void AddVelocity(float x, float y, float z);
+	bool IsColliding();
+
 
 	void CreateEntity(Physics* PM, Renderer* R, LuaHelper* LH, std::string EntityName, std::string MeshName, int PosX, int PosY, int PosZ);
 	void CreateLight(Physics* PM, Renderer* R, LuaHelper* LH, std::string LightName, int PosX, int PosY, int PosZ);
 	void CreateCamera(Physics* PM, Renderer* R, LuaHelper* LH, std::string CameraName, int PosX, int PosY, int PosZ);
 	void AttachSystems(Physics*PM,Renderer*R,LuaHelper*LH);
+	GameObject CollideObject();
 
 	StoredObj StoredObject;
 	float Velocity[3] = {0,0,0};
@@ -94,6 +97,7 @@ public:
 			.addConstructor<void(*)(), luabridge::RefCountedPtr<GameObject>>()
 			.addFunction("SetMass", &GameObject::SetMass)
 			.addFunction("SetVelocity", &GameObject::SetVelocity)
+			.addFunction("IsColliding", &GameObject::IsColliding)
 			.endClass()
 			.endNamespace();
 	}

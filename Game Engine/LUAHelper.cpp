@@ -7,7 +7,7 @@ LuaHelper::LuaHelper()
 	register_lua(F);
 }
 
-void LuaHelper::LoadEntities(int Level)
+void LuaHelper::LoadEntityData(int Level)
 {
 	entityList.clear();
 	elementList.clear();
@@ -79,22 +79,11 @@ std::vector<std::string> LuaHelper::getElements(std::string& table, lua_State* L
 		"return s "
 		"end";
 
-	/* We load the function using the loadstring function, then set up our
-	default preamble. We then use getGlobal to access the getElements
-	function, and pass in the name of the table we wish to explore (in this
-	case, elementList, or 'tab'). The second lua_pcall executes the function
-	we've loaded. */
-
 	luaL_loadstring(L, source.c_str());
 	lua_pcall(L, 0, 0, 0);
 	lua_getglobal(L, "getElements");
 	lua_pushstring(L, table.c_str());
 	lua_pcall(L, 1, 1, 0);
-
-	/* The return from the function will be a single string, so we'll need to
-	parse it.  This is why we added the separation character in the function
-	code. We simply iterate through ans, populating a temp string, and push
-	temp onto elements whenever the separation character is reached. */
 
 	std::string ans = lua_tostring(L, -1);
 	std::vector<std::string> elements;
@@ -130,7 +119,7 @@ void LuaHelper::report_errors(int state)
 {
 	if (state != 0)
 	{
-		std::cerr << "ERR: " << lua_tostring(F, state) << std::endl;
+		std::cerr << "ERR: " << lua_tostring(F, state) << std::endl; 
 		lua_pop(F, 1); //remove error
 	}
 }
@@ -145,8 +134,6 @@ void LuaHelper::ExecuteFile(const char* file)
 	report_errors(state);
 }
 
-//execute a lua expression contained in string
-//
 //(could contain a full script with line breaks)
 void LuaHelper::ExecuteString(const char* expression)
 {
@@ -167,10 +154,11 @@ int LuaHelper::GetCurrentLevel()
 
 void LuaHelper::StartLevel(int Level)
 {
-	LoadEntities(Level);
+	LoadEntityData(Level);
 	CurrentLevel = Level;
+	Finished = false;
 }
-bool LuaHelper::IsFinished()
+bool LuaHelper::GetFinished()
 {
 	return Finished;
 }

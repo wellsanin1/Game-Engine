@@ -26,7 +26,7 @@ public:
 	void Audio();
 
 	void ExecuteLUA();
-	void LoadLevel(int Level);
+	void LoadEntitiesIntoEngine(int Level);
 	EventQueue EQ;
 	ObjectPool OP = ObjectPool();
 	Renderer R = Renderer();
@@ -45,6 +45,7 @@ public:
 			.addConstructor<void(*)(), luabridge::RefCountedPtr<GameEngine>>()
 			.addFunction("GetLevelManager", &GameEngine::GetLevelManager)
 			.addFunction("GetGameObjectWithName", &GameEngine::GetGameObjectWithName)
+			.addFunction("LoadEntitiesIntoEngine", &GameEngine::LoadEntitiesIntoEngine)
 			.endClass()
 			.endNamespace();
 	}

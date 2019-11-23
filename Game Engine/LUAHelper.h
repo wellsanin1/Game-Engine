@@ -6,6 +6,7 @@
 #include <vector>
 #include <iostream>
 #include "LuaStructs.h"
+#include "EventSystem.h"
 
 extern "C" {
 # include "lua.h"
@@ -23,17 +24,18 @@ private:
 	std::vector<std::string> getElements(std::string& table, lua_State* L);
 	lua_State* F = luaL_newstate();
 	void report_errors(int state);
+	EventQueue* _EQ;
 public:
 	lua_State* L();
 	std::vector<LuaGenStruct*> entityList;
 	LuaHelper();
-	void LoadEntities(int Level);
+	void LoadEntityData(int Level);
 	~LuaHelper();
 	void ExecuteFile(const char* file);
 	void ExecuteString(const char* expression);
 	LuaHelper(const LuaHelper& other);  //non-construction copy
 	LuaHelper& operator=(const LuaHelper&); //non-copy
-
+	void RegisterEventQueue(EventQueue* EQ);
 //LEVEL MANAGEMENT
 
 void register_lua(lua_State* L)
@@ -45,7 +47,7 @@ void register_lua(lua_State* L)
 		.addConstructor<void(*)(), luabridge::RefCountedPtr<LuaHelper>>()
 		.addFunction("StartLevel", &LuaHelper::StartLevel)
 		.addFunction("SetFinished", &LuaHelper::SetFinished)
-		.addFunction("IsFinished", &LuaHelper::IsFinished)
+		.addFunction("GetFinished", &LuaHelper::GetFinished)
 		.addFunction("GetCurrentLevel", &LuaHelper::GetCurrentLevel)
 		.endClass()
 		.endNamespace();
@@ -54,7 +56,7 @@ void register_lua(lua_State* L)
 public:
 	int GetCurrentLevel();
 	void StartLevel(int Level);
-	bool IsFinished();
+	bool GetFinished();
 	void SetFinished(bool Value);
 private:
 	int CurrentLevel = 0;

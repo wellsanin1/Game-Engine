@@ -7,5 +7,6 @@ enum EventEnum
 	LEFT,
 	RIGHT,
 	QUIT,
-	PHYSICS
+	PHYSICS,
+	LOAD
 };

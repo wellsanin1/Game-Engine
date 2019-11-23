@@ -10,7 +10,7 @@ public:
 	//Function FunctionArray[FunctionArraySize];
 
 	//EventData
-	enum SubSystem {NONE,TEST,Renderer,Audio,Input,Netcode,Physics};
+	enum SubSystem {NONE,TEST,Renderer,Audio,Input,Netcode,Physics,Load};
 	EventEnum EventType = EventEnum::NONE;
 	std::vector<SubSystem> SubSystemList;
 };
