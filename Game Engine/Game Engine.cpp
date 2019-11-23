@@ -1,13 +1,10 @@
 #include "GameEngine.h"
-
-void GameEngine::Game()
-{
-
-}
 void GameEngine::ExecuteLUA()
 {
-	GameEngine::register_lua(LH.L());
-	return;
+	luabridge::LuaRef processFunc = luabridge::getGlobal(LH.L(), "GameEngine");
+	if (processFunc.isFunction()) {
+		processFunc(this);
+	}
 }
 void GameEngine::LoadLevel(int Level)
 {
@@ -31,8 +28,7 @@ void GameEngine::LoadLevel(int Level)
 			OP.CreateLight(GenEnt.Light->Name, GenEnt.Light->x, GenEnt.Light->y, GenEnt.Light->z, &PM, &R);
 		}
 	}
-	OP.GetObject("penguin")->SetMass(0, &PM);
-	ExecuteLUA();
+	//OP.GetObject("penguin")->SetMass(0, &PM);
 }
 void GameEngine::register_lua(lua_State* L)
 {
@@ -41,13 +37,19 @@ void GameEngine::register_lua(lua_State* L)
 		.beginNamespace("Engine") //our defined namespace (w.e we want to call it)
 		.beginClass<GameEngine>("GameEngine") //define class object
 		.addConstructor<void(*)(), luabridge::RefCountedPtr<GameEngine> /* creation policy */ >()
-		.addFunction("LoadLevel", &GameEngine::LoadLevel) //reg. setName function
+		.addFunction("StartLevel", &GameEngine::StartLevel) //reg. setName function
+		.addFunction("LevelFinished", &GameEngine::LevelFinished) //reg. setName function
 		.endClass() //end class
 		.endNamespace(); //end namespace
+// lookup script function in global table
 }
 void GameEngine::Start()
 {
-	LH.ExecuteFile("test.lua");
+	LoadLevel(0);
+}
+
+void GameEngine::Game()
+{
 }
 
 void GameEngine::PhysicsUpdate()
@@ -58,6 +60,22 @@ void GameEngine::PhysicsUpdate()
 void GameEngine::Audio()
 {
 	//AM.PlaySound("rain.wav");
+}
+
+void GameEngine::StartLevel(int Level)
+{
+	LH.StartLevel(Level);
+	LoadLevel(Level);
+}
+
+bool GameEngine::LevelFinished()
+{
+	return LH.IsFinished();
+}
+
+void GameEngine::SetLevelFinished()
+{
+	LH.SetFinished(true);
 }
 
 void GameEngine::CheckInput()
@@ -101,8 +119,9 @@ void GameEngine::Update()
 	CheckInput();
 	PhysicsUpdate();
 	Render();
-	Game();
 	Audio();
+	Game();
+	ExecuteLUA();
 }
 
 void GameEngine::Initialise()

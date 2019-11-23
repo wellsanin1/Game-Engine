@@ -2,12 +2,14 @@
 
 LuaHelper::LuaHelper()
 {
-
+	luaL_dofile(F, "test.lua");
+	luaL_openlibs(F);
 }
 
 void LuaHelper::Load(int Level)
 {
-	std::string LevelString = std::string("Level")+std::string((char*)Level)+std::string(".lua");
+
+	std::string LevelString = std::string("Level") + std::to_string(Level)+std::string(".lua");
 	luaL_dofile(F, LevelString.c_str());
 	luaL_openlibs(F);
 	lua_pcall(F, 0, 0, 0);
@@ -154,4 +156,19 @@ void LuaHelper::ExecuteString(const char* expression)
 
 	int state = luaL_dostring(F, expression);
 	report_errors(state);
+}
+
+void LuaHelper::StartLevel(int Level)
+{
+	Load(Level);
+	CurrentLevel = Level;
+}
+bool LuaHelper::IsFinished()
+{
+	return Finished;
+}
+
+void LuaHelper::SetFinished(bool Value)
+{
+	Finished = Value;
 }

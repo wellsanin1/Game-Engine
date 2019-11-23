@@ -22,11 +22,14 @@ public:
 	void Quit();
 	void Render();
 	void Start();
-	void Audio();
 	void Game();
+	void Audio();
+
+	void StartLevel(int Level);
+	bool LevelFinished();
+	void SetLevelFinished();
 	void ExecuteLUA();
 	void LoadLevel(int Level);
-	void RegisterGameEngine();
 	EventQueue EQ;
 	ObjectPool OP = ObjectPool();
 	Renderer R = Renderer();
@@ -34,6 +37,6 @@ public:
 	Physics PM = Physics();
 	KeyManager KM = KeyManager();
 	LuaHelper LH = LuaHelper();
-	static void register_lua(lua_State* L);
+	void register_lua(lua_State* L);
 
 };

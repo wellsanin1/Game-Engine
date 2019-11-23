@@ -28,13 +28,19 @@ public:
 	LuaHelper();
 	void Load(int Level);
 	~LuaHelper();
-	//Execute Lua File
 	void ExecuteFile(const char* file);
-	//Execute Lua Expression (contained in string)
 	void ExecuteString(const char* expression);
-	//LuaHelper(void) : F(luaL_newstate()) { luaL_openlibs(F); }
 	LuaHelper(const LuaHelper& other);  //non-construction copy
 	LuaHelper& operator=(const LuaHelper&); //non-copy
-	//~LuaHelper(void) { lua_close(F); } //Destructor clean-up
+
+//LEVEL MANAGEMENT
+
+public:
+	int CurrentLevel = 0;
+	void StartLevel(int Level);
+	bool IsFinished();
+	void SetFinished(bool Value);
+private:
+	bool Finished = false;
 };
 #endif
