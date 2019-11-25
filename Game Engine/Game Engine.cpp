@@ -15,7 +15,7 @@ void GameEngine::LoadEntitiesIntoEngine(int Level)
 		if (LH.entityList[i]->UnionType == "Entity")
 		{
 			LuaGenStruct::LuaGeneric GenEnt = LH.entityList[i]->GenericStore;
-			OP.CreateEntity(GenEnt.Entity->Name, GenEnt.Entity->Mesh, GenEnt.Entity->x, GenEnt.Entity->y, GenEnt.Entity->z, &PM, &R,&LH);
+			OP.CreateEntity(GenEnt.Entity->Name, GenEnt.Entity->Mesh,GenEnt.Entity->Material, GenEnt.Entity->x, GenEnt.Entity->y, GenEnt.Entity->z, &PM, &R,&LH);
 		}
 		if (LH.entityList[i]->UnionType == "Camera")
 		{
@@ -41,6 +41,7 @@ void GameEngine::Game()
 }
 void GameEngine::PhysicsUpdate()
 {
+	PM.CheckCollisions(&OP);
 	PM.PhysicsUpdate(&OP);
 }
 void GameEngine::Audio()
@@ -55,6 +56,14 @@ GameObject* GameEngine::GetGameObjectWithName(std::string Name)
 {
 	return OP.GetObject(Name);
 }
+void GameEngine::LuaStringOUT(std::string Value)
+{
+	std::cout << "LUA:" << Value << std::endl;
+}
+void GameEngine::LuaIntOUT(int Value)
+{
+	std::cout << "LUA:" << Value << std::endl;
+}
 void GameEngine::CheckInput()
 {
 	KM.InputRead(&EQ);
@@ -66,7 +75,6 @@ void GameEngine::CheckInput()
 			break;
 		case UP:
 			std::cout << "UP" << std::endl;
-			LH.SetFinished(true);
 			break;
 		case LEFT:
 			std::cout << "LEFT" << std::endl;
@@ -81,11 +89,6 @@ void GameEngine::CheckInput()
 void GameEngine::Render()
 {
 	R.Update();
-}
-
-void GameEngine::Quit()
-{
-
 }
 
 void GameEngine::Update()

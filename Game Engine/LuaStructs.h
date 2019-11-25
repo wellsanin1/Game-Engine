@@ -6,6 +6,7 @@ struct LuaEntity
 	~LuaEntity() {};
 	std::string Name;
 	std::string Mesh;
+	std::string Material;
 	int x = 0;
 	int y = 0;
 	int z = 0;

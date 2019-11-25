@@ -1,0 +1,20 @@
+material "planeMaterial__48"
+{
+	technique planeMaterial__48_technique
+	{
+		pass planeMaterial__48_standard
+		{
+			ambient 0.588235 0.588235 0.588235 1
+			diffuse 1 1 1 1
+			specular 0.4 0.4 0.4 1 0
+			emissive 0 0 0 1
+
+			texture_unit planeMaterial__48_Diffuse#0
+			{
+				texture plane_2095343-169_left_4_dead_2_gabe_newell_interview_103109.DDS
+				tex_coord_set 0
+				colour_op modulate
+			}
+		}
+	}
+}

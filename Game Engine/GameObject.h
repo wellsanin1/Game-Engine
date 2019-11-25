@@ -47,6 +47,7 @@ private:
 	Renderer* _R;
 	LuaHelper* _LH;
 
+	std::vector<std::string> CollidedObjects;
 public:
 	//BULLET
 	btCollisionShape* CollisionShape;
@@ -55,25 +56,32 @@ public:
 	btDefaultMotionState* myMotionState; //initialise = new btDefaultMotionState(startTransform);
 	btRigidBody::btRigidBodyConstructionInfo* BodyInfo;
 	btRigidBody* RigidBody3d;
-	std::vector<GameObject*> CollidedObjects;
 	//OGRE
 	Ogre::SceneNode* Node;
 
 	bool IsEmpty() { return Empty; };
 	void ClearObject();
 
+
 	//Propriatory
 	void SetTransform(double x,double y, double z);
 	std::vector<double> GetTransform();
 	void SetOrientation(double w, double x, double y, double z);
 	std::vector<double> GetOrientation();
+
+	void AddCollision(std::string ObjName);
+	void RemoveCollision(std::string ObjName);
+	bool GetCollision(std::string ObjName);
+	void ClearCollision();
+
 	void SetMass(float NewMass);
 	void SetVelocity(float x, float y, float z);
 	void AddVelocity(float x, float y, float z);
 	bool IsColliding();
+	void ChangeTexture(std::string TextureName);
 
 
-	void CreateEntity(Physics* PM, Renderer* R, LuaHelper* LH, std::string EntityName, std::string MeshName, int PosX, int PosY, int PosZ);
+	void CreateEntity(Physics* PM, Renderer* R, LuaHelper* LH, std::string EntityName, std::string MeshName,std::string MaterialName, int PosX, int PosY, int PosZ);
 	void CreateLight(Physics* PM, Renderer* R, LuaHelper* LH, std::string LightName, int PosX, int PosY, int PosZ);
 	void CreateCamera(Physics* PM, Renderer* R, LuaHelper* LH, std::string CameraName, int PosX, int PosY, int PosZ);
 	void AttachSystems(Physics*PM,Renderer*R,LuaHelper*LH);
@@ -98,6 +106,8 @@ public:
 			.addFunction("SetMass", &GameObject::SetMass)
 			.addFunction("SetVelocity", &GameObject::SetVelocity)
 			.addFunction("IsColliding", &GameObject::IsColliding)
+			.addFunction("GetCollision", &GameObject::GetCollision)
+			.addFunction("ChangeTexture", &GameObject::ChangeTexture)
 			.endClass()
 			.endNamespace();
 	}

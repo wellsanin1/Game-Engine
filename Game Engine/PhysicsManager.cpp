@@ -30,24 +30,35 @@ Physics::Physics()
 	dynamicsWorld->setGravity(btVector3(0, -Gravity, 0));
 }
 
-void Physics::CheckCollisions()
+void Physics::CheckCollisions(ObjectPool* OP)
 {
 	int numManifolds = dispatcher->getNumManifolds();
 	for (int i = 0; i < numManifolds; i++)
 	{
 		btPersistentManifold* contactManifold = dispatcher->getManifoldByIndexInternal(1);
-		btCollisionObject* obA = (btCollisionObject*)contactManifold->getBody0();//->Body0 as CollisionObject;
-		btCollisionObject* obB = (btCollisionObject*)contactManifold->getBody1();// as CollisionObject;
-
+		btCollisionObject* obA = (btCollisionObject*)contactManifold->getBody0();
+		btCollisionObject* obB = (btCollisionObject*)contactManifold->getBody1();
 		int numContacts = contactManifold->getNumContacts();
 		for (int j = 0; j < numContacts; j++)
 		{
+			btRigidBody* bodyA = btRigidBody::upcast(obA);
+			btRigidBody* bodyB = btRigidBody::upcast(obB);
+			GameObject* A = OP->GetObject(bodyA);
+			GameObject* B = OP->GetObject(bodyB);
 			btManifoldPoint pt = contactManifold->getContactPoint(j);
 			if (pt.getDistance() < 0.0f)
 			{
 				btVector3 ptA = pt.getPositionWorldOnA();
 				btVector3 ptB = pt.getPositionWorldOnB();
 				btVector3 normalOnB = pt.m_normalWorldOnB;
+
+				A->AddCollision(B->Name);
+				B->AddCollision(A->Name);
+			}
+			else
+			{
+				A->ClearCollision();
+				B->ClearCollision();
 			}
 		}
 	}
@@ -55,7 +66,7 @@ void Physics::CheckCollisions()
 
 void Physics::PhysicsUpdate(ObjectPool* OP)
 {
-	dynamicsWorld->stepSimulation(1.0f / (float)PhysicsPollRate); //suppose you have 60 frames per second
+	dynamicsWorld->stepSimulation(1.0f / (float)PhysicsPollRate);
 	for (int i = 0; i < collisionShapes.size(); i++) 
 	{
 		btCollisionObject* obj = dynamicsWorld->getCollisionObjectArray()[i];

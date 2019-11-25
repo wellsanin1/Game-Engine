@@ -19,7 +19,6 @@ public:
 	void Initialise();
 	void PhysicsUpdate();
 	void Close();
-	void Quit();
 	void Render();
 	void Start();
 	void Game();
@@ -46,6 +45,8 @@ public:
 			.addFunction("GetLevelManager", &GameEngine::GetLevelManager)
 			.addFunction("GetGameObjectWithName", &GameEngine::GetGameObjectWithName)
 			.addFunction("LoadEntitiesIntoEngine", &GameEngine::LoadEntitiesIntoEngine)
+			.addFunction("LuaStringOUT", &GameEngine::LuaStringOUT)
+			.addFunction("LuaIntOUT", &GameEngine::LuaIntOUT)
 			.endClass()
 			.endNamespace();
 	}
@@ -53,4 +54,6 @@ public:
 	//LUA interface functions
 	LuaHelper* GetLevelManager();
 	GameObject* GetGameObjectWithName(std::string Name);
+	void LuaStringOUT(std::string Value);
+	void LuaIntOUT(int Value);
 };

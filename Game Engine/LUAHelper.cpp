@@ -49,6 +49,7 @@ void LuaHelper::LoadEntityData(int Level)
 		if (checker == "Entity")
 		{
 			LuaEntity* NewEntity = new LuaEntity();
+			NewEntity->Material = entityCheck["material"].cast<std::string>();
 			NewEntity->Name = entityCheck["name"].cast<std::string>();
 			NewEntity->Mesh = entityCheck["mesh"].cast<std::string>();
 			NewEntity->x = entityCheck["x"].cast<int>();

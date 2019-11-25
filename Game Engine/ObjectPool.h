@@ -29,7 +29,7 @@ public:
 	GameObject* GetObject(Ogre::String ObjectName);
 	GameObject* GetObject(btRigidBody* RigidBody);
 	void CreateCamera(std::string Name, int PosX, int PosY, int PosZ, Physics* PM, Renderer* R, LuaHelper* LH);
-	void CreateEntity(std::string Name, std::string MeshName, int PosX, int PosY, int PosZ, Physics* PM, Renderer* R, LuaHelper* LH);
+	void CreateEntity(std::string Name, std::string MeshName, std::string MaterialName, int PosX, int PosY, int PosZ, Physics* PM, Renderer* R, LuaHelper* LH);
 	void CreateLight(std::string Name, int PosX, int PosY, int PosZ, Physics* PM, Renderer* R, LuaHelper* LH);
 	void Reinitialise();
 	void ClearPool(Renderer* R, Physics* PM);

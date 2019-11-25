@@ -23,7 +23,7 @@ public:
 	btDiscreteDynamicsWorld* dynamicsWorld;
 	std::vector<btCollisionShape*> collisionShapes;
 	void PhysicsUpdate(ObjectPool* OP);
-	void CheckCollisions();
+	void CheckCollisions(ObjectPool* OP);
 	void dealloc();
 	void Restart();
 };

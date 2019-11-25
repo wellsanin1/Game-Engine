@@ -44,6 +44,50 @@ std::vector<double> GameObject::GetOrientation()
 
 }
 
+void GameObject::AddCollision(std::string ObjName)
+{
+	for (int i = 0; i < CollidedObjects.size(); ++i)
+	{
+		if (ObjName == CollidedObjects[i])
+		{
+			return;
+		}
+	}
+	CollidedObjects.push_back(ObjName);
+}
+
+void GameObject::RemoveCollision(std::string ObjName)
+{
+	for (int i = 0; i < CollidedObjects.size(); ++i)
+	{
+		if (ObjName == CollidedObjects[i])
+		{
+			CollidedObjects.erase(CollidedObjects.begin()+i);
+		}
+	}
+}
+
+bool GameObject::GetCollision(std::string ObjName)
+{
+	for (int i = 0;i<CollidedObjects.size();++i)
+	{
+		if (ObjName == CollidedObjects[i])
+		{
+			return true;
+		}
+	}
+	std::cout << "Object with name "<< ObjName <<" Is not colliding or does not exist" <<std::endl;
+	return false;
+}
+
+void GameObject::ClearCollision()
+{
+	if (!CollidedObjects.empty())
+	{
+		CollidedObjects.clear();
+	}
+}
+
 void GameObject::SetMass(float NewMass)
 {
 	_PM->dynamicsWorld->removeRigidBody(RigidBody3d);
@@ -80,7 +124,11 @@ bool GameObject::IsColliding()
 	}
 	return false;
 }
-void GameObject::CreateEntity(Physics*PM,Renderer*R,LuaHelper* LH,std::string EntityName,std::string MeshName, int PosX, int PosY, int PosZ)
+void GameObject::ChangeTexture(std::string TextureName)
+{
+	this->StoredObject.entity->getSubEntity(0)->setMaterialName(TextureName);
+}
+void GameObject::CreateEntity(Physics*PM,Renderer*R,LuaHelper* LH,std::string EntityName,std::string MeshName,std::string MaterialName, int PosX, int PosY, int PosZ)
 {
 	AttachSystems(PM,R,LH);
 	Ogre::Entity* OgreEntity = _R->scnMgr->createEntity(EntityName, MeshName);
