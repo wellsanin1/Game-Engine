@@ -17,6 +17,7 @@ extern "C" {
 #include "LUAHelper.h"
 #include "PhysicsManager.h"
 #include "Renderer.h"
+#include <OgreVector3.h>
 #include <vector>
 
 struct GameObject
@@ -79,9 +80,10 @@ public:
 	void AddVelocity(float x, float y, float z);
 	bool IsColliding();
 	void ChangeTexture(std::string TextureName);
+	void LookAt(double X, double Y, double Z);
 
 
-	void CreateEntity(Physics* PM, Renderer* R, LuaHelper* LH, std::string EntityName, std::string MeshName,std::string MaterialName, int PosX, int PosY, int PosZ);
+	void CreateEntity(Physics* PM, Renderer* R, LuaHelper* LH, std::string EntityName, std::string MeshName,std::string MaterialName, int PosX, int PosY, int PosZ,int ColX,int ColY,int ColZ);
 	void CreateLight(Physics* PM, Renderer* R, LuaHelper* LH, std::string LightName, int PosX, int PosY, int PosZ);
 	void CreateCamera(Physics* PM, Renderer* R, LuaHelper* LH, std::string CameraName, int PosX, int PosY, int PosZ);
 	void AttachSystems(Physics*PM,Renderer*R,LuaHelper*LH);
@@ -108,6 +110,9 @@ public:
 			.addFunction("IsColliding", &GameObject::IsColliding)
 			.addFunction("GetCollision", &GameObject::GetCollision)
 			.addFunction("ChangeTexture", &GameObject::ChangeTexture)
+			.addFunction("GetTransform", &GameObject::GetTransform)
+			.addFunction("SetTransform", &GameObject::SetTransform)
+			.addFunction("GetOrientation", &GameObject::GetOrientation)
 			.endClass()
 			.endNamespace();
 	}

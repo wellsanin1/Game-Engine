@@ -26,9 +26,9 @@ void LuaHelper::LoadEntityData(int Level)
 		{
 			LuaCamera* NewCamera = new LuaCamera();
 			NewCamera->Name = entityCheck["name"].cast<std::string>();
-			NewCamera->x = entityCheck["x"].cast<int>();
-			NewCamera->y = entityCheck["y"].cast<int>();
-			NewCamera->z = entityCheck["z"].cast<int>();
+			NewCamera->x = entityCheck["PosX"].cast<int>();
+			NewCamera->y = entityCheck["PosY"].cast<int>();
+			NewCamera->z = entityCheck["PosZ"].cast<int>();
 			LuaGenStruct* NewGeneric = new LuaGenStruct();
 			NewGeneric->UnionType = checker;
 			NewGeneric->GenericStore.Camera = NewCamera;
@@ -38,9 +38,9 @@ void LuaHelper::LoadEntityData(int Level)
 		{
 			LuaLight* NewLight = new LuaLight();
 			NewLight->Name = entityCheck["name"].cast<std::string>();
-			NewLight->x = entityCheck["x"].cast<int>();
-			NewLight->y = entityCheck["y"].cast<int>();
-			NewLight->z = entityCheck["z"].cast<int>();
+			NewLight->x = entityCheck["PosX"].cast<int>();
+			NewLight->y = entityCheck["PosY"].cast<int>();
+			NewLight->z = entityCheck["PosZ"].cast<int>();
 			LuaGenStruct* NewGeneric = new LuaGenStruct();
 			NewGeneric->UnionType = checker;
 			NewGeneric->GenericStore.Light = NewLight;
@@ -52,9 +52,12 @@ void LuaHelper::LoadEntityData(int Level)
 			NewEntity->Material = entityCheck["material"].cast<std::string>();
 			NewEntity->Name = entityCheck["name"].cast<std::string>();
 			NewEntity->Mesh = entityCheck["mesh"].cast<std::string>();
-			NewEntity->x = entityCheck["x"].cast<int>();
-			NewEntity->y = entityCheck["y"].cast<int>();
-			NewEntity->z = entityCheck["z"].cast<int>();
+			NewEntity->x = entityCheck["PosX"].cast<int>();
+			NewEntity->y = entityCheck["PosY"].cast<int>();
+			NewEntity->z = entityCheck["PosZ"].cast<int>();
+			NewEntity->ColX = entityCheck["ColX"].cast<int>();
+			NewEntity->ColY = entityCheck["ColY"].cast<int>();
+			NewEntity->ColZ = entityCheck["ColZ"].cast<int>();
 			LuaGenStruct* NewGeneric = new LuaGenStruct();
 			NewGeneric->UnionType = checker;
 			NewGeneric->GenericStore.Entity = NewEntity;

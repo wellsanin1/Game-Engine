@@ -41,7 +41,6 @@ void GameObject::SetOrientation(double w, double x, double y, double z)
 }
 std::vector<double> GameObject::GetOrientation()
 {
-
 }
 
 void GameObject::AddCollision(std::string ObjName)
@@ -128,7 +127,11 @@ void GameObject::ChangeTexture(std::string TextureName)
 {
 	this->StoredObject.entity->getSubEntity(0)->setMaterialName(TextureName);
 }
-void GameObject::CreateEntity(Physics*PM,Renderer*R,LuaHelper* LH,std::string EntityName,std::string MeshName,std::string MaterialName, int PosX, int PosY, int PosZ)
+void GameObject::LookAt(double X,double Y,double Z)
+{
+	Node->lookAt( Ogre::Vector3(X,Y,Z), Ogre::Node::TS_WORLD, Ogre::Vector3::UNIT_X );
+}
+void GameObject::CreateEntity(Physics*PM,Renderer*R,LuaHelper* LH,std::string EntityName,std::string MeshName,std::string MaterialName, int PosX, int PosY, int PosZ,int ColX, int ColY, int ColZ)
 {
 	AttachSystems(PM,R,LH);
 	Ogre::Entity* OgreEntity = _R->scnMgr->createEntity(EntityName, MeshName);
@@ -137,7 +140,7 @@ void GameObject::CreateEntity(Physics*PM,Renderer*R,LuaHelper* LH,std::string En
 	NewTransform.setIdentity();
 	NewTransform.setOrigin({ (btScalar)PosX,(btScalar)PosY,(btScalar)PosZ });
 	FillObject(OgreEntity, OgreNode, EntityName);
-	InitiationAbstraction(OgreNode, new btBoxShape(btVector3(15.0f, 15.0f, 15.0f)), NewTransform, 10);
+	InitiationAbstraction(OgreNode, new btBoxShape(btVector3(ColX, ColY, ColZ)), NewTransform, 10);
 }
 void GameObject::CreateLight(Physics* PM, Renderer* R, LuaHelper* LH, std::string LightName, int PosX, int PosY, int PosZ)
 {

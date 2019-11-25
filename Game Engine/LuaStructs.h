@@ -10,6 +10,9 @@ struct LuaEntity
 	int x = 0;
 	int y = 0;
 	int z = 0;
+	int ColX = 0;
+	int ColY = 0;
+	int ColZ = 0;
 };
 struct LuaLight
 {

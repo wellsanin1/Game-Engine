@@ -15,7 +15,10 @@ void GameEngine::LoadEntitiesIntoEngine(int Level)
 		if (LH.entityList[i]->UnionType == "Entity")
 		{
 			LuaGenStruct::LuaGeneric GenEnt = LH.entityList[i]->GenericStore;
-			OP.CreateEntity(GenEnt.Entity->Name, GenEnt.Entity->Mesh,GenEnt.Entity->Material, GenEnt.Entity->x, GenEnt.Entity->y, GenEnt.Entity->z, &PM, &R,&LH);
+			OP.CreateEntity(GenEnt.Entity->Name, GenEnt.Entity->Mesh,GenEnt.Entity->Material
+							,GenEnt.Entity->x, GenEnt.Entity->y, GenEnt.Entity->z
+							,GenEnt.Entity->ColX, GenEnt.Entity->ColY, GenEnt.Entity->ColZ
+							, &PM, &R,&LH);
 		}
 		if (LH.entityList[i]->UnionType == "Camera")
 		{
@@ -34,6 +37,7 @@ void GameEngine::LoadEntitiesIntoEngine(int Level)
 void GameEngine::Start()
 {
 	register_lua(LH.L());
+	KM.Initiate(LH.L());
 	LoadEntitiesIntoEngine(0);
 }
 void GameEngine::Game()
@@ -51,6 +55,10 @@ void GameEngine::Audio()
 LuaHelper* GameEngine::GetLevelManager()
 {
 	return &LH;
+}
+KeyManager* GameEngine::GetKeyManager()
+{
+	return &KM;
 }
 GameObject* GameEngine::GetGameObjectWithName(std::string Name)
 {

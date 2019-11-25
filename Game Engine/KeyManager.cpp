@@ -43,4 +43,13 @@ void KeyManager::InputRead(EventQueue* EQ)
 		}
 	}
 	return;
+}
+void KeyManager::Initiate(lua_State* F)
+{
+	register_lua(F);
+}
+bool KeyManager::GetKey(std::string EventEnum)
+{
+
+	return false;
 };

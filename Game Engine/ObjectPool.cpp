@@ -75,10 +75,10 @@ void ObjectPool::CreateCamera(std::string Name, int PosX, int PosY, int PosZ,Phy
 	a->CreateCamera(PM, R, LH, Name, PosX, PosY, PosZ);
 	StoreObject(a);
 }
-void ObjectPool::CreateEntity(std::string Name, std::string MeshName, std::string MaterialName, int PosX, int PosY, int PosZ, Physics* PM, Renderer* R,LuaHelper* LH)
+void ObjectPool::CreateEntity(std::string Name, std::string MeshName, std::string MaterialName, int PosX, int PosY, int PosZ, int ColX, int ColY, int ColZ, Physics* PM, Renderer* R,LuaHelper* LH)
 {
 	GameObject* a = new GameObject();
-	a->CreateEntity(PM, R, LH, Name, MeshName,MaterialName, PosX, PosY, PosZ);
+	a->CreateEntity(PM, R, LH, Name, MeshName,MaterialName, PosX, PosY, PosZ, ColX, ColY, ColZ);
 	StoreObject(a);
 }
 void ObjectPool::CreateLight(std::string Name, int PosX, int PosY, int PosZ, Physics* PM, Renderer* R,LuaHelper* LH)

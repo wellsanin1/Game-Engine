@@ -7,6 +7,17 @@
 #include <iostream>
 #include <map>
 
+//LUA Includes required because doesnt like linking from LUAHelper
+#include "LUAHelper.h"
+extern "C" {
+# include "lua.h"
+# include "lauxlib.h"
+# include "lualib.h"
+}
+#include <LuaBridge/RefCountedPtr.h>
+#include <LuaBridge/LuaBridge.h>
+#include <lua.hpp>
+
 class KeyManager {
 public:
 	EventEnum MapConvert(SDL_Keycode KeyCode);
@@ -15,4 +26,19 @@ public:
 	~KeyManager() {};
 	void InputRead(EventQueue* EQ);
 	event CreateEvent(EventEnum KeyPressed);
+	void Initiate(lua_State* F);
+	//LUA REGISTRATION AND FUNCTIONS
+	void register_lua(lua_State* L)
+	{
+		using namespace luabridge;
+		getGlobalNamespace(L)
+			.beginNamespace("Key")
+			.beginClass<KeyManager>("KeyManager")
+			.addConstructor<void(*)(), luabridge::RefCountedPtr<KeyManager>>()
+			.addFunction("GetKey", &KeyManager::GetKey)
+			.endClass()
+			.endNamespace();
+	}
+	bool GetKey(std::string EventEnum);
+
 };

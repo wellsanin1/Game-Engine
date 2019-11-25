@@ -43,6 +43,7 @@ public:
 			.beginClass<GameEngine>("GameEngine")
 			.addConstructor<void(*)(), luabridge::RefCountedPtr<GameEngine>>()
 			.addFunction("GetLevelManager", &GameEngine::GetLevelManager)
+			.addFunction("GetKeyManager", &GameEngine::GetKeyManager)
 			.addFunction("GetGameObjectWithName", &GameEngine::GetGameObjectWithName)
 			.addFunction("LoadEntitiesIntoEngine", &GameEngine::LoadEntitiesIntoEngine)
 			.addFunction("LuaStringOUT", &GameEngine::LuaStringOUT)
@@ -52,6 +53,7 @@ public:
 	}
 
 	//LUA interface functions
+	KeyManager* GetKeyManager();
 	LuaHelper* GetLevelManager();
 	GameObject* GetGameObjectWithName(std::string Name);
 	void LuaStringOUT(std::string Value);

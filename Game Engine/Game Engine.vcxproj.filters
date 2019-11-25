@@ -43,9 +43,6 @@
     <Filter Include="Source Files\Audio">
       <UniqueIdentifier>{ba964490-ed49-4f96-af40-0b86b2f30cba}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Inputs">
-      <UniqueIdentifier>{ab4ab713-08ea-4fb1-9e3e-ac3be40c7b5b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Physics">
       <UniqueIdentifier>{b4a38348-c5fc-4074-9a4f-457a32734cc1}</UniqueIdentifier>
     </Filter>
@@ -54,6 +51,9 @@
     </Filter>
     <Filter Include="Source Files\LUA">
       <UniqueIdentifier>{bf51b4b1-dd39-4c49-9f97-8d04376f74c4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\UI">
+      <UniqueIdentifier>{ab4ab713-08ea-4fb1-9e3e-ac3be40c7b5b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -73,7 +73,7 @@
       <Filter>Source Files\Audio</Filter>
     </ClCompile>
     <ClCompile Include="KeyManager.cpp">
-      <Filter>Source Files\Inputs</Filter>
+      <Filter>Source Files\UI</Filter>
     </ClCompile>
     <ClCompile Include="CollisionCallback.cpp">
       <Filter>Source Files\Physics</Filter>
