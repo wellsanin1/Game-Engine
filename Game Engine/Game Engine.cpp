@@ -1,8 +1,10 @@
 #include "GameEngine.h"
 void GameEngine::ExecuteLUA()
 {
+	luaL_openlibs(LH.L());
 	luabridge::LuaRef processFunc = luabridge::getGlobal(LH.L(), "GameEngine");
-	if (processFunc.isFunction()) {
+	if (processFunc.isFunction()) 
+	{
 		processFunc(this);
 	}
 }
@@ -37,7 +39,7 @@ void GameEngine::LoadEntitiesIntoEngine(int Level)
 void GameEngine::Start()
 {
 	register_lua(LH.L());
-	KM.Initiate(LH.L());
+	KM.Initiate(LH.L(),&EQ);
 	LoadEntitiesIntoEngine(0);
 }
 void GameEngine::Game()
@@ -74,24 +76,8 @@ void GameEngine::LuaIntOUT(int Value)
 }
 void GameEngine::CheckInput()
 {
-	KM.InputRead(&EQ);
-	while (EventEnum Enum = EQ.CheckQueue(event::TEST))
-	{
-		switch (Enum)
-		{
-		case NONE:
-			break;
-		case UP:
-			std::cout << "UP" << std::endl;
-			break;
-		case LEFT:
-			std::cout << "LEFT" << std::endl;
-			break;
-		case QUIT:
-			std::cout << "QUIT" << std::endl;
-			break;
-		}
-	}
+	KM.InputRead();
+	
 }
 
 void GameEngine::Render()

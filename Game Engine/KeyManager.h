@@ -20,13 +20,14 @@ extern "C" {
 
 class KeyManager {
 public:
+	EventQueue* _EQ;
 	EventEnum MapConvert(SDL_Keycode KeyCode);
 	std::map<SDL_Keycode, EventEnum> EnumMap;
 	KeyManager();
 	~KeyManager() {};
-	void InputRead(EventQueue* EQ);
+	void InputRead();
 	event CreateEvent(EventEnum KeyPressed);
-	void Initiate(lua_State* F);
+	void Initiate(lua_State* F, EventQueue* EQ);
 	//LUA REGISTRATION AND FUNCTIONS
 	void register_lua(lua_State* L)
 	{
@@ -34,11 +35,9 @@ public:
 		getGlobalNamespace(L)
 			.beginNamespace("Key")
 			.beginClass<KeyManager>("KeyManager")
-			.addConstructor<void(*)(), luabridge::RefCountedPtr<KeyManager>>()
 			.addFunction("GetKey", &KeyManager::GetKey)
 			.endClass()
 			.endNamespace();
 	}
-	bool GetKey(std::string EventEnum);
-
+	bool GetKey(int Input);
 };

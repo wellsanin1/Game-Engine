@@ -28,7 +28,46 @@ void EventQueue::GetNextEvent()
 
 };
 
-EventEnum EventQueue::CheckQueue(event::SubSystem CurrentEvent)
+EventEnum EventQueue::CheckQueue(event::SubSystem CurrentEvent, bool Delete)
+{
+	for (int i = 0; i < Queue.size(); ++i)
+	{
+		for (int j = 0; j < Queue[i].SubSystemList.size(); ++j)
+		{
+			if (Queue[i].SubSystemList[j] == CurrentEvent)
+			{
+				EventEnum Store = Queue[i].EventType;
+				if (Delete)
+				{
+					Queue[i].SubSystemList.erase(Queue[i].SubSystemList.begin() + j);
+					if (Queue[i].SubSystemList.empty())
+					{
+						Queue.erase(Queue.begin() + j);
+					}
+				}
+				return Store;
+			}
+		}
+	}
+	return NONE;
+}
+event EventQueue::CheckQueueNoRemoval(event::SubSystem CurrentEvent)
+{
+	for (int i = 0; i < Queue.size(); ++i)
+	{
+		for (int j = 0; j < Queue[i].SubSystemList.size(); ++j)
+		{
+			if (Queue[i].SubSystemList[j] == CurrentEvent)
+			{
+				return Queue[i];
+			}
+		}
+	}
+	event empty = event();
+	empty.EventType == NONE;
+	return empty;
+}
+void EventQueue::RemoveFromQueue(event::SubSystem CurrentEvent,EventEnum EventType)
 {
 	for (int i = 0; i < Queue.size(); ++i)
 	{
@@ -42,9 +81,8 @@ EventEnum EventQueue::CheckQueue(event::SubSystem CurrentEvent)
 				{
 					Queue.erase(Queue.begin() + j);
 				}
-				return Store;
 			}
 		}
 	}
-	return NONE;
+	return;
 }

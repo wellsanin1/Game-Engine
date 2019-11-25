@@ -9,8 +9,6 @@
 
 class GameEngine
 {
-private:
-	bool Started = false;
 public:
 	GameEngine() {};
 	virtual ~GameEngine() {};
@@ -41,7 +39,6 @@ public:
 		getGlobalNamespace(L)
 			.beginNamespace("Engine")
 			.beginClass<GameEngine>("GameEngine")
-			.addConstructor<void(*)(), luabridge::RefCountedPtr<GameEngine>>()
 			.addFunction("GetLevelManager", &GameEngine::GetLevelManager)
 			.addFunction("GetKeyManager", &GameEngine::GetKeyManager)
 			.addFunction("GetGameObjectWithName", &GameEngine::GetGameObjectWithName)

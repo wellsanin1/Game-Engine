@@ -19,19 +19,17 @@ EventEnum KeyManager::MapConvert(SDL_Keycode KeyCode)
 		return(KeyPressed);
 	}
 	return NONE;
-
 };
 
 event KeyManager::CreateEvent(EventEnum KeyPressed)
 {
 	event E;
-	E.SubSystemList.push_back(event::Renderer);
-	E.SubSystemList.push_back(event::TEST);
+	E.SubSystemList.push_back(event::Input);
 	E.EventType = KeyPressed;
 	return E;
 }
 
-void KeyManager::InputRead(EventQueue* EQ)
+void KeyManager::InputRead()
 {
 	SDL_Event event;
 	while (SDL_PollEvent(&event))
@@ -39,17 +37,29 @@ void KeyManager::InputRead(EventQueue* EQ)
 		EventEnum KeyPressed = MapConvert(event.key.keysym.sym);
 		if (event.type == SDL_KEYDOWN && KeyPressed != NONE)
 		{
-			EQ->AddEvent(CreateEvent(KeyPressed));
+			_EQ->AddEvent(CreateEvent(KeyPressed));
 		}
 	}
 	return;
 }
-void KeyManager::Initiate(lua_State* F)
+void KeyManager::Initiate(lua_State* F,EventQueue* EQ)
 {
+	_EQ = EQ;
 	register_lua(F);
 }
-bool KeyManager::GetKey(std::string EventEnum)
+bool KeyManager::GetKey(int Input)
 {
+	//Create Temp versin of event queue to iterate on
+	EventQueue E =  EventQueue();
+	E = _EQ[0];
 
+	while (EventEnum Enum = E.CheckQueue(event::Input,true))
+	{
+		if (Enum == Input)
+		{
+			_EQ->CheckQueue(event::Input, true);
+			return true;
+		}
+	}
 	return false;
 };

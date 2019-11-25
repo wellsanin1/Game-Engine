@@ -20,7 +20,7 @@ elementList = {
 		mesh = 'ogrehead.mesh',
 		material = '',
 		PosX = 0,
-		PosY = 200,
+		PosY = 100,
 		PosZ = 0,
 		ColX = 15,
 		ColY = 15,
@@ -32,7 +32,7 @@ elementList = {
 		mesh = 'penguin.mesh',
 		material = '',
 		PosX = 0,
-		PosY = 50,
+		PosY = 200,
 		PosZ = 0,
 		ColX = 15,
 		ColY = 15,
@@ -46,9 +46,9 @@ elementList = {
 		PosX = 50,
 		PosY = 0,
 		PosZ = 0,
-		ColX = 15,
-		ColY = 15,
-		ColZ = 15
+		ColX = 100,
+		ColY = 1,
+		ColZ = 100
 	}
 }
 

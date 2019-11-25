@@ -31,8 +31,8 @@ void GameObject::SetTransform(double x, double y, double z)
 std::vector<double> GameObject::GetTransform()
 {
 	std::vector<double> ReturnTransform;
-	btVector3 Origin = Transform.getOrigin();
-	ReturnTransform = {Origin.getX(),Origin.getY(),Origin.getZ()};
+	Ogre::Vector3 Pos = Node->getPosition();//  Transform.getOrigin();
+	ReturnTransform = {Pos.x,Pos.y,Pos.z};
 	return ReturnTransform;
 }
 void GameObject::SetOrientation(double w, double x, double y, double z)
@@ -41,6 +41,9 @@ void GameObject::SetOrientation(double w, double x, double y, double z)
 }
 std::vector<double> GameObject::GetOrientation()
 {
+	Ogre::Quaternion Orien = Node->getOrientation();
+	std::vector<double> ReturnQuat = {Orien.w,Orien.x,Orien.y,Orien.z};
+	return ReturnQuat;
 }
 
 void GameObject::AddCollision(std::string ObjName)
@@ -75,15 +78,17 @@ bool GameObject::GetCollision(std::string ObjName)
 			return true;
 		}
 	}
-	std::cout << "Object with name "<< ObjName <<" Is not colliding or does not exist" <<std::endl;
 	return false;
 }
 
-void GameObject::ClearCollision()
+void GameObject::ClearCollision(std::string ObjName)
 {
-	if (!CollidedObjects.empty())
+	for (int i=0; i<CollidedObjects.size();++i)
 	{
-		CollidedObjects.clear();
+		if (CollidedObjects[i] == ObjName)
+		{
+			CollidedObjects.erase(CollidedObjects.begin() + i);
+		}
 	}
 }
 
@@ -127,9 +132,9 @@ void GameObject::ChangeTexture(std::string TextureName)
 {
 	this->StoredObject.entity->getSubEntity(0)->setMaterialName(TextureName);
 }
-void GameObject::LookAt(double X,double Y,double Z)
+void GameObject::LookAt(float X,float Y,float Z)
 {
-	Node->lookAt( Ogre::Vector3(X,Y,Z), Ogre::Node::TS_WORLD, Ogre::Vector3::UNIT_X );
+	Node->lookAt( Ogre::Vector3(X,Y,Z), Ogre::Node::TS_WORLD, Ogre::Vector3::NEGATIVE_UNIT_Z );
 }
 void GameObject::CreateEntity(Physics*PM,Renderer*R,LuaHelper* LH,std::string EntityName,std::string MeshName,std::string MaterialName, int PosX, int PosY, int PosZ,int ColX, int ColY, int ColZ)
 {
@@ -192,7 +197,10 @@ void GameObject::AssignRigidBody(btRigidBody* Rigidbody)
 	RigidBody3d = Rigidbody;
 }
 
-
+void GameObject::TranslateLocally(float X, float Y, float Z)
+{
+	RigidBody3d->applyCentralImpulse({ X,Y,Z });
+}
 void GameObject::AssignTransform()
 {
 	this->myMotionState = new btDefaultMotionState(Transform);

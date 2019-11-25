@@ -35,7 +35,7 @@ void Physics::CheckCollisions(ObjectPool* OP)
 	int numManifolds = dispatcher->getNumManifolds();
 	for (int i = 0; i < numManifolds; i++)
 	{
-		btPersistentManifold* contactManifold = dispatcher->getManifoldByIndexInternal(1);
+		btPersistentManifold* contactManifold = dispatcher->getManifoldByIndexInternal(i);
 		btCollisionObject* obA = (btCollisionObject*)contactManifold->getBody0();
 		btCollisionObject* obB = (btCollisionObject*)contactManifold->getBody1();
 		int numContacts = contactManifold->getNumContacts();
@@ -51,14 +51,13 @@ void Physics::CheckCollisions(ObjectPool* OP)
 				btVector3 ptA = pt.getPositionWorldOnA();
 				btVector3 ptB = pt.getPositionWorldOnB();
 				btVector3 normalOnB = pt.m_normalWorldOnB;
-
 				A->AddCollision(B->Name);
 				B->AddCollision(A->Name);
 			}
 			else
 			{
-				A->ClearCollision();
-				B->ClearCollision();
+				A->ClearCollision(B->Name);
+				B->ClearCollision(A->Name);
 			}
 		}
 	}

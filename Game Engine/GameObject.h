@@ -11,6 +11,7 @@ extern "C" {
 # include "lualib.h"
 }
 #include <LuaBridge/LuaBridge.h>
+#include <LuaBridge/Vector.h>
 #include <lua.hpp>
 #include <LuaBridge/RefCountedPtr.h>
 
@@ -73,14 +74,15 @@ public:
 	void AddCollision(std::string ObjName);
 	void RemoveCollision(std::string ObjName);
 	bool GetCollision(std::string ObjName);
-	void ClearCollision();
+	void ClearCollision(std::string ObjName);
 
 	void SetMass(float NewMass);
 	void SetVelocity(float x, float y, float z);
 	void AddVelocity(float x, float y, float z);
 	bool IsColliding();
 	void ChangeTexture(std::string TextureName);
-	void LookAt(double X, double Y, double Z);
+	void LookAt(float X, float Y, float Z);
+	void TranslateLocally(float X, float Y, float Z);
 
 
 	void CreateEntity(Physics* PM, Renderer* R, LuaHelper* LH, std::string EntityName, std::string MeshName,std::string MaterialName, int PosX, int PosY, int PosZ,int ColX,int ColY,int ColZ);
@@ -104,15 +106,17 @@ public:
 		getGlobalNamespace(L)
 			.beginNamespace("GObject")
 			.beginClass<GameObject>("GameObject")
-			.addConstructor<void(*)(), luabridge::RefCountedPtr<GameObject>>()
 			.addFunction("SetMass", &GameObject::SetMass)
 			.addFunction("SetVelocity", &GameObject::SetVelocity)
+			.addFunction("AddVelocity", &GameObject::AddVelocity)
 			.addFunction("IsColliding", &GameObject::IsColliding)
 			.addFunction("GetCollision", &GameObject::GetCollision)
 			.addFunction("ChangeTexture", &GameObject::ChangeTexture)
 			.addFunction("GetTransform", &GameObject::GetTransform)
 			.addFunction("SetTransform", &GameObject::SetTransform)
 			.addFunction("GetOrientation", &GameObject::GetOrientation)
+			.addFunction("TranslateLocally", &GameObject::TranslateLocally)
+			.addFunction("LookAt", &GameObject::LookAt)
 			.endClass()
 			.endNamespace();
 	}
