@@ -191,6 +191,7 @@
     <ClInclude Include="AudioManager.h" />
     <ClInclude Include="CollisionCallback.h" />
     <ClInclude Include="Event.h" />
+    <ClInclude Include="EventStructs.h" />
     <ClInclude Include="EventSystem.h" />
     <ClInclude Include="GameEngine.h" />
     <ClInclude Include="GameEngineDefinitions.h" />
@@ -200,7 +201,6 @@
     <ClInclude Include="LUAHelper.h" />
     <ClInclude Include="LuaStructs.h" />
     <ClInclude Include="NetworkingStructs.h" />
-    <ClInclude Include="NetworkManager.fwd.h" />
     <ClInclude Include="NetworkManager.h" />
     <ClInclude Include="ObjectPool.fwd.h" />
     <ClInclude Include="ObjectPool.h" />

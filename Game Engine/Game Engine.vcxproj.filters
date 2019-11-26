@@ -161,8 +161,8 @@
     <ClInclude Include="NetworkingStructs.h">
       <Filter>Header Files\Network</Filter>
     </ClInclude>
-    <ClInclude Include="NetworkManager.fwd.h">
-      <Filter>Header Files\Network</Filter>
+    <ClInclude Include="EventStructs.h">
+      <Filter>Header Files\Events</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
