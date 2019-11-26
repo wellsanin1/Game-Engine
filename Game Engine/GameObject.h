@@ -15,6 +15,7 @@ extern "C" {
 #include <lua.hpp>
 #include <LuaBridge/RefCountedPtr.h>
 
+#include "NetworkManager.h"
 #include "LUAHelper.h"
 #include "PhysicsManager.h"
 #include "Renderer.h"
@@ -42,13 +43,16 @@ private:
 	void FillObject(Ogre::Camera* Object, Ogre::SceneNode* ScnNode, Ogre::String ObjName);
 	void FillObject(Ogre::Light* Object, Ogre::SceneNode* ScnNode, Ogre::String ObjName);
 	void FillObject(Ogre::Entity* Object, Ogre::SceneNode* ScnNode, Ogre::String ObjName);
+	void AttachSystems(Physics* PM, Renderer* R, LuaHelper* LH);
 	//BULLET
 	btTransform Transform;
 
 	Physics* _PM;
 	Renderer* _R;
 	LuaHelper* _LH;
-
+	std::string _MeshName;
+	std::string _Material;
+	float _ColliderSize[3];
 	std::vector<std::string> CollidedObjects;
 public:
 	//BULLET
@@ -60,6 +64,7 @@ public:
 	btRigidBody* RigidBody3d;
 	//OGRE
 	Ogre::SceneNode* Node;
+
 
 	bool IsEmpty() { return Empty; };
 	void ClearObject();
@@ -83,12 +88,11 @@ public:
 	void ChangeTexture(std::string TextureName);
 	void LookAt(float X, float Y, float Z);
 	void TranslateLocally(float X, float Y, float Z);
-
-
+	void SendToClient(NetworkManager* NM);
 	void CreateEntity(Physics* PM, Renderer* R, LuaHelper* LH, std::string EntityName, std::string MeshName,std::string MaterialName, int PosX, int PosY, int PosZ,int ColX,int ColY,int ColZ);
 	void CreateLight(Physics* PM, Renderer* R, LuaHelper* LH, std::string LightName, int PosX, int PosY, int PosZ);
 	void CreateCamera(Physics* PM, Renderer* R, LuaHelper* LH, std::string CameraName, int PosX, int PosY, int PosZ);
-	void AttachSystems(Physics*PM,Renderer*R,LuaHelper*LH);
+
 	GameObject CollideObject();
 
 	StoredObj StoredObject;

@@ -139,12 +139,17 @@ void GameObject::LookAt(float X,float Y,float Z)
 void GameObject::CreateEntity(Physics*PM,Renderer*R,LuaHelper* LH,std::string EntityName,std::string MeshName,std::string MaterialName, int PosX, int PosY, int PosZ,int ColX, int ColY, int ColZ)
 {
 	AttachSystems(PM,R,LH);
+	_Material = MaterialName;
+	_MeshName = MeshName;
 	Ogre::Entity* OgreEntity = _R->scnMgr->createEntity(EntityName, MeshName);
 	Ogre::SceneNode* OgreNode = _R->scnMgr->getRootSceneNode()->createChildSceneNode();
 	btTransform NewTransform;
 	NewTransform.setIdentity();
 	NewTransform.setOrigin({ (btScalar)PosX,(btScalar)PosY,(btScalar)PosZ });
 	FillObject(OgreEntity, OgreNode, EntityName);
+	_ColliderSize[0] = ColX;
+	_ColliderSize[1] = ColY;
+	_ColliderSize[2] = ColZ;
 	InitiationAbstraction(OgreNode, new btBoxShape(btVector3(ColX, ColY, ColZ)), NewTransform, 10);
 }
 void GameObject::CreateLight(Physics* PM, Renderer* R, LuaHelper* LH, std::string LightName, int PosX, int PosY, int PosZ)
@@ -229,4 +234,10 @@ void GameObject::InitiationAbstraction(Ogre::SceneNode* ScnNode,btBoxShape* Coll
 	AssignRigidBody(Bdy);
 	RigidBody3d->setUserPointer(ScnNode);
 	AddtoPhysicsSystem(_PM);
+}
+void GameObject::SendToClient(NetworkManager* NM)
+{
+	Vector3* a = new Vector3{ Node->getPosition().x, Node->getPosition().y, Node->getPosition().z };
+	Vector3* b = new Vector3{ _ColliderSize[0], _ColliderSize[1], _ColliderSize[2] };
+	NM->SendPacket(Name,_MeshName,_Material,a,b);
 }

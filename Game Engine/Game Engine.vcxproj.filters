@@ -61,6 +61,9 @@
     <Filter Include="Source Files\Network">
       <UniqueIdentifier>{cda723f7-f1db-49cc-8570-a9b7dfebabe4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Events\FunctionPointers">
+      <UniqueIdentifier>{28a90e07-5659-4aa5-ab9e-96af5212b773}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -163,6 +166,15 @@
     </ClInclude>
     <ClInclude Include="EventStructs.h">
       <Filter>Header Files\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="FunctionPointers.h">
+      <Filter>Header Files\Events\FunctionPointers</Filter>
+    </ClInclude>
+    <ClInclude Include="NetworkManager.fwd.h">
+      <Filter>Header Files\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="LUAHelper.fwd.h">
+      <Filter>Header Files\LUA</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
