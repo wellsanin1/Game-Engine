@@ -5,6 +5,7 @@
 #include "AudioManager.h"
 #include <iostream>
 #include "LUAHelper.h"
+#include "NetworkManager.h"
 #include <LuaBridge/RefCountedPtr.h>
 
 class GameEngine
@@ -21,6 +22,7 @@ public:
 	void Start();
 	void Game();
 	void Audio();
+	void Network();
 
 	void ExecuteLUA();
 	void LoadEntitiesIntoEngine(int Level);
@@ -31,7 +33,7 @@ public:
 	Physics PM = Physics();
 	KeyManager KM = KeyManager();
 	LuaHelper LH = LuaHelper();
-
+	NetworkManager NM = NetworkManager();
 	//LUA interface
 	void register_lua(lua_State* L)
 	{

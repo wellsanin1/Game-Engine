@@ -27,7 +27,7 @@ void GameEngine::LoadEntitiesIntoEngine(int Level)
 			LuaGenStruct::LuaGeneric GenEnt = LH.entityList[i]->GenericStore;
 			OP.CreateCamera(GenEnt.Camera->Name, GenEnt.Camera->x, GenEnt.Camera->y, GenEnt.Camera->z, &PM, &R, &LH);
 			R.getRenderWindow()->removeAllViewports();
-			R.getRenderWindow()->addViewport(OP.GetObject(GenEnt.Camera->Name)->StoredObject.Camera);
+			R.getRenderWindow()->addViewport(OP.GetObjectFromPool(GenEnt.Camera->Name)->StoredObject.Camera);
 		}
 		if (LH.entityList[i]->UnionType == "Light")
 		{
@@ -54,6 +54,10 @@ void GameEngine::Audio()
 {
 	//AM.PlaySound("rain.wav");
 }
+void GameEngine::Network()
+{
+	NM.Update(&OP,&PM,&LH,&R);
+}
 LuaHelper* GameEngine::GetLevelManager()
 {
 	return &LH;
@@ -64,7 +68,7 @@ KeyManager* GameEngine::GetKeyManager()
 }
 GameObject* GameEngine::GetGameObjectWithName(std::string Name)
 {
-	return OP.GetObject(Name);
+	return OP.GetObjectFromPool(Name);
 }
 void GameEngine::LuaStringOUT(std::string Value)
 {

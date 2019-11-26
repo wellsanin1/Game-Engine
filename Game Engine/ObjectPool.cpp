@@ -41,7 +41,7 @@ void ObjectPool::StoreObject(GameObject* Object)
 	return;
 };
 
-GameObject* ObjectPool::GetObject(Ogre::String ObjectName)
+GameObject* ObjectPool::GetObjectFromPool(std::string ObjectName)
 {
 	int size = sizeof(PoolStorage) / sizeof(*PoolStorage);
 	for (int i = 0; i < size; i++)
@@ -55,7 +55,7 @@ GameObject* ObjectPool::GetObject(Ogre::String ObjectName)
 	return nullptr;
 };
 
-GameObject* ObjectPool::GetObject(btRigidBody* RigidBody)
+GameObject* ObjectPool::GetObjectFromPool(btRigidBody* RigidBody)
 {
 	int size = sizeof(PoolStorage) / sizeof(*PoolStorage);
 	for (int i = 0; i < size; i++)

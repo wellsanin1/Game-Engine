@@ -2,6 +2,7 @@
 #include "ObjectPool.fwd.h"
 #include "GameObject.fwd.h"
 #include "PhysicsManager.fwd.h"
+#include "EventSystem.h"
 
 #include <Ogre.h>
 
@@ -26,11 +27,12 @@ public:
 	GameObject* PoolStorage[PoolSize];
 	virtual ~ObjectPool() {};
 	void StoreObject(GameObject* Object);
-	GameObject* GetObject(Ogre::String ObjectName);
-	GameObject* GetObject(btRigidBody* RigidBody);
+	GameObject* GetObjectFromPool(std::string ObjectName);
+	GameObject* GetObjectFromPool(btRigidBody* RigidBody);
 	void CreateCamera(std::string Name, int PosX, int PosY, int PosZ, Physics* PM, Renderer* R, LuaHelper* LH);
 	void CreateEntity(std::string Name, std::string MeshName, std::string MaterialName, int PosX, int PosY, int PosZ, int ColX, int ColY, int ColZ, Physics* PM, Renderer* R, LuaHelper* LH);
 	void CreateLight(std::string Name, int PosX, int PosY, int PosZ, Physics* PM, Renderer* R, LuaHelper* LH);
 	void Reinitialise();
 	void ClearPool(Renderer* R, Physics* PM);
+	void Update();
 };

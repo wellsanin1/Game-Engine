@@ -180,6 +180,7 @@
     <ClCompile Include="KeyManager.cpp" />
     <ClCompile Include="LUAHelper.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="NetworkManager.cpp" />
     <ClCompile Include="ObjectPool.cpp" />
     <ClCompile Include="PhysicsManager.cpp" />
     <ClCompile Include="GameObject.cpp" />
@@ -198,6 +199,9 @@
     <ClInclude Include="EventEnum.h" />
     <ClInclude Include="LUAHelper.h" />
     <ClInclude Include="LuaStructs.h" />
+    <ClInclude Include="NetworkingStructs.h" />
+    <ClInclude Include="NetworkManager.fwd.h" />
+    <ClInclude Include="NetworkManager.h" />
     <ClInclude Include="ObjectPool.fwd.h" />
     <ClInclude Include="ObjectPool.h" />
     <ClInclude Include="PhysicsManager.fwd.h" />

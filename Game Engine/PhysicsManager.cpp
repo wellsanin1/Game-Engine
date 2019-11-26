@@ -43,8 +43,8 @@ void Physics::CheckCollisions(ObjectPool* OP)
 		{
 			btRigidBody* bodyA = btRigidBody::upcast(obA);
 			btRigidBody* bodyB = btRigidBody::upcast(obB);
-			GameObject* A = OP->GetObject(bodyA);
-			GameObject* B = OP->GetObject(bodyB);
+			GameObject* A = OP->GetObjectFromPool(bodyA);
+			GameObject* B = OP->GetObjectFromPool(bodyB);
 			btManifoldPoint pt = contactManifold->getContactPoint(j);
 			if (pt.getDistance() < 0.0f)
 			{
@@ -78,7 +78,7 @@ void Physics::PhysicsUpdate(ObjectPool* OP)
 			void* userPointer = body->getUserPointer();
 			if (userPointer) 
 			{
-				OP->GetObject(body)->SetTransform(trans.getOrigin().getX(), trans.getOrigin().getY(), trans.getOrigin().getZ());
+				OP->GetObjectFromPool(body)->SetTransform(trans.getOrigin().getX(), trans.getOrigin().getY(), trans.getOrigin().getZ());
 			}
 		}
 	}

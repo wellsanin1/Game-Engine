@@ -55,6 +55,12 @@
     <Filter Include="Source Files\UI">
       <UniqueIdentifier>{ab4ab713-08ea-4fb1-9e3e-ac3be40c7b5b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Network">
+      <UniqueIdentifier>{33561558-1147-4602-9f08-6e1ff1c1be91}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Network">
+      <UniqueIdentifier>{cda723f7-f1db-49cc-8570-a9b7dfebabe4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -89,6 +95,9 @@
     </ClCompile>
     <ClCompile Include="LUAHelper.cpp">
       <Filter>Source Files\LUA</Filter>
+    </ClCompile>
+    <ClCompile Include="NetworkManager.cpp">
+      <Filter>Source Files\Network</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -145,6 +154,15 @@
     </ClInclude>
     <ClInclude Include="LuaStructs.h">
       <Filter>Header Files\LUA</Filter>
+    </ClInclude>
+    <ClInclude Include="NetworkManager.h">
+      <Filter>Header Files\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="NetworkingStructs.h">
+      <Filter>Header Files\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="NetworkManager.fwd.h">
+      <Filter>Header Files\Network</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

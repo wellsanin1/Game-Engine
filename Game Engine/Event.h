@@ -5,12 +5,8 @@
 struct event
 {
 public:
-	//Function pointers
-	//typedef void* (*Function)(double[3], double[4], void*);
-	//Function FunctionArray[FunctionArraySize];
-
 	//EventData
-	enum SubSystem {NONE,TEST,Renderer,Audio,Input,Netcode,Physics,Load};
+	enum SubSystem {NONE,TEST,Renderer,Audio,Input,Netcode,Physics,Load,ObjectPool};
 	EventEnum EventType = EventEnum::NONE;
 	std::vector<SubSystem> SubSystemList;
 };
