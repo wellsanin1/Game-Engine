@@ -136,9 +136,9 @@ void GameObject::LookAt(float X,float Y,float Z)
 {
 	Node->lookAt( Ogre::Vector3(X,Y,Z), Ogre::Node::TS_WORLD, Ogre::Vector3::NEGATIVE_UNIT_Z );
 }
-void GameObject::CreateEntity(Physics*PM,Renderer*R,LuaHelper* LH,std::string EntityName,std::string MeshName,std::string MaterialName, int PosX, int PosY, int PosZ,int ColX, int ColY, int ColZ)
+void GameObject::CreateEntity(Physics*PM,Renderer*R,LuaHelper* LH, NetworkManager* NM, std::string EntityName,std::string MeshName,std::string MaterialName, int PosX, int PosY, int PosZ,int ColX, int ColY, int ColZ)
 {
-	AttachSystems(PM,R,LH);
+	AttachSystems(PM,R,LH,NM);
 	_Material = MaterialName;
 	_MeshName = MeshName;
 	Ogre::Entity* OgreEntity = _R->scnMgr->createEntity(EntityName, MeshName);
@@ -152,9 +152,9 @@ void GameObject::CreateEntity(Physics*PM,Renderer*R,LuaHelper* LH,std::string En
 	_ColliderSize[2] = ColZ;
 	InitiationAbstraction(OgreNode, new btBoxShape(btVector3(ColX, ColY, ColZ)), NewTransform, 10);
 }
-void GameObject::CreateLight(Physics* PM, Renderer* R, LuaHelper* LH, std::string LightName, int PosX, int PosY, int PosZ)
+void GameObject::CreateLight(Physics* PM, Renderer* R, LuaHelper* LH,NetworkManager*NM, std::string LightName, int PosX, int PosY, int PosZ)
 {
-	AttachSystems(PM, R,LH);
+	AttachSystems(PM, R,LH,NM);
 	Ogre::Light* light = _R->scnMgr->createLight(LightName);
 	Ogre::SceneNode* lightNode = _R->scnMgr->getRootSceneNode()->createChildSceneNode();
 	btTransform NewTransform;
@@ -163,9 +163,9 @@ void GameObject::CreateLight(Physics* PM, Renderer* R, LuaHelper* LH, std::strin
 	FillObject(light, lightNode, LightName);
 	InitiationAbstraction(lightNode, new btBoxShape(btVector3(0.0f, 0.0f, 0.0f)), NewTransform, 0);
 }
-void GameObject::CreateCamera(Physics* PM, Renderer* R, LuaHelper* LH, std::string CameraName, int PosX, int PosY, int PosZ)
+void GameObject::CreateCamera(Physics* PM, Renderer* R, LuaHelper* LH, NetworkManager* NM, std::string CameraName, int PosX, int PosY, int PosZ)
 {
-	AttachSystems(PM, R,LH);
+	AttachSystems(PM, R,LH,NM);
 	Name = "";
 	Ogre::SceneNode* camNode = _R->scnMgr->getRootSceneNode()->createChildSceneNode();
 	Ogre::Camera* cam = _R->scnMgr->createCamera(CameraName);
@@ -178,8 +178,9 @@ void GameObject::CreateCamera(Physics* PM, Renderer* R, LuaHelper* LH, std::stri
 	InitiationAbstraction(camNode, new btBoxShape(btVector3(0.0f, 0.0f, 0.0f)), NewTransform, 0);
 }
 
-void GameObject::AttachSystems(Physics* PM, Renderer* R,LuaHelper* LH)
+void GameObject::AttachSystems(Physics* PM, Renderer* R,LuaHelper* LH,NetworkManager* NM)
 {
+	_NM = NM;
 	_PM = PM;
 	_R = R;
 	_LH = LH;
@@ -235,9 +236,9 @@ void GameObject::InitiationAbstraction(Ogre::SceneNode* ScnNode,btBoxShape* Coll
 	RigidBody3d->setUserPointer(ScnNode);
 	AddtoPhysicsSystem(_PM);
 }
-void GameObject::SendToClient(NetworkManager* NM)
+void GameObject::SendToClient()
 {
-	Vector3* a = new Vector3{ Node->getPosition().x, Node->getPosition().y, Node->getPosition().z };
-	Vector3* b = new Vector3{ _ColliderSize[0], _ColliderSize[1], _ColliderSize[2] };
-	NM->SendPacket(Name,_MeshName,_Material,a,b);
+	Vector3 a = Vector3{ Node->getPosition().x, Node->getPosition().y, Node->getPosition().z };
+	Vector3 b = Vector3{ _ColliderSize[0], _ColliderSize[1], _ColliderSize[2] };
+	_NM->SendPacket(Name,_MeshName,_Material,a,b);
 }

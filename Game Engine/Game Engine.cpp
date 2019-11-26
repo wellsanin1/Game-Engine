@@ -20,19 +20,19 @@ void GameEngine::LoadEntitiesIntoEngine(int Level)
 			OP.CreateEntity(GenEnt.Entity->Name, GenEnt.Entity->Mesh,GenEnt.Entity->Material
 							,GenEnt.Entity->x, GenEnt.Entity->y, GenEnt.Entity->z
 							,GenEnt.Entity->ColX, GenEnt.Entity->ColY, GenEnt.Entity->ColZ
-							, &PM, &R,&LH);
+							, &PM,&R,&LH,&NM);
 		}
 		if (LH.entityList[i]->UnionType == "Camera")
 		{
 			LuaGenStruct::LuaGeneric GenEnt = LH.entityList[i]->GenericStore;
-			OP.CreateCamera(GenEnt.Camera->Name, GenEnt.Camera->x, GenEnt.Camera->y, GenEnt.Camera->z, &PM, &R, &LH);
+			OP.CreateCamera(GenEnt.Camera->Name, GenEnt.Camera->x, GenEnt.Camera->y, GenEnt.Camera->z, &PM, &R, &LH, &NM);
 			R.getRenderWindow()->removeAllViewports();
 			R.getRenderWindow()->addViewport(OP.GetObjectFromPool(GenEnt.Camera->Name)->StoredObject.Camera);
 		}
 		if (LH.entityList[i]->UnionType == "Light")
 		{
 			LuaGenStruct::LuaGeneric GenEnt = LH.entityList[i]->GenericStore;
-			OP.CreateLight(GenEnt.Light->Name, GenEnt.Light->x, GenEnt.Light->y, GenEnt.Light->z, &PM, &R, &LH);
+			OP.CreateLight(GenEnt.Light->Name, GenEnt.Light->x, GenEnt.Light->y, GenEnt.Light->z, &PM, &R, &LH, &NM);
 		}
 	}
 }
@@ -56,7 +56,11 @@ void GameEngine::Audio()
 }
 void GameEngine::Network()
 {
-	NM.Update(&OP,&PM,&LH,&R);
+	NM.Update(&OP,&EQ);
+}
+void GameEngine::ObjectPoolUpdate()
+{
+	OP.Update(&EQ,&PM,&R,&LH,&NM);
 }
 LuaHelper* GameEngine::GetLevelManager()
 {
@@ -97,10 +101,12 @@ void GameEngine::Update()
 	Audio();
 	Game();
 	ExecuteLUA();
+	Network();
 }
 
 void GameEngine::Initialise()
 {
+	NM.Initiate();
 	R.initApp();
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0) 
 	{

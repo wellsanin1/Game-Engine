@@ -1,23 +1,10 @@
 #include "NetworkManager.h"
 NetworkManager::NetworkManager()
 {
-	*packetType = -1;
-	if (enet_initialize() != 0)
-	{
-		std::cout << "Enet failed to initialise!" << "\n\n";
-	}
-	client = enet_host_create(NULL, 1, 2, 0, 0);
 
-	if (client == NULL)
-	{
-		std::cout << "Client failed to initialise!" << "\n\n";
-	}
-	enet_address_set_host(&address, "localhost");
-	address.port = 1234;
-	Host();
 }
 
-void NetworkManager::Host()
+void NetworkManager::ConnectHost()
 {
 	peer = enet_host_connect(client, &address, 2, 0);
 
@@ -26,8 +13,9 @@ void NetworkManager::Host()
 	}
 }
 
-void NetworkManager::Update(ObjectPool*OP,Physics*PM,LuaHelper*LH,Renderer*R)
+void NetworkManager::Update(ObjectPool*OP,EventQueue* EQ)
 {
+	ConnectHost();
 	while (enet_host_service(client, &enetEvent, 0) > 0)
 	{
 		switch (enetEvent.type) 
@@ -47,35 +35,66 @@ void NetworkManager::Update(ObjectPool*OP,Physics*PM,LuaHelper*LH,Renderer*R)
 				GameObject* GO = OP->GetObjectFromPool(serverData->Name);
 				if (GO == nullptr)
 				{
-					event EV;
-					OP->CreateEntity(serverData->Name,serverData->MeshName,serverData->Material
-									,serverData->positions->x, serverData->positions->y, serverData->positions->z
-									,serverData->Colliders->x,serverData->Colliders->y,serverData->Colliders->z,PM,R,LH);
+					event E;
+					E.PD.Name = serverData->Name;
+					E.PD.MeshName = serverData->MeshName;
+					E.PD.Material = serverData->Material;
+
+					E.PD.positions.x = serverData->positions.x;
+					E.PD.positions.y = serverData->positions.y;
+					E.PD.positions.z = serverData->positions.z;
+
+					E.PD.Colliders.x = serverData->Colliders.x;
+					E.PD.Colliders.y = serverData->Colliders.y;
+					E.PD.Colliders.z = serverData->Colliders.z;
+
+					EQ->AddEvent(E);
 				}
 				else
 				{
-					GO->SetTransform(serverData->positions->x,serverData->positions->y,serverData->positions->z);
+					GO->SetTransform(serverData->positions.x,serverData->positions.y,serverData->positions.z);
 				}
 			}
 			break;
 		}
 	}
-
 }
 
-void NetworkManager::SendPacket(std::string Name,std::string MeshName,std::string Material,Vector3 positions[3],Vector3 Colliders[3])
+void NetworkManager::SendPacket(std::string Name,std::string MeshName,std::string Material,Vector3 positions,Vector3 Colliders)
 {
 	EntityData* ED = new EntityData();
 	ED->Name = Name;
 	ED->MeshName = MeshName;
 	ED->Material = Material;
-	for (int i = 0;i<3;++i)
-	{
-		ED->positions[i] = positions[i];
-		ED->Colliders[i] = Colliders[i];
-	}
+
+	ED->positions.x = positions.x;
+	ED->positions.y = positions.y;
+	ED->positions.z = positions.z;
+
+	ED->Colliders.x = Colliders.x;
+	ED->Colliders.y = Colliders.y;
+	ED->Colliders.z = Colliders.z;
+
 	dataPacket = enet_packet_create(ED, sizeof(EntityData), ENET_PACKET_FLAG_RELIABLE);
 	enet_peer_send(peer, 0, dataPacket);
+}
+
+void NetworkManager::Initiate()
+{
+	*packetType = -1;
+	if (enet_initialize() != 0)
+	{
+		std::cout << "Enet failed to initialise!" << "\n\n";
+	}
+	client = enet_host_create(NULL, 1, 2, 0, 0);
+
+	if (client == NULL)
+	{
+		std::cout << "Client failed to initialise!" << "\n\n";
+	}
+	enet_address_set_host(&address, "localhost");
+	address.port = 1234;
+	ConnectHost();
 }
 
 NetworkManager::~NetworkManager()

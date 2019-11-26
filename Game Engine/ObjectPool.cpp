@@ -26,6 +26,21 @@ void ObjectPool::ClearPool(Renderer *R, Physics*PM)
 	Reinitialise();
 }
 
+void ObjectPool::Update(EventQueue*EQ, Physics* PM, Renderer* R, LuaHelper* LH,NetworkManager* NM)
+{
+	EventQueue E = EventQueue();
+	E = EQ[0];
+	event EV = E.CheckQueueNoRemoval(event::ObjectPool);
+	if (EV.EventType != NONE)
+	{
+		CreateEntity(EV.PD.Name, EV.PD.MeshName, EV.PD.Material
+			, EV.PD.positions.x, EV.PD.positions.y, EV.PD.positions.z
+			, EV.PD.Colliders.x, EV.PD.Colliders.y, EV.PD.Colliders.z
+			, PM, R, LH,NM);
+		EQ->CheckQueue(event::ObjectPool,true);
+	}
+}
+
 void ObjectPool::StoreObject(GameObject* Object)
 {
 	int size = sizeof(PoolStorage) / sizeof(*PoolStorage);
@@ -69,21 +84,21 @@ GameObject* ObjectPool::GetObjectFromPool(btRigidBody* RigidBody)
 	return nullptr;
 };
 
-void ObjectPool::CreateCamera(std::string Name, int PosX, int PosY, int PosZ,Physics* PM,Renderer* R, LuaHelper* LH)
+void ObjectPool::CreateCamera(std::string Name, int PosX, int PosY, int PosZ,Physics* PM,Renderer* R, LuaHelper* LH,NetworkManager* NM)
 {
 	GameObject* a = new GameObject();
-	a->CreateCamera(PM, R, LH, Name, PosX, PosY, PosZ);
+	a->CreateCamera(PM, R, LH,NM, Name, PosX, PosY, PosZ);
 	StoreObject(a);
 }
-void ObjectPool::CreateEntity(std::string Name, std::string MeshName, std::string MaterialName, int PosX, int PosY, int PosZ, int ColX, int ColY, int ColZ, Physics* PM, Renderer* R,LuaHelper* LH)
+void ObjectPool::CreateEntity(std::string Name, std::string MeshName, std::string MaterialName, int PosX, int PosY, int PosZ, int ColX, int ColY, int ColZ, Physics* PM, Renderer* R,LuaHelper* LH, NetworkManager* NM)
 {
 	GameObject* a = new GameObject();
-	a->CreateEntity(PM, R, LH, Name, MeshName,MaterialName, PosX, PosY, PosZ, ColX, ColY, ColZ);
+	a->CreateEntity(PM, R, LH,NM, Name, MeshName,MaterialName, PosX, PosY, PosZ, ColX, ColY, ColZ);
 	StoreObject(a);
 }
-void ObjectPool::CreateLight(std::string Name, int PosX, int PosY, int PosZ, Physics* PM, Renderer* R,LuaHelper* LH)
+void ObjectPool::CreateLight(std::string Name, int PosX, int PosY, int PosZ, Physics* PM, Renderer* R,LuaHelper* LH,NetworkManager* NM)
 {
 	GameObject* a = new GameObject();
-	a->CreateLight(PM,R,LH,Name, PosX, PosY, PosZ);
+	a->CreateLight(PM,R,LH,NM,Name, PosX, PosY, PosZ);
 	StoreObject(a);
 }

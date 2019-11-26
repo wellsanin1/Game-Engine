@@ -1,14 +1,15 @@
 #pragma once
+#pragma once
 #include <string>
 
-struct Vector3 
+struct Vector3
 {
 	float x;
 	float y;
 	float z;
 };
 
-struct EntityData 
+struct EntityData
 {
 	std::string Name;
 	std::string MeshName;
@@ -19,14 +20,14 @@ struct EntityData
 	Vector3 Colliders;
 };
 
-struct ClientData 
+struct ClientData
 {
 	int packetType = 0;
 	int clientIndex;
 	Vector3 position[3];
 };
 
-struct ClientPacket 
+struct ClientPacket
 {
 	int clientIndex;
 	int direction;

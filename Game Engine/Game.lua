@@ -42,9 +42,11 @@ function GameEngine(Engine)
 	if(Engine:GetLevelManager():GetCurrentLevel() == 2)
 	then
 		--Level 2 Logic
+		
+		
 		local a = Engine:GetGameObjectWithName("OgreHead"):GetTransform()
 		Engine:GetGameObjectWithName("myCam"):LookAt(a[1],a[2],a[3])
-		
+		Engine:GetGameObjectWithName("OgreHead"):SendToClient()
 		local KeyManager = Engine:GetKeyManager()
 		if (KeyManager:GetKey(UP) == true)
 		then

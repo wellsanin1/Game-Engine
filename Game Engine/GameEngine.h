@@ -23,6 +23,7 @@ public:
 	void Game();
 	void Audio();
 	void Network();
+	void ObjectPoolUpdate();
 
 	void ExecuteLUA();
 	void LoadEntitiesIntoEngine(int Level);

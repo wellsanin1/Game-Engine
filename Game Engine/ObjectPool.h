@@ -2,21 +2,14 @@
 #include "ObjectPool.fwd.h"
 #include "GameObject.fwd.h"
 #include "PhysicsManager.fwd.h"
-#include "EventSystem.h"
+#include "LUAHelper.fwd.h"
+#include "Renderer.fwd.h"
 
+#include "EventSystem.h"
 #include <Ogre.h>
 
-#include "LuaStructs.h"
-extern "C" {
-# include "lua.h"
-# include "lauxlib.h"
-# include "lualib.h"
-}
-#include <LuaBridge/LuaBridge.h>
-#include <lua.hpp>
-
+#include "EventSystem.h"
 #include "GameObject.h"
-#include "Renderer.h"
 #include "GameEngineDefinitions.h"
 #include <iostream>
 
@@ -29,10 +22,13 @@ public:
 	void StoreObject(GameObject* Object);
 	GameObject* GetObjectFromPool(std::string ObjectName);
 	GameObject* GetObjectFromPool(btRigidBody* RigidBody);
-	void CreateCamera(std::string Name, int PosX, int PosY, int PosZ, Physics* PM, Renderer* R, LuaHelper* LH);
-	void CreateEntity(std::string Name, std::string MeshName, std::string MaterialName, int PosX, int PosY, int PosZ, int ColX, int ColY, int ColZ, Physics* PM, Renderer* R, LuaHelper* LH);
-	void CreateLight(std::string Name, int PosX, int PosY, int PosZ, Physics* PM, Renderer* R, LuaHelper* LH);
+	void CreateCamera(std::string Name, int PosX, int PosY, int PosZ
+						, Physics* PM, Renderer* R, LuaHelper* LH, NetworkManager* NM);
+	void CreateEntity(std::string Name, std::string MeshName, std::string MaterialName, int PosX, int PosY, int PosZ, int ColX, int ColY, int ColZ
+						,Physics* PM, Renderer* R, LuaHelper* LH, NetworkManager* NM);
+	void CreateLight(std::string Name, int PosX, int PosY, int PosZ
+						,Physics* PM, Renderer* R, LuaHelper* LH, NetworkManager* NM);
 	void Reinitialise();
 	void ClearPool(Renderer* R, Physics* PM);
-	void Update();
+	void Update(EventQueue* EQ, Physics* PM, Renderer* R, LuaHelper* LH,NetworkManager* NM);
 };

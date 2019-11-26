@@ -2,6 +2,9 @@
 //Forward declare headers to avoid circular dependancy
 #include "GameObject.fwd.h"
 #include "PhysicsManager.fwd.h"
+#include "LUAHelper.fwd.h"
+#include "NetworkManager.fwd.h"
+
 
 
 #include "LuaStructs.h"
@@ -43,13 +46,14 @@ private:
 	void FillObject(Ogre::Camera* Object, Ogre::SceneNode* ScnNode, Ogre::String ObjName);
 	void FillObject(Ogre::Light* Object, Ogre::SceneNode* ScnNode, Ogre::String ObjName);
 	void FillObject(Ogre::Entity* Object, Ogre::SceneNode* ScnNode, Ogre::String ObjName);
-	void AttachSystems(Physics* PM, Renderer* R, LuaHelper* LH);
+	void AttachSystems(Physics* PM, Renderer* R, LuaHelper* LH, NetworkManager* NM);
 	//BULLET
 	btTransform Transform;
 
 	Physics* _PM;
 	Renderer* _R;
 	LuaHelper* _LH;
+	NetworkManager* _NM;
 	std::string _MeshName;
 	std::string _Material;
 	float _ColliderSize[3];
@@ -88,10 +92,10 @@ public:
 	void ChangeTexture(std::string TextureName);
 	void LookAt(float X, float Y, float Z);
 	void TranslateLocally(float X, float Y, float Z);
-	void SendToClient(NetworkManager* NM);
-	void CreateEntity(Physics* PM, Renderer* R, LuaHelper* LH, std::string EntityName, std::string MeshName,std::string MaterialName, int PosX, int PosY, int PosZ,int ColX,int ColY,int ColZ);
-	void CreateLight(Physics* PM, Renderer* R, LuaHelper* LH, std::string LightName, int PosX, int PosY, int PosZ);
-	void CreateCamera(Physics* PM, Renderer* R, LuaHelper* LH, std::string CameraName, int PosX, int PosY, int PosZ);
+	void SendToClient();
+	void CreateEntity(Physics* PM, Renderer* R, LuaHelper* LH, NetworkManager* NM, std::string EntityName, std::string MeshName,std::string MaterialName, int PosX, int PosY, int PosZ,int ColX,int ColY,int ColZ);
+	void CreateLight(Physics* PM, Renderer* R, LuaHelper* LH, NetworkManager* NM, std::string LightName, int PosX, int PosY, int PosZ);
+	void CreateCamera(Physics* PM, Renderer* R, LuaHelper* LH, NetworkManager* NM, std::string CameraName, int PosX, int PosY, int PosZ);
 
 	GameObject CollideObject();
 
@@ -120,6 +124,7 @@ public:
 			.addFunction("SetTransform", &GameObject::SetTransform)
 			.addFunction("GetOrientation", &GameObject::GetOrientation)
 			.addFunction("TranslateLocally", &GameObject::TranslateLocally)
+			.addFunction("SendToClient", &GameObject::SendToClient)
 			.addFunction("LookAt", &GameObject::LookAt)
 			.endClass()
 			.endNamespace();

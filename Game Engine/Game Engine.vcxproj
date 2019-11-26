@@ -160,6 +160,7 @@
       <StringPooling>true</StringPooling>
       <FloatingPointModel>Fast</FloatingPointModel>
       <EnableModules>true</EnableModules>
+      <ShowIncludes>false</ShowIncludes>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -210,6 +211,7 @@
     <ClInclude Include="PhysicsManager.fwd.h" />
     <ClInclude Include="PhysicsManager.h" />
     <ClInclude Include="GameObject.h" />
+    <ClInclude Include="Renderer.fwd.h" />
     <ClInclude Include="Renderer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

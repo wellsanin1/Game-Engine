@@ -176,5 +176,8 @@
     <ClInclude Include="LUAHelper.fwd.h">
       <Filter>Header Files\LUA</Filter>
     </ClInclude>
+    <ClInclude Include="Renderer.fwd.h">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

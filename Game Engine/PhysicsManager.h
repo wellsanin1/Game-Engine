@@ -11,7 +11,6 @@
 #include <vector>
 #include <map>
 
-
 class Physics {
 public:
 	Physics();

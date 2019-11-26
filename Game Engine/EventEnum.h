@@ -8,5 +8,6 @@ enum EventEnum
 	RIGHT,
 	QUIT,
 	PHYSICS,
-	LOAD
+	LOAD,
+	ENTITY
 };

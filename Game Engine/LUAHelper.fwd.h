@@ -1,2 +1,2 @@
 #pragma once
-class LUAHelper;
+class LuaHelper;
