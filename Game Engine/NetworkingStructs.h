@@ -10,10 +10,10 @@ struct Vector3
 
 struct EntityData 
 {
-	std::string Name;
-	std::string MeshName;
-	std::string Material;
 	int packetType = 1;
+	char Name[30];
+	char MeshName[30];
+	char Material[30];
 	int clients;
 	Vector3 positions;
 	Vector3 Colliders;

@@ -1,6 +1,9 @@
 #include <iostream>
+#include <vector>
 #include "NetworkingStructs.h"
 #include <enet/enet.h>
+
+#define PeerCount 10
 
 /* Note that we are including both the 32-bit and 64-bit versions of SFML
 (downloadable from their site) as ENet can be temperamental dependent upon OS.
@@ -47,8 +50,8 @@ void main()
 	ENetAddress address;
 	ENetHost* server;
 	ENetEvent enetEvent;
-
 	ENetPacket* dataPacket;
+	std::vector<ENetPeer*> PeerArray;
 
 	/* We set the address values to essentially be a local host */
 
@@ -79,19 +82,10 @@ void main()
 
 	while (1)
 	{
-		/* As we mentioned, ENet is event driven. This while loop checks to see if
-		the server has any events to respond to. We can use the event type to
-		determine how to respond to a given event. Note that there are multiple types
-		of ENet event - in this example, our server is only reacting to a client
-		connection being established (ENET_EVENT_TYPE_CONNECT) or a connection being
-		dropped (ENET_EVENT_TYPE_DISCONNECT). Note that given our sample Client uses
-		the enet_peer_disconnect_now function, there is no guarantee the server will
-		detect a disconnect event - that is something you can consider improving in your
-		own networking subsystem. */
 
 		while (enet_host_service(server, &enetEvent, 0) > 0)
 		{
-			cout << "TEST" << endl;
+			ENetPeer* TempPeer;
 			switch (enetEvent.type)
 			{
 			case ENET_EVENT_TYPE_CONNECT:
@@ -100,6 +94,7 @@ void main()
 
 				clientData->clientIndex = clientCount;
 
+				PeerArray.push_back(enetEvent.peer);
 				dataPacket = enet_packet_create(clientData, sizeof(ClientData), ENET_PACKET_FLAG_RELIABLE);
 				enet_peer_send(enetEvent.peer, 0, dataPacket);
 
@@ -115,19 +110,38 @@ void main()
 				cout << "The client from address " << enetEvent.peer->address.host << ":" << enetEvent.peer->address.port << " disconnected \n";
 				
 				enetEvent.peer->data = NULL;
+				for (int i = 0; i < PeerArray.size(); ++i)
+				{
+					if (PeerArray[i] == enetEvent.peer)
+					{
+						
+						delete PeerArray[i];
+						PeerArray.erase(PeerArray.begin()+i);
+						break;
+					}
+				}
 				
 				break;
 
 			case ENET_EVENT_TYPE_RECEIVE:
 				memcpy(physicsData, enetEvent.packet->data, enetEvent.packet->dataLength);
-				std::cout << "TEST";
-				//physicsData->positions[clientPacket->clientIndex] = clientPacket->position;
+				for (int i = 0 ; i<PeerArray.size() ; ++i)
+				{
+					if (enetEvent.peer != PeerArray[i])
+					{
+						char a[10] = "(Online)";
+						char b[2];
+						memcpy(b, &i, sizeof(i));
+						strcat_s(a, b);
+						strcat_s(physicsData->Name, "(Online)");
+						dataPacket = enet_packet_create(physicsData, sizeof(EntityData), ENET_PACKET_FLAG_RELIABLE);
+						enet_peer_send(PeerArray[i], 0, dataPacket);
+					}
+				}
 			}
 		}
-
-		/* Basic draw functionality for SFML, making sure our texture appears. */
-		dataPacket = enet_packet_create(physicsData, sizeof(EntityData), ENET_PACKET_FLAG_RELIABLE);
-		enet_host_broadcast(server, 0, dataPacket);
+		//dataPacket = enet_packet_create(physicsData, sizeof(EntityData), ENET_PACKET_FLAG_RELIABLE);
+		//enet_host_broadcast(server, 0, dataPacket);
 
 	}
 
@@ -138,4 +152,5 @@ void main()
 
 	enet_host_destroy(server);
 	atexit(enet_deinitialize);
+
 }

@@ -1,5 +1,4 @@
 #pragma once
-#pragma once
 #include <string>
 
 struct Vector3
@@ -11,10 +10,10 @@ struct Vector3
 
 struct EntityData
 {
-	std::string Name;
-	std::string MeshName;
-	std::string Material;
 	int packetType = 1;
+	char Name[30];
+	char MeshName[30];
+	char Material[30];
 	int clients;
 	Vector3 positions;
 	Vector3 Colliders;
@@ -24,7 +23,6 @@ struct ClientData
 {
 	int packetType = 0;
 	int clientIndex;
-	Vector3 position[3];
 };
 
 struct ClientPacket

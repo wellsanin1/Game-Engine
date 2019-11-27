@@ -58,9 +58,9 @@ elementList = {
 		PosX = 50,
 		PosY = 0,
 		PosZ = 0,
-		ColX = 15,
-		ColY = 15,
-		ColZ = 15
+		ColX = 100,
+		ColY = 1,
+		ColZ = 100
 	}
 
 }

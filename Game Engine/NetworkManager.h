@@ -16,6 +16,7 @@ public:
 	void Update(ObjectPool* OP, EventQueue* EQ);
 	void SendPacket(std::string Name, std::string MeshName, std::string Material, Vector3 positions, Vector3 Colliders);
 	void Initiate();
+	void Disconnect();
 private:
 	ENetAddress address;
 	ENetHost* client;

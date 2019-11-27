@@ -66,8 +66,8 @@ GameObject* ObjectPool::GetObjectFromPool(std::string ObjectName)
 			return PoolStorage[i];
 		}
 	}
-	throw std::invalid_argument("Object with name " + ObjectName + " does not exist");
-	return nullptr;
+	GameObject* GO = new GameObject();
+	return GO;
 };
 
 GameObject* ObjectPool::GetObjectFromPool(btRigidBody* RigidBody)
@@ -77,11 +77,12 @@ GameObject* ObjectPool::GetObjectFromPool(btRigidBody* RigidBody)
 	{
 		if (PoolStorage[i]->RigidBody3d == RigidBody)
 		{
+
 			return PoolStorage[i];
 		}
 	}
-	throw std::invalid_argument("Object Rigidbody does not exist");
-	return nullptr;
+	GameObject* GO = new GameObject();
+	return GO;
 };
 
 void ObjectPool::CreateCamera(std::string Name, int PosX, int PosY, int PosZ,Physics* PM,Renderer* R, LuaHelper* LH,NetworkManager* NM)

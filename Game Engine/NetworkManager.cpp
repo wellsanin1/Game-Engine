@@ -6,11 +6,7 @@ NetworkManager::NetworkManager()
 
 void NetworkManager::ConnectHost()
 {
-	peer = enet_host_connect(client, &address, 2, 0);
 
-	if (peer == NULL) {
-		std::cout << "No available peers for initializing an ENet connection.\n";
-	}
 }
 
 void NetworkManager::Update(ObjectPool*OP,EventQueue* EQ)
@@ -33,9 +29,11 @@ void NetworkManager::Update(ObjectPool*OP,EventQueue* EQ)
 			{
 				memcpy(serverData, enetEvent.packet->data, sizeof(EntityData));
 				GameObject* GO = OP->GetObjectFromPool(serverData->Name);
-				if (GO == nullptr)
+				if (GO->IsEmpty() == true)
 				{
 					event E;
+					E.SubSystemList.push_back(event::ObjectPool);
+					E.EventType = EventEnum::ENTITY;
 					E.PD.Name = serverData->Name;
 					E.PD.MeshName = serverData->MeshName;
 					E.PD.Material = serverData->Material;
@@ -63,9 +61,12 @@ void NetworkManager::Update(ObjectPool*OP,EventQueue* EQ)
 void NetworkManager::SendPacket(std::string Name,std::string MeshName,std::string Material,Vector3 positions,Vector3 Colliders)
 {
 	EntityData* ED = new EntityData();
-	ED->Name = Name;
-	ED->MeshName = MeshName;
-	ED->Material = Material;
+	strcpy(ED->Name, Name.c_str());
+	strcpy(ED->MeshName, MeshName.c_str());
+	strcpy(ED->Material, Material.c_str());
+	//ED->Name = Name.c_str();
+	//ED->MeshName = MeshName.c_str();
+	//ED->Material = Material.c_str();
 
 	ED->positions.x = positions.x;
 	ED->positions.y = positions.y;
@@ -75,8 +76,10 @@ void NetworkManager::SendPacket(std::string Name,std::string MeshName,std::strin
 	ED->Colliders.y = Colliders.y;
 	ED->Colliders.z = Colliders.z;
 
+
 	dataPacket = enet_packet_create(ED, sizeof(EntityData), ENET_PACKET_FLAG_RELIABLE);
 	enet_peer_send(peer, 0, dataPacket);
+
 }
 
 void NetworkManager::Initiate()
@@ -94,8 +97,18 @@ void NetworkManager::Initiate()
 	}
 	enet_address_set_host(&address, "localhost");
 	address.port = 1234;
-	ConnectHost();
+	peer = enet_host_connect(client, &address, 2, 0);
+
+	if (peer == NULL) {
+		std::cout << "No available peers for initializing an ENet connection.\n";
+	}
 }
+
+void NetworkManager::Disconnect()
+{
+
+}
+
 
 NetworkManager::~NetworkManager()
 {

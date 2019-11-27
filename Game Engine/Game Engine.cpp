@@ -101,7 +101,9 @@ void GameEngine::Update()
 	Audio();
 	Game();
 	ExecuteLUA();
+	ObjectPoolUpdate();
 	Network();
+
 }
 
 void GameEngine::Initialise()
