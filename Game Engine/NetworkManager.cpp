@@ -11,7 +11,6 @@ void NetworkManager::ConnectHost()
 
 void NetworkManager::Update(ObjectPool*OP,EventQueue* EQ)
 {
-	ConnectHost();
 	while (enet_host_service(client, &enetEvent, 0) > 0)
 	{
 		switch (enetEvent.type) 
@@ -29,8 +28,11 @@ void NetworkManager::Update(ObjectPool*OP,EventQueue* EQ)
 			{
 				memcpy(serverData, enetEvent.packet->data, sizeof(EntityData));
 				GameObject* GO = OP->GetObjectFromPool(serverData->Name);
-				if (GO->IsEmpty() == true)
+				std::vector<std::string>::iterator it;
+				it = std::find(ConnectedObjectTempStore.begin(), ConnectedObjectTempStore.end(), serverData->Name);
+				if (GO->IsEmpty() == true && it == ConnectedObjectTempStore.end())
 				{
+					ConnectedObjectTempStore.push_back(serverData->Name);
 					event E;
 					E.SubSystemList.push_back(event::ObjectPool);
 					E.EventType = EventEnum::ENTITY;
@@ -48,7 +50,7 @@ void NetworkManager::Update(ObjectPool*OP,EventQueue* EQ)
 
 					EQ->AddEvent(E);
 				}
-				else
+				else if(GO->IsEmpty() == false)
 				{
 					GO->SetTransform(serverData->positions.x,serverData->positions.y,serverData->positions.z);
 				}
@@ -64,10 +66,7 @@ void NetworkManager::SendPacket(std::string Name,std::string MeshName,std::strin
 	strcpy(ED->Name, Name.c_str());
 	strcpy(ED->MeshName, MeshName.c_str());
 	strcpy(ED->Material, Material.c_str());
-	//ED->Name = Name.c_str();
-	//ED->MeshName = MeshName.c_str();
-	//ED->Material = Material.c_str();
-
+	ED->clientIndex = clientIndex;
 	ED->positions.x = positions.x;
 	ED->positions.y = positions.y;
 	ED->positions.z = positions.z;
@@ -77,7 +76,7 @@ void NetworkManager::SendPacket(std::string Name,std::string MeshName,std::strin
 	ED->Colliders.z = Colliders.z;
 
 
-	dataPacket = enet_packet_create(ED, sizeof(EntityData), ENET_PACKET_FLAG_RELIABLE);
+	dataPacket = enet_packet_create(ED,sizeof(EntityData), ENET_PACKET_FLAG_RELIABLE);
 	enet_peer_send(peer, 0, dataPacket);
 
 }
@@ -104,9 +103,9 @@ void NetworkManager::Initiate()
 	}
 }
 
-void NetworkManager::Disconnect()
+void NetworkManager::Restart()
 {
-
+	ConnectedObjectTempStore.clear();
 }
 
 

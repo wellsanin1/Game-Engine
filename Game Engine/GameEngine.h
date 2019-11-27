@@ -24,6 +24,7 @@ public:
 	void Audio();
 	void Network();
 	void ObjectPoolUpdate();
+	void Reload(int Level);
 
 	void ExecuteLUA();
 	void LoadEntitiesIntoEngine(int Level);
@@ -48,6 +49,7 @@ public:
 			.addFunction("LoadEntitiesIntoEngine", &GameEngine::LoadEntitiesIntoEngine)
 			.addFunction("LuaStringOUT", &GameEngine::LuaStringOUT)
 			.addFunction("LuaIntOUT", &GameEngine::LuaIntOUT)
+			.addFunction("Reload", &GameEngine::Reload)
 			.endClass()
 			.endNamespace();
 	}

@@ -138,6 +138,7 @@ void GameObject::LookAt(float X,float Y,float Z)
 }
 void GameObject::CreateEntity(Physics*PM,Renderer*R,LuaHelper* LH, NetworkManager* NM, std::string EntityName,std::string MeshName,std::string MaterialName, int PosX, int PosY, int PosZ,int ColX, int ColY, int ColZ)
 {
+
 	AttachSystems(PM,R,LH,NM);
 	_Material = MaterialName;
 	_MeshName = MeshName;
@@ -151,9 +152,11 @@ void GameObject::CreateEntity(Physics*PM,Renderer*R,LuaHelper* LH, NetworkManage
 	_ColliderSize[1] = ColY;
 	_ColliderSize[2] = ColZ;
 	InitiationAbstraction(OgreNode, new btBoxShape(btVector3(ColX, ColY, ColZ)), NewTransform, 10);
+	std::cout << "created object with name " << EntityName << std::endl;
 }
 void GameObject::CreateLight(Physics* PM, Renderer* R, LuaHelper* LH,NetworkManager*NM, std::string LightName, int PosX, int PosY, int PosZ)
 {
+
 	AttachSystems(PM, R,LH,NM);
 	Ogre::Light* light = _R->scnMgr->createLight(LightName);
 	Ogre::SceneNode* lightNode = _R->scnMgr->getRootSceneNode()->createChildSceneNode();
@@ -162,9 +165,11 @@ void GameObject::CreateLight(Physics* PM, Renderer* R, LuaHelper* LH,NetworkMana
 	NewTransform.setOrigin({ (btScalar)PosX,(btScalar)PosY,(btScalar)PosZ });
 	FillObject(light, lightNode, LightName);
 	InitiationAbstraction(lightNode, new btBoxShape(btVector3(0.0f, 0.0f, 0.0f)), NewTransform, 0);
+	std::cout << "created object with name " << LightName << std::endl;
 }
 void GameObject::CreateCamera(Physics* PM, Renderer* R, LuaHelper* LH, NetworkManager* NM, std::string CameraName, int PosX, int PosY, int PosZ)
 {
+
 	AttachSystems(PM, R,LH,NM);
 	Name = "";
 	Ogre::SceneNode* camNode = _R->scnMgr->getRootSceneNode()->createChildSceneNode();
@@ -176,6 +181,7 @@ void GameObject::CreateCamera(Physics* PM, Renderer* R, LuaHelper* LH, NetworkMa
 	NewTransform.setOrigin({ (btScalar)PosX,(btScalar)PosY,(btScalar)PosZ });
 	FillObject(cam, camNode, CameraName);
 	InitiationAbstraction(camNode, new btBoxShape(btVector3(0.0f, 0.0f, 0.0f)), NewTransform, 0);
+	std::cout << "created object with name " << CameraName << std::endl;
 }
 
 void GameObject::AttachSystems(Physics* PM, Renderer* R,LuaHelper* LH,NetworkManager* NM)

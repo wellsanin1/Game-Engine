@@ -11,6 +11,7 @@ struct Vector3
 struct EntityData
 {
 	int packetType = 1;
+	int clientIndex;
 	char Name[30];
 	char MeshName[30];
 	char Material[30];

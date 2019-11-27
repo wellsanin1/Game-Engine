@@ -28,7 +28,7 @@ void main()
 	background texture with instructions, and to help us be clear which window
 	is the server and which is the client in our example. */
 
-	int clientCount = 0;
+	int clientCount = 1;
 
 	/* Now we're declaring our Vector2 - this vector will be controlling the
 	position of an 'enemy' entity in the Client instance. */
@@ -129,11 +129,13 @@ void main()
 				{
 					if (enetEvent.peer != PeerArray[i])
 					{
-						char a[10] = "(Online)";
-						char b[2];
-						memcpy(b, &i, sizeof(i));
-						strcat_s(a, b);
-						strcat_s(physicsData->Name, "(Online)");
+						char IntergerString[32];
+						int integer = physicsData->clientIndex;
+						sprintf_s(IntergerString, "%d", integer);
+
+						char PostFix[10] = "(Online)";
+						strcat_s(PostFix, IntergerString);
+						strcat_s(physicsData->Name, PostFix);
 						dataPacket = enet_packet_create(physicsData, sizeof(EntityData), ENET_PACKET_FLAG_RELIABLE);
 						enet_peer_send(PeerArray[i], 0, dataPacket);
 					}

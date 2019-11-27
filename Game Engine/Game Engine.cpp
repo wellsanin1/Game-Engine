@@ -62,6 +62,12 @@ void GameEngine::ObjectPoolUpdate()
 {
 	OP.Update(&EQ,&PM,&R,&LH,&NM);
 }
+void GameEngine::Reload(int Level)
+{
+	LH.StartLevel(Level);
+	LoadEntitiesIntoEngine(Level);
+	NM.Restart();
+}
 LuaHelper* GameEngine::GetLevelManager()
 {
 	return &LH;
@@ -95,15 +101,14 @@ void GameEngine::Render()
 
 void GameEngine::Update()
 {
+	ExecuteLUA();
 	CheckInput();
 	PhysicsUpdate();
 	Render();
 	Audio();
 	Game();
-	ExecuteLUA();
 	ObjectPoolUpdate();
 	Network();
-
 }
 
 void GameEngine::Initialise()

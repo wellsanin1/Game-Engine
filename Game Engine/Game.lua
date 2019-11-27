@@ -3,8 +3,7 @@ function GameEngine(Engine)
 	if (Engine:GetLevelManager():GetCurrentLevel() == 0)
 	then 
 		--Initialise level 1
-		Engine:GetLevelManager():StartLevel(1) 
-		Engine:LoadEntitiesIntoEngine(1)
+		Engine:Reload(1)
 		Engine:GetGameObjectWithName("penguin"):SetMass(0)
 		Engine:GetGameObjectWithName("plane"):SetMass(0)
 	end
@@ -34,8 +33,7 @@ function GameEngine(Engine)
 	if (Engine:GetLevelManager():GetFinished() == true and Engine:GetLevelManager():GetCurrentLevel() == 1)
 	then 
 		--Initialise level 2
-		Engine:GetLevelManager():StartLevel(2)
-		Engine:LoadEntitiesIntoEngine(2)
+		Engine:Reload(2)
 		Engine:GetGameObjectWithName("penguin"):SetMass(0)
 		Engine:GetGameObjectWithName("plane"):SetMass(0)
 	end
