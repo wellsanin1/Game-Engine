@@ -5,8 +5,6 @@
 #include "LUAHelper.fwd.h"
 #include "NetworkManager.fwd.h"
 
-
-
 #include "LuaStructs.h"
 extern "C" {
 # include "lua.h"
@@ -38,37 +36,14 @@ private:
 		Ogre::Entity* entity;
 	};
 	//Propriatory
-	void AssignRigidBody(btRigidBody* Rigidbody);
-	void AssignTransform();
-	void AssignCollisionShape(btCollisionShape* CollisionShape);
-	void AddtoPhysicsSystem(Physics* PM);
-	void InitiationAbstraction(Ogre::SceneNode* ScnNode,btBoxShape* ColliderShape, btTransform DefaultTransform, int ObjMass);
-	void FillObject(Ogre::Camera* Object, Ogre::SceneNode* ScnNode, Ogre::String ObjName);
-	void FillObject(Ogre::Light* Object, Ogre::SceneNode* ScnNode, Ogre::String ObjName);
-	void FillObject(Ogre::Entity* Object, Ogre::SceneNode* ScnNode, Ogre::String ObjName);
-	void AttachSystems(Physics* PM, Renderer* R, LuaHelper* LH, NetworkManager* NM);
+	void AttachSystems(EventQueue*EQ);
 	//BULLET
 	btTransform Transform;
 
-	Physics* _PM;
-	Renderer* _R;
-	LuaHelper* _LH;
-	NetworkManager* _NM;
-	std::string _MeshName;
-	std::string _Material;
+	EventQueue* _EQ;
 	float _ColliderSize[3];
 	std::vector<std::string> CollidedObjects;
 public:
-	//BULLET
-	btCollisionShape* CollisionShape;
-	btScalar mass = (0); //0 is static
-	btVector3 localInertia = { 0, 0, 0 };
-	btDefaultMotionState* myMotionState; //initialise = new btDefaultMotionState(startTransform);
-	btRigidBody::btRigidBodyConstructionInfo* BodyInfo;
-	btRigidBody* RigidBody3d;
-	//OGRE
-	Ogre::SceneNode* Node;
-
 
 	bool IsEmpty() { return Empty; };
 	void ClearObject();
@@ -93,13 +68,14 @@ public:
 	void LookAt(float X, float Y, float Z);
 	void TranslateLocally(float X, float Y, float Z);
 	void SendToClient();
-	void CreateEntity(Physics* PM, Renderer* R, LuaHelper* LH, NetworkManager* NM, std::string EntityName, std::string MeshName,std::string MaterialName, int PosX, int PosY, int PosZ,int ColX,int ColY,int ColZ);
-	void CreateLight(Physics* PM, Renderer* R, LuaHelper* LH, NetworkManager* NM, std::string LightName, int PosX, int PosY, int PosZ);
-	void CreateCamera(Physics* PM, Renderer* R, LuaHelper* LH, NetworkManager* NM, std::string CameraName, int PosX, int PosY, int PosZ);
+	void CreateEntity(EventQueue* EQ, std::string EntityName, std::string MeshName,std::string MaterialName, int PosX, int PosY, int PosZ,int ColX,int ColY,int ColZ);
+	void CreateLight(EventQueue* EQ, std::string LightName, int PosX, int PosY, int PosZ);
+	void CreateCamera(EventQueue* EQ, std::string CameraName, int PosX, int PosY, int PosZ);
+	void Teleport(double x, double y, double z);
+	std::vector<double> GetLinearVelocity();
 
 	GameObject CollideObject();
 
-	StoredObj StoredObject;
 	float Velocity[3] = {0,0,0};
 
 	std::string Name = "";

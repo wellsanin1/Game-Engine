@@ -25,6 +25,7 @@ public:
 	void Network();
 	void ObjectPoolUpdate();
 	void Reload(int Level);
+	void ExecuteEvents();
 
 	void ExecuteLUA();
 	void LoadEntitiesIntoEngine(int Level);

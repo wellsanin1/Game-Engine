@@ -8,8 +8,11 @@
 #include "Bullet3Common/b3Vector3.h"
 #include "GameEngineDefinitions.h"
 #include "ObjectPool.h"
+#include "EventSystem.h"
 #include <vector>
 #include <map>
+
+
 
 class Physics {
 public:
@@ -21,8 +24,26 @@ public:
 	btSequentialImpulseConstraintSolver* solver;
 	btDiscreteDynamicsWorld* dynamicsWorld;
 	std::vector<btCollisionShape*> collisionShapes;
-	void PhysicsUpdate(ObjectPool* OP);
+	std::map<std::string, btRigidBody*> physicsAccessors;
+	void PhysicsUpdate(ObjectPool* OP, EventQueue* EQ);
 	void CheckCollisions(ObjectPool* OP);
 	void dealloc();
-	void Restart();
+
+	void Restart(PhysicsData PD);
+	void CreateEntity(PhysicsData PD);
+	void SetMass(PhysicsData PD);
+	void TranslateLocally(PhysicsData PD);
+	void SetVelocity(PhysicsData PD);
+	void AddVelocity(PhysicsData PD);
+	void Teleport(PhysicsData PD);
+
+	typedef void (Physics::* Reactions)(PhysicsData);
+	Reactions EventReactions[7] = {&Physics::CreateEntity
+									,&Physics::SetMass
+									,&Physics::TranslateLocally
+									,&Physics::SetVelocity
+									,&Physics::AddVelocity
+									,& Physics::Teleport
+									,&Physics::Restart};
+
 };

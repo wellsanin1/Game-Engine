@@ -12,8 +12,8 @@ public:
 	void GetNextEvent();
 	void GetEvent();
 	void PopEvent();
-	EventEnum CheckQueue(event::SubSystem CurrentEvent,bool Delete);
-	event CheckQueueNoRemoval(event::SubSystem CurrentEvent);
-	void RemoveFromQueue(event::SubSystem CurrentEvent, EventEnum EventType);
+	EventEnum CheckQueue(SubSystem CurrentEvent,bool Delete);
+	event CheckQueueReturnEvent(SubSystem CurrentEvent);
+	void RemoveFromQueue(SubSystem CurrentEvent, EventEnum EventType);
 	std::vector<event> Queue;
 };

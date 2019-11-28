@@ -22,13 +22,16 @@ public:
 	void StoreObject(GameObject* Object);
 	GameObject* GetObjectFromPool(std::string ObjectName);
 	GameObject* GetObjectFromPool(btRigidBody* RigidBody);
-	void CreateCamera(std::string Name, int PosX, int PosY, int PosZ
-						, Physics* PM, Renderer* R, LuaHelper* LH, NetworkManager* NM);
-	void CreateEntity(std::string Name, std::string MeshName, std::string MaterialName, int PosX, int PosY, int PosZ, int ColX, int ColY, int ColZ
-						,Physics* PM, Renderer* R, LuaHelper* LH, NetworkManager* NM);
-	void CreateLight(std::string Name, int PosX, int PosY, int PosZ
-						,Physics* PM, Renderer* R, LuaHelper* LH, NetworkManager* NM);
+	void CreateCamera(ObjectPoolData OP,EventQueue*EQ);
+	void CreateEntity(ObjectPoolData OP, EventQueue* EQ);
+	void CreateLight(ObjectPoolData OP, EventQueue* EQ);
 	void Reinitialise();
-	void ClearPool(Renderer* R, Physics* PM);
-	void Update(EventQueue* EQ, Physics* PM, Renderer* R, LuaHelper* LH,NetworkManager* NM);
+	void ClearPool(EventQueue* EQ);
+	void Update(EventQueue* EQ);
+
+	typedef void (ObjectPool::* Reactions)(ObjectPoolData,EventQueue*);
+
+	Reactions EventReactions[3] = { &ObjectPool::CreateEntity
+									,& ObjectPool::CreateCamera
+									,& ObjectPool::CreateLight};
 };

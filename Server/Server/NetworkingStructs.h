@@ -16,8 +16,9 @@ struct EntityData
 	char MeshName[30];
 	char Material[30];
 	int clients;
-	Vector3 positions;
+	Vector3 Positions;
 	Vector3 Colliders;
+	Vector3 Velocity;
 };
 
 struct ClientData

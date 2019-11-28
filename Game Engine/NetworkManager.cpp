@@ -34,26 +34,28 @@ void NetworkManager::Update(ObjectPool*OP,EventQueue* EQ)
 				{
 					ConnectedObjectTempStore.push_back(serverData->Name);
 					event E;
-					E.SubSystemList.push_back(event::ObjectPool);
-					E.EventType = EventEnum::ENTITY;
-					E.PD.Name = serverData->Name;
-					E.PD.MeshName = serverData->MeshName;
-					E.PD.Material = serverData->Material;
+					E.SubSystemList.push_back(SubSystem_ObjectPool);
+					E.ObjectPoolEventEnum = ObjectPool_CREATEENTITY;
+					E.OD.Name = serverData->Name;
+					E.OD.e_type = "entity";
+					E.OD.MeshName = serverData->MeshName;
+					E.OD.Material = serverData->Material;
 
-					E.PD.positions.x = serverData->positions.x;
-					E.PD.positions.y = serverData->positions.y;
-					E.PD.positions.z = serverData->positions.z;
+					E.OD.positions.x = serverData->Positions.x;
+					E.OD.positions.y = serverData->Positions.y;
+					E.OD.positions.z = serverData->Positions.z;
 
-					E.PD.Colliders.x = serverData->Colliders.x;
-					E.PD.Colliders.y = serverData->Colliders.y;
-					E.PD.Colliders.z = serverData->Colliders.z;
-
+					E.OD.Colliders.x = serverData->Colliders.x;
+					E.OD.Colliders.y = serverData->Colliders.y;
+					E.OD.Colliders.z = serverData->Colliders.z;
 					EQ->AddEvent(E);
 				}
 				else if(GO->IsEmpty() == false)
 				{
-					std::cout << GO->Name << std::endl;
-					GO->SetTransform(serverData->positions.x,serverData->positions.y,serverData->positions.z);
+
+
+					GO->SetVelocity(serverData->Velocity.x, serverData->Velocity.y, serverData->Velocity.z);
+					GO->Teleport(serverData->Positions.x,serverData->Positions.y,serverData->Positions.z);
 				}
 			}
 			break;
@@ -61,21 +63,24 @@ void NetworkManager::Update(ObjectPool*OP,EventQueue* EQ)
 	}
 }
 
-void NetworkManager::SendPacket(std::string Name,std::string MeshName,std::string Material,Vector3 positions,Vector3 Colliders)
+void NetworkManager::SendPacket(std::string Name,std::string MeshName,std::string Material,Vector3 positions,Vector3 Colliders, Vector3 Velocity)
 {
 	EntityData* ED = new EntityData();
 	strcpy(ED->Name, Name.c_str());
 	strcpy(ED->MeshName, MeshName.c_str());
 	strcpy(ED->Material, Material.c_str());
 	ED->clientIndex = clientIndex;
-	ED->positions.x = positions.x;
-	ED->positions.y = positions.y;
-	ED->positions.z = positions.z;
+	ED->Positions.x = positions.x;
+	ED->Positions.y = positions.y;
+	ED->Positions.z = positions.z;
 
 	ED->Colliders.x = Colliders.x;
 	ED->Colliders.y = Colliders.y;
 	ED->Colliders.z = Colliders.z;
 
+	ED->Velocity.x = Velocity.x;
+	ED->Velocity.y = Velocity.y;
+	ED->Velocity.z = Velocity.z;
 
 	dataPacket = enet_packet_create(ED,sizeof(EntityData), ENET_PACKET_FLAG_RELIABLE);
 	enet_peer_send(peer, 0, dataPacket);

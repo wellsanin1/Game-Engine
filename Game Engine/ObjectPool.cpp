@@ -11,6 +11,7 @@ ObjectPool::ObjectPool()
 
 void ObjectPool::Reinitialise()
 {
+	std::fill(PoolStorage, PoolStorage + PoolSize, nullptr);
 	int size = sizeof(PoolStorage) / sizeof(*PoolStorage);
 	for (int i = 0; i < size; i++)
 	{
@@ -18,26 +19,29 @@ void ObjectPool::Reinitialise()
 	}
 }
 
-void ObjectPool::ClearPool(Renderer *R, Physics*PM)
+void ObjectPool::ClearPool(EventQueue*EQ)
 {
-	std::fill(PoolStorage, PoolStorage + PoolSize, nullptr);
-	R->Restart();
-	PM->Restart();
+	event A;
+	A.SubSystemList.push_back(SubSystem_Renderer);
+	A.SubSystemList.push_back(SubSystem_Physics);
+	A.PhysicsEventType = Physics_RESTART;
+	A.RenderEventType = Render_RESTART;
+	EQ->AddEvent(A);
 	Reinitialise();
 }
 
-void ObjectPool::Update(EventQueue*EQ, Physics* PM, Renderer* R, LuaHelper* LH,NetworkManager* NM)
+void ObjectPool::Update(EventQueue*EQ)
 {
 	EventQueue E = EventQueue();
 	E = EQ[0];
-	event EV = E.CheckQueueNoRemoval(event::ObjectPool);
-	if (EV.EventType != NONE)
+	event EV = E.CheckQueueReturnEvent(SubSystem_ObjectPool);
+	for (int i = 0; i < EV.SubSystemList.size(); ++i)
 	{
-		CreateEntity(EV.PD.Name, EV.PD.MeshName, EV.PD.Material
-			, EV.PD.positions.x, EV.PD.positions.y, EV.PD.positions.z
-			, EV.PD.Colliders.x, EV.PD.Colliders.y, EV.PD.Colliders.z
-			, PM, R, LH,NM);
-		EQ->CheckQueue(event::ObjectPool,true);
+		if (EV.SubSystemList.at(i) == SubSystem_ObjectPool)
+		{
+			Reactions A = EventReactions[(int)EV.EventType];
+			(this->*A)(EV.OD,EQ);
+		}
 	}
 }
 
@@ -85,21 +89,23 @@ GameObject* ObjectPool::GetObjectFromPool(btRigidBody* RigidBody)
 	return GO;
 };
 
-void ObjectPool::CreateCamera(std::string Name, int PosX, int PosY, int PosZ,Physics* PM,Renderer* R, LuaHelper* LH,NetworkManager* NM)
+void ObjectPool::CreateCamera(ObjectPoolData OD, EventQueue* EQ)
 {
 	GameObject* a = new GameObject();
-	a->CreateCamera(PM, R, LH,NM, Name, PosX, PosY, PosZ);
+	a->CreateCamera(EQ,OD.Name, OD.positions.x, OD.positions.z, OD.positions.z);
 	StoreObject(a);
 }
-void ObjectPool::CreateEntity(std::string Name, std::string MeshName, std::string MaterialName, int PosX, int PosY, int PosZ, int ColX, int ColY, int ColZ, Physics* PM, Renderer* R,LuaHelper* LH, NetworkManager* NM)
+void ObjectPool::CreateEntity(ObjectPoolData OD, EventQueue* EQ)
 {
 	GameObject* a = new GameObject();
-	a->CreateEntity(PM, R, LH,NM, Name, MeshName,MaterialName, PosX, PosY, PosZ, ColX, ColY, ColZ);
+	a->CreateEntity(EQ,OD.Name, OD.MeshName,OD.Material
+				, OD.positions.x, OD.positions.y, OD.positions.z
+				, OD.Colliders.x, OD.Colliders.y, OD.Colliders.z);
 	StoreObject(a);
 }
-void ObjectPool::CreateLight(std::string Name, int PosX, int PosY, int PosZ, Physics* PM, Renderer* R,LuaHelper* LH,NetworkManager* NM)
+void ObjectPool::CreateLight(ObjectPoolData OD, EventQueue* EQ)
 {
 	GameObject* a = new GameObject();
-	a->CreateLight(PM,R,LH,NM,Name, PosX, PosY, PosZ);
+	a->CreateLight(EQ,OD.Name, OD.positions.x, OD.positions.y, OD.positions.z);
 	StoreObject(a);
 }

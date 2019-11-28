@@ -22,9 +22,6 @@
     <Filter Include="Header Files\Events">
       <UniqueIdentifier>{fe42d50d-9af3-4374-b90d-f5f4373483dc}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Game Engine">
-      <UniqueIdentifier>{8749a659-3f1c-4b5e-8088-3b80de35ff9e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\UI">
       <UniqueIdentifier>{ad667770-ecb7-4ad9-bb2f-15344773a313}</UniqueIdentifier>
     </Filter>
@@ -63,6 +60,9 @@
     </Filter>
     <Filter Include="Header Files\Events\FunctionPointers">
       <UniqueIdentifier>{28a90e07-5659-4aa5-ab9e-96af5212b773}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Game Engine">
+      <UniqueIdentifier>{8749a659-3f1c-4b5e-8088-3b80de35ff9e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -178,6 +178,9 @@
     </ClInclude>
     <ClInclude Include="Renderer.fwd.h">
       <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysicsFunctions.h">
+      <Filter>Header Files\Physics</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

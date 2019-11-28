@@ -11,28 +11,51 @@ void GameEngine::ExecuteLUA()
 void GameEngine::LoadEntitiesIntoEngine(int Level)
 {
 	LH.LoadEntityData(Level);
-	OP.ClearPool(&R,&PM);
+	OP.ClearPool(&EQ);
 	for (int i = 0; i < LH.entityList.size(); ++i)
 	{
 		if (LH.entityList[i]->UnionType == "Entity")
 		{
 			LuaGenStruct::LuaGeneric GenEnt = LH.entityList[i]->GenericStore;
-			OP.CreateEntity(GenEnt.Entity->Name, GenEnt.Entity->Mesh,GenEnt.Entity->Material
-							,GenEnt.Entity->x, GenEnt.Entity->y, GenEnt.Entity->z
-							,GenEnt.Entity->ColX, GenEnt.Entity->ColY, GenEnt.Entity->ColZ
-							, &PM,&R,&LH,&NM);
+			event E;
+			E.SubSystemList.push_back(SubSystem_ObjectPool);
+			E.ObjectPoolEventEnum = ObjectPool_CREATEENTITY;
+			E.OD.MeshName = GenEnt.Entity->Mesh;
+			E.OD.Name = GenEnt.Entity->Name;
+			E.OD.Material = GenEnt.Entity->Material;
+
+			E.OD.positions.x = GenEnt.Entity->x;
+			E.OD.positions.y = GenEnt.Entity->y;
+			E.OD.positions.z = GenEnt.Entity->z;
+
+			E.OD.Colliders.x = GenEnt.Entity->ColX;
+			E.OD.Colliders.y = GenEnt.Entity->ColY;
+			E.OD.Colliders.z = GenEnt.Entity->ColZ;
+			EQ.AddEvent(E);
 		}
 		if (LH.entityList[i]->UnionType == "Camera")
 		{
 			LuaGenStruct::LuaGeneric GenEnt = LH.entityList[i]->GenericStore;
-			OP.CreateCamera(GenEnt.Camera->Name, GenEnt.Camera->x, GenEnt.Camera->y, GenEnt.Camera->z, &PM, &R, &LH, &NM);
-			R.getRenderWindow()->removeAllViewports();
-			R.getRenderWindow()->addViewport(OP.GetObjectFromPool(GenEnt.Camera->Name)->StoredObject.Camera);
+			event E;
+			E.SubSystemList.push_back(SubSystem_ObjectPool);
+			E.ObjectPoolEventEnum = ObjectPool_CREATECAMERA;
+			E.OD.Name = GenEnt.Camera->Name;
+			E.OD.positions.x = GenEnt.Camera->x;
+			E.OD.positions.y = GenEnt.Camera->y;
+			E.OD.positions.z = GenEnt.Camera->z;
+			EQ.AddEvent(E);
 		}
 		if (LH.entityList[i]->UnionType == "Light")
 		{
 			LuaGenStruct::LuaGeneric GenEnt = LH.entityList[i]->GenericStore;
-			OP.CreateLight(GenEnt.Light->Name, GenEnt.Light->x, GenEnt.Light->y, GenEnt.Light->z, &PM, &R, &LH, &NM);
+			event E;
+			E.SubSystemList.push_back(SubSystem_ObjectPool);
+			E.ObjectPoolEventEnum = ObjectPool_CREATELIGHT;
+			E.OD.Name = GenEnt.Light->Name;
+			E.OD.positions.x = GenEnt.Light->x;
+			E.OD.positions.y = GenEnt.Light->y;
+			E.OD.positions.z = GenEnt.Light->z;
+			EQ.AddEvent(E);
 		}
 	}
 }
@@ -48,7 +71,7 @@ void GameEngine::Game()
 void GameEngine::PhysicsUpdate()
 {
 	PM.CheckCollisions(&OP);
-	PM.PhysicsUpdate(&OP);
+	PM.PhysicsUpdate(&OP,&EQ);
 }
 void GameEngine::Audio()
 {
@@ -60,13 +83,16 @@ void GameEngine::Network()
 }
 void GameEngine::ObjectPoolUpdate()
 {
-	OP.Update(&EQ,&PM,&R,&LH,&NM);
+	OP.Update(&EQ);
 }
 void GameEngine::Reload(int Level)
 {
 	LH.StartLevel(Level);
 	LoadEntitiesIntoEngine(Level);
 	NM.Restart();
+}
+void GameEngine::ExecuteEvents()
+{;
 }
 LuaHelper* GameEngine::GetLevelManager()
 {
@@ -90,25 +116,23 @@ void GameEngine::LuaIntOUT(int Value)
 }
 void GameEngine::CheckInput()
 {
-	KM.InputRead();
-	
+	if (1)
+	{
+		KM.InputRead();
+	}
 }
-
 void GameEngine::Render()
 {
 	R.Update();
 }
-
 void GameEngine::Update()
 {
-	ExecuteLUA();
+	Network();
 	CheckInput();
 	PhysicsUpdate();
 	Render();
-	Audio();
-	Game();
 	ObjectPoolUpdate();
-	Network();
+	//ExecuteLUA();
 }
 
 void GameEngine::Initialise()

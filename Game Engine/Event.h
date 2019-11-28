@@ -7,8 +7,13 @@ struct event
 {
 public:
 	PhysicsData PD;
+	RendererData RD;
+	ObjectPoolData OD;
 	//EventData
-	enum SubSystem {NONE,TEST,Renderer,Audio,Input,Netcode,Physics,Load,ObjectPool};
+	PhysicsEnum PhysicsEventType;
+	RenderEnum RenderEventType;
+	ObjectPoolEnum ObjectPoolEventEnum;
+
 	EventEnum EventType = EventEnum::NONE;
 	std::vector<SubSystem> SubSystemList;
 };

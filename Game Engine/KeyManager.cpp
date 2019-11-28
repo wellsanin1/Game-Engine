@@ -24,7 +24,7 @@ EventEnum KeyManager::MapConvert(SDL_Keycode KeyCode)
 event KeyManager::CreateEvent(EventEnum KeyPressed)
 {
 	event E;
-	E.SubSystemList.push_back(event::Input);
+	E.SubSystemList.push_back(SubSystem_Input);
 	E.EventType = KeyPressed;
 	return E;
 }
@@ -53,11 +53,11 @@ bool KeyManager::GetKey(int Input)
 	EventQueue E =  EventQueue();
 	E = _EQ[0];
 
-	while (EventEnum Enum = E.CheckQueue(event::Input,true))
+	while (EventEnum Enum = E.CheckQueue(SubSystem_Input,true))
 	{
 		if (Enum == Input)
 		{
-			_EQ->CheckQueue(event::Input, true);
+			_EQ->CheckQueue(SubSystem_Input, true);
 			return true;
 		}
 	}

@@ -7,7 +7,13 @@ struct Vector3
 	float y;
 	float z;
 };
-
+struct Vector4
+{
+	float w;
+	float x;
+	float y;
+	float z;
+};
 struct EntityData 
 {
 	int packetType = 1;
@@ -16,8 +22,9 @@ struct EntityData
 	char MeshName[30];
 	char Material[30];
 	int clients;
-	Vector3 positions;
+	Vector3 Positions;
 	Vector3 Colliders;
+	Vector3 Velocity;
 };
 
 struct ClientData 
