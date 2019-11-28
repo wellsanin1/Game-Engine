@@ -28,11 +28,11 @@ elementList = {
 	},
 	element4 = {
 		e_type = 'Entity',
-		name = 'penguin',
-		mesh = 'penguin.mesh',
+		name = 'Barrel',
+		mesh = 'Barrel.mesh',
 		material = '',
-		PosX = 0,
-		PosY = 50,
+		PosX = -100,
+		PosY = 10,
 		PosZ = 0,
 		ColX = 15,
 		ColY = 15,
@@ -40,27 +40,15 @@ elementList = {
 	},
 	element5 = {
 		e_type = 'Entity',
-		name = 'Barrel',
-		mesh = 'Barrel.mesh',
-		material = '',
-		PosX = 0,
-		PosY = 100,
-		PosZ = 0,
-		ColX = 15,
-		ColY = 15,
-		ColZ = 15
-	},
-	element6 = {
-		e_type = 'Entity',
 		name = 'plane',
 		mesh = 'planePlane001.mesh',
 		material = 'planeMaterial__47',
-		PosX = 50,
+		PosX = 0,
 		PosY = 0,
 		PosZ = 0,
-		ColX = 100,
+		ColX = 10000,
 		ColY = 1,
-		ColZ = 100
+		ColZ = 10000
 	}
 
 }

@@ -52,6 +52,7 @@ void NetworkManager::Update(ObjectPool*OP,EventQueue* EQ)
 				}
 				else if(GO->IsEmpty() == false)
 				{
+					std::cout << GO->Name << std::endl;
 					GO->SetTransform(serverData->positions.x,serverData->positions.y,serverData->positions.z);
 				}
 			}

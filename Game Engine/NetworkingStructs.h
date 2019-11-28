@@ -12,7 +12,7 @@ struct EntityData
 {
 	int packetType = 1;
 	int clientIndex;
-	char Name[30];
+	char Name[100];
 	char MeshName[30];
 	char Material[30];
 	int clients;
