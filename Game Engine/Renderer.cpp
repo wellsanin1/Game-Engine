@@ -1,11 +1,35 @@
 #include "Renderer.h"
 
-Renderer::Renderer() :OgreBites::ApplicationContext("GameEngine")
+Renderer::Renderer(ObjectPool* OP) :OgreBites::ApplicationContext("GameEngine")
 {
+	_OP = OP;
 }
 
-void Renderer::Update()
+void Renderer::Update(EventQueue* EQ)
 {
+	EventQueue E = EventQueue();
+	E = EQ[0];
+	for (int i = 0; i < EQ->Queue.size(); ++i)
+	{
+		event EV = E.CheckQueueReturnEvent(SubSystem_Renderer);
+		if (EV.Empty == false)
+		{
+			for (int i = 0; i < EV.SubSystemList.size(); ++i)
+			{
+				if (EV.SubSystemList.at(i) == SubSystem_Renderer)
+				{
+					Reactions A = EventReactions[(int)EV.RenderEventType];
+					(this->*A)(EV.RD);
+					EQ->RemoveFromQueue(SubSystem_Renderer);
+				}
+			}
+		}
+		else
+		{
+			break;
+		}
+	}
+
 	root->renderOneFrame();
 }
 
@@ -40,40 +64,41 @@ void Renderer::CreateEntity(RendererData RD)
 {
 	Ogre::Entity* OgreEntity = scnMgr->createEntity(RD.Name, RD.MeshName);
 	Ogre::SceneNode* OgreNode = scnMgr->getRootSceneNode()->createChildSceneNode();
-	btTransform NewTransform;
 	OgreNode->attachObject(OgreEntity);
-	OgreObject* Object = new OgreObject();
-	Object->Entity = OgreEntity;
-	JoinedStore JS = JoinedStore();;
-	JS.Node = OgreNode;
-	JS.Object->Entity = OgreEntity;
-	RendererAccessors.insert(std::pair<std::string,JoinedStore>(RD.Name, JS));
-}
+	JoinedStore* JS = new JoinedStore();
+	JS->Node = OgreNode;
+	JS->Entity = OgreEntity;
 
+	RendererAccessors.insert({ RD.Name, JS[0] });
+	_OP->GetObjectFromPool(RD.Name)->entity = OgreEntity;
+	_OP->GetObjectFromPool(RD.Name)->Empty = false;
+}
 void Renderer::CreateCamera(RendererData RD)
 {
 	Ogre::Light* light = scnMgr->createLight(RD.Name);
 	Ogre::SceneNode* lightNode = scnMgr->getRootSceneNode()->createChildSceneNode();
-	JoinedStore JS = JoinedStore();;
-	JS.Node = lightNode;
-	JS.Object->Light = light;
-	RendererAccessors.insert(std::pair<std::string, JoinedStore>(RD.Name, JS));
+	JoinedStore* JS = new JoinedStore();
+	JS->Node = lightNode;
+	JS->Light = light;
+	RendererAccessors.insert({ RD.Name, JS[0] });
 	getRenderWindow()->removeAllViewports();
-	getRenderWindow()->addViewport(RendererAccessors.at(RD.Name).Object->Camera);
+	getRenderWindow()->addViewport(RendererAccessors.at(RD.Name).Camera);
+	_OP->GetObjectFromPool(RD.Name)->Light = light;
+	_OP->GetObjectFromPool(RD.Name)->Empty = false;
 }
-
 void Renderer::CreateLight(RendererData RD)
 {
 	Ogre::SceneNode* camNode = scnMgr->getRootSceneNode()->createChildSceneNode();
 	Ogre::Camera* cam = scnMgr->createCamera(RD.Name);
 	cam->setAutoAspectRatio(true);
 	cam->setNearClipDistance(NearCamClipDistance);
-	JoinedStore JS = JoinedStore();
-	JS.Node = camNode;
-	JS.Object->Camera = cam;
-	RendererAccessors.insert(std::pair<std::string, JoinedStore>(RD.Name, JS));
+	JoinedStore* JS = new JoinedStore();
+	JS->Node = camNode;
+	JS->Camera = cam;
+	RendererAccessors.insert({RD.Name,JS[0]});
+	_OP->GetObjectFromPool(RD.Name)->Camera = cam;
+	_OP->GetObjectFromPool(RD.Name)->Empty = false;
 }
-
 void Renderer::LookAt(RendererData RD)
 {
 	Ogre::SceneNode* SN = RendererAccessors.at(RD.Name).Node;

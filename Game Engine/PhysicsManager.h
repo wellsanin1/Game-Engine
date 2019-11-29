@@ -15,8 +15,10 @@
 
 
 class Physics {
+private:
+	ObjectPool* _OP;
 public:
-	Physics();
+	Physics(ObjectPool* OP);
 	~Physics() {};
 	btDefaultCollisionConfiguration* collisionConfiguration;
 	btCollisionDispatcher* dispatcher;
@@ -25,8 +27,11 @@ public:
 	btDiscreteDynamicsWorld* dynamicsWorld;
 	std::vector<btCollisionShape*> collisionShapes;
 	std::map<std::string, btRigidBody*> physicsAccessors;
-	void PhysicsUpdate(ObjectPool* OP, EventQueue* EQ);
-	void CheckCollisions(ObjectPool* OP);
+
+
+
+	void PhysicsUpdate(EventQueue* EQ);
+	void CheckCollisions();
 	void dealloc();
 
 	void Restart(PhysicsData PD);

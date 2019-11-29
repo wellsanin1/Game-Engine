@@ -25,15 +25,16 @@ void Physics::CreateEntity(PhysicsData PD)
 	btTransform NewTransform;
 	NewTransform.setIdentity();
 	NewTransform.setOrigin({ (btScalar)PD.positions.x,(btScalar)PD.positions.y,(btScalar)PD.positions.z});
-	int mass = 10;
 	btCollisionShape* newRigidShape = new btBoxShape({PD.Colliders.x,PD.Colliders.y,PD.Colliders.z});
-	newRigidShape->calculateLocalInertia(mass, btVector3({ 0,0,0 }));
+	newRigidShape->calculateLocalInertia(PD.mass, btVector3({ 0,0,0 }));
 	btMotionState* myMotionState = new btDefaultMotionState(NewTransform);
-	btRigidBody::btRigidBodyConstructionInfo BodyInfo(mass, myMotionState, newRigidShape, btVector3({ 0,0,0 }));
+	btRigidBody::btRigidBodyConstructionInfo BodyInfo(PD.mass, myMotionState, newRigidShape, btVector3({ 0,0,0 }));
 	btRigidBody* Bdy = new btRigidBody(BodyInfo);
 	collisionShapes.push_back(newRigidShape);
 	dynamicsWorld->addRigidBody(Bdy);
 	physicsAccessors.insert({ PD.Name,Bdy });
+	_OP->GetObjectFromPool(PD.Name)->RigidBody3d = Bdy;
+	_OP->GetObjectFromPool(PD.Name)->Empty = false;
 }
 
 void Physics::SetMass(PhysicsData PD)
@@ -47,6 +48,8 @@ void Physics::SetMass(PhysicsData PD)
 	collisionShapes.push_back(RB->getCollisionShape());
 	dynamicsWorld->addRigidBody(RB);
 	physicsAccessors.at(PD.Name) = RB;
+
+	_OP->GetObjectFromPool(PD.Name)->RigidBody3d = RB;
 }
 
 void Physics::TranslateLocally(PhysicsData PD)
@@ -82,8 +85,9 @@ void Physics::Teleport(PhysicsData PD)
 	RB->getMotionState()->setWorldTransform(Transform);
 }
 
-Physics::Physics()
+Physics::Physics(ObjectPool* OP)
 {
+	_OP = OP;
 	collisionConfiguration = new btDefaultCollisionConfiguration();
 	dispatcher = new btCollisionDispatcher(collisionConfiguration);
 	overlappingPairCache = new btDbvtBroadphase();
@@ -92,7 +96,7 @@ Physics::Physics()
 	dynamicsWorld->setGravity(btVector3(0, -Gravity, 0));
 }
 
-void Physics::CheckCollisions(ObjectPool* OP)
+void Physics::CheckCollisions()
 {
 	int numManifolds = dispatcher->getNumManifolds();
 	for (int i = 0; i < numManifolds; i++)
@@ -105,8 +109,8 @@ void Physics::CheckCollisions(ObjectPool* OP)
 		{
 			btRigidBody* bodyA = btRigidBody::upcast(obA);
 			btRigidBody* bodyB = btRigidBody::upcast(obB);
-			GameObject* A = OP->GetObjectFromPool(bodyA);
-			GameObject* B = OP->GetObjectFromPool(bodyB);
+			GameObject* A = _OP->GetObjectFromPool(bodyA);
+			GameObject* B = _OP->GetObjectFromPool(bodyB);
 			btManifoldPoint pt = contactManifold->getContactPoint(j);
 			if (pt.getDistance() < 0.0f)
 			{
@@ -125,18 +129,30 @@ void Physics::CheckCollisions(ObjectPool* OP)
 	}
 }
 
-void Physics::PhysicsUpdate(ObjectPool* OP,EventQueue* EQ)
+void Physics::PhysicsUpdate(EventQueue* EQ)
 {
 	EventQueue E = EventQueue();
 	E = EQ[0];
-	event EV = E.CheckQueueReturnEvent(SubSystem_Physics);
-	for (int i= 0;i<EV.SubSystemList.size();++i)
+	for (int i = 0;i<EQ->Queue.size();++i)
 	{
-		if (EV.SubSystemList.at(i) == SubSystem_Physics)
+		event EV = E.CheckQueueReturnEvent(SubSystem_Physics);
+		if (EV.Empty == false)
 		{
-			Reactions A = EventReactions[(int)EV.EventType];
-			(this->*A)(EV.PD);
+			for (int j = 0; j < EV.SubSystemList.size(); ++j)
+			{
+				if (EV.SubSystemList.at(j) == SubSystem_Physics)
+				{
+					Reactions A = EventReactions[(int)EV.PhysicsEventType];
+					(this->*A)(EV.PD);
+					EQ->RemoveFromQueue(SubSystem_Physics);
+				}
+			}
 		}
+		else
+		{
+			break;
+		}
+
 	}
 
 
@@ -154,7 +170,7 @@ void Physics::PhysicsUpdate(ObjectPool* OP,EventQueue* EQ)
 			void* userPointer = body->getUserPointer();
 			if (userPointer) 
 			{
-				OP->GetObjectFromPool(body)->SetTransform(trans.getOrigin().getX(), trans.getOrigin().getY(), trans.getOrigin().getZ());
+				_OP->GetObjectFromPool(body)->SetTransform(trans.getOrigin().getX(), trans.getOrigin().getY(), trans.getOrigin().getZ());
 			}
 		}
 	}

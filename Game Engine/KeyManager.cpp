@@ -2,40 +2,64 @@
 
 KeyManager::KeyManager()
 {
-	EnumMap = { {SDLK_UP,UP}
-				,{SDLK_DOWN,DOWN}
-				,{SDLK_LEFT,LEFT}
-				,{SDLK_RIGHT,RIGHT}
-				,{SDLK_ESCAPE,QUIT}
+	EnumMap = { {SDLK_UP,KeyManager_UP}
+				,{SDLK_DOWN,KeyManager_DOWN}
+				,{SDLK_LEFT,KeyManager_LEFT}
+				,{SDLK_RIGHT,KeyManager_RIGHT}
+				,{SDLK_ESCAPE,KeyManager_QUIT}
 	};
 };
 
-EventEnum KeyManager::MapConvert(SDL_Keycode KeyCode)
+KeyManagerEnum KeyManager::MapConvert(SDL_Keycode KeyCode)
 {
-	std::map<SDL_Keycode,EventEnum>::const_iterator it = EnumMap.find(KeyCode);
+	std::map<SDL_Keycode, KeyManagerEnum>::const_iterator it = EnumMap.find(KeyCode);
 	if (it != EnumMap.end())
 	{
-		EventEnum KeyPressed = EnumMap.at(KeyCode);
+		KeyManagerEnum KeyPressed = EnumMap.at(KeyCode);
 		return(KeyPressed);
 	}
-	return NONE;
+	return KeyManager_NONE;
 };
 
-event KeyManager::CreateEvent(EventEnum KeyPressed)
+event KeyManager::CreateEvent(KeyManagerEnum KeyPressed)
 {
 	event E;
 	E.SubSystemList.push_back(SubSystem_Input);
-	E.EventType = KeyPressed;
+	E.InputEventEnum = KeyPressed;
+	E.Empty = false;
 	return E;
 }
 
 void KeyManager::InputRead()
 {
+	//clear queue of previous frames inputs before adding more
+	EventQueue E = EventQueue();
+	E = _EQ[0];
+	for (int i = 0; i < _EQ->Queue.size(); ++i)
+	{
+		event EV = E.CheckQueueReturnEvent(SubSystem_Input);
+		if (EV.Empty == false)
+		{
+			for (int i = 0; i < EV.SubSystemList.size(); ++i)
+			{
+				if (EV.SubSystemList.at(i) == SubSystem_Input)
+				{
+					_EQ->RemoveFromQueue(SubSystem_Input);
+				}
+			}
+		}
+		else
+		{
+			break;
+		}
+	}
+
+	//add this frames inputs
 	SDL_Event event;
 	while (SDL_PollEvent(&event))
 	{
-		EventEnum KeyPressed = MapConvert(event.key.keysym.sym);
-		if (event.type == SDL_KEYDOWN && KeyPressed != NONE)
+		KeyManagerEnum KeyPressed = MapConvert(event.key.keysym.sym);
+		if (event.type == SDL_KEYDOWN && KeyPressed != KeyManager_NONE)
 		{
 			_EQ->AddEvent(CreateEvent(KeyPressed));
 		}
@@ -49,16 +73,22 @@ void KeyManager::Initiate(lua_State* F,EventQueue* EQ)
 }
 bool KeyManager::GetKey(int Input)
 {
-	//Create Temp versin of event queue to iterate on
+	//Create Temp version of event queue to iterate on
 	EventQueue E =  EventQueue();
 	E = _EQ[0];
-
-	while (EventEnum Enum = E.CheckQueue(SubSystem_Input,true))
+	for (int i = 0; i < _EQ->Queue.size(); ++i)
 	{
-		if (Enum == Input)
+		event EV = E.CheckQueueReturnEvent(SubSystem_Input);
+		if (EV.Empty == false)
 		{
-			_EQ->CheckQueue(SubSystem_Input, true);
-			return true;
+			for (int i = 0; i < EV.SubSystemList.size(); ++i)
+			{
+				if (EV.SubSystemList.at(i) == SubSystem_Input)
+				{
+					_EQ->RemoveFromQueue(SubSystem_Input);
+					return true;
+				}
+			}
 		}
 	}
 	return false;

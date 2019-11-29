@@ -1,20 +1,4 @@
 #pragma once
-enum EventEnum
-{
-	NONE,
-	UP,
-	DOWN,
-	LEFT,
-	RIGHT,
-	QUIT,
-	PHYSICS,
-	LOAD,
-	ENTITY,
-	CREATEENTITY,
-	CREATELIGHT,
-	CREATECAMERA,
-	FUNCTION
-};
 enum PhysicsEnum
 {
 	Physics_CREATEENTITY
@@ -33,12 +17,23 @@ enum RenderEnum
 	, Render_RESTART
 	, Render_LOOKAT
 	, Render_SETPOSITION
+	, Render_SETORIENTATION
 };
 enum ObjectPoolEnum
 {
 	ObjectPool_CREATEENTITY
 	,ObjectPool_CREATECAMERA
 	,ObjectPool_CREATELIGHT
+};
+enum KeyManagerEnum
+{
+	KeyManager_NONE,
+	KeyManager_UP,
+	KeyManager_DOWN,
+	KeyManager_LEFT,
+	KeyManager_RIGHT,
+	KeyManager_QUIT,
+
 };
 enum SubSystem 
 { 
@@ -51,5 +46,6 @@ enum SubSystem
 	SubSystem_Physics,
 	SubSystem_Load,
 	SubSystem_ObjectPool,
-	SubSystem_EventQueue
+	SubSystem_EventQueue,
+	Subsystem_GameObject
 };

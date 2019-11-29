@@ -20,6 +20,7 @@ void GameEngine::LoadEntitiesIntoEngine(int Level)
 			event E;
 			E.SubSystemList.push_back(SubSystem_ObjectPool);
 			E.ObjectPoolEventEnum = ObjectPool_CREATEENTITY;
+
 			E.OD.MeshName = GenEnt.Entity->Mesh;
 			E.OD.Name = GenEnt.Entity->Name;
 			E.OD.Material = GenEnt.Entity->Material;
@@ -31,6 +32,7 @@ void GameEngine::LoadEntitiesIntoEngine(int Level)
 			E.OD.Colliders.x = GenEnt.Entity->ColX;
 			E.OD.Colliders.y = GenEnt.Entity->ColY;
 			E.OD.Colliders.z = GenEnt.Entity->ColZ;
+			E.Empty = false;
 			EQ.AddEvent(E);
 		}
 		if (LH.entityList[i]->UnionType == "Camera")
@@ -43,6 +45,7 @@ void GameEngine::LoadEntitiesIntoEngine(int Level)
 			E.OD.positions.x = GenEnt.Camera->x;
 			E.OD.positions.y = GenEnt.Camera->y;
 			E.OD.positions.z = GenEnt.Camera->z;
+			E.Empty = false;
 			EQ.AddEvent(E);
 		}
 		if (LH.entityList[i]->UnionType == "Light")
@@ -55,6 +58,7 @@ void GameEngine::LoadEntitiesIntoEngine(int Level)
 			E.OD.positions.x = GenEnt.Light->x;
 			E.OD.positions.y = GenEnt.Light->y;
 			E.OD.positions.z = GenEnt.Light->z;
+			E.Empty = false;
 			EQ.AddEvent(E);
 		}
 	}
@@ -70,8 +74,8 @@ void GameEngine::Game()
 }
 void GameEngine::PhysicsUpdate()
 {
-	PM.CheckCollisions(&OP);
-	PM.PhysicsUpdate(&OP,&EQ);
+	PM.CheckCollisions();
+	PM.PhysicsUpdate(&EQ);
 }
 void GameEngine::Audio()
 {
@@ -123,7 +127,7 @@ void GameEngine::CheckInput()
 }
 void GameEngine::Render()
 {
-	R.Update();
+	R.Update(&EQ);
 }
 void GameEngine::Update()
 {
@@ -132,7 +136,7 @@ void GameEngine::Update()
 	PhysicsUpdate();
 	Render();
 	ObjectPoolUpdate();
-	//ExecuteLUA();
+	ExecuteLUA();
 }
 
 void GameEngine::Initialise()

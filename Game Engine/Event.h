@@ -13,7 +13,9 @@ public:
 	PhysicsEnum PhysicsEventType;
 	RenderEnum RenderEventType;
 	ObjectPoolEnum ObjectPoolEventEnum;
+	KeyManagerEnum InputEventEnum;
+	//GameObjectEnum GameObjectEventEnum;
 
-	EventEnum EventType = EventEnum::NONE;
 	std::vector<SubSystem> SubSystemList;
+	bool Empty = true;
 };

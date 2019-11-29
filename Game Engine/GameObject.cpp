@@ -1,37 +1,15 @@
 #include "GameObject.h"
 
-//void GameObject::FillObject(Ogre::Camera* Object, Ogre::SceneNode* ScnNode, Ogre::String ObjName)
-//{
-//	Node = ScnNode;
-//	ScnNode->attachObject(Object);
-//	Name = ObjName;
-//	StoredObject.Camera = Object;
-//	Empty = false;
-//}
-//void GameObject::FillObject(Ogre::Light* Object, Ogre::SceneNode* ScnNode, Ogre::String ObjName)
-//{
-//	Node = ScnNode;
-//	ScnNode->attachObject(Object);
-//	Name = ObjName;
-//	StoredObject.Light = Object;
-//	Empty = false;
-//}
-//void GameObject::FillObject(Ogre::Entity* Object, Ogre::SceneNode* ScnNode, Ogre::String ObjName)
-//{
-//	Node = ScnNode;
-//	ScnNode->attachObject(Object);
-//	Name = ObjName;
-//	StoredObject.entity = Object;
-//	Empty = false;
-//}
 void GameObject::SetTransform(double x, double y, double z)
 {
 	event A;
 	A.SubSystemList.push_back(SubSystem_Renderer);
 	A.RenderEventType = Render_SETPOSITION;
 	A.RD.Name = Name;
-	A.RD.positions = { x,y,z };
+	A.RD.positions = { (float)x,(float)y,(float)z };
+	A.Empty = false;
 	_EQ->AddEvent(A);
+
 	//Node->setPosition(x,y,z);
 }
 std::vector<double> GameObject::GetTransform()
@@ -47,7 +25,8 @@ void GameObject::SetOrientation(double w, double x, double y, double z)
 	A.SubSystemList.push_back(SubSystem_Renderer);
 	A.RenderEventType = Render_SETPOSITION;
 	A.RD.Name = Name;
-	A.RD.Orientation = {w, x,y,z };
+	A.RD.Orientation = { (float)w, (float)x,(float)y,(float)z };
+	A.Empty = false;
 	_EQ->AddEvent(A);
 }
 std::vector<double> GameObject::GetOrientation()
@@ -111,6 +90,7 @@ void GameObject::SetMass(float NewMass)
 	A.RenderEventType = Render_CREATEENTITY;
 	A.PD.Name = Name;
 	A.PD.mass = NewMass;
+	A.Empty = false;
 	_EQ->AddEvent(A);
 }
 
@@ -123,6 +103,7 @@ void GameObject::SetVelocity(float x, float y, float z)
 	A.PD.GenericVector.x = x;
 	A.PD.GenericVector.y = y;
 	A.PD.GenericVector.z = z;
+	A.Empty = false;
 	_EQ->AddEvent(A);
 }
 
@@ -135,6 +116,7 @@ void GameObject::AddVelocity(float x, float y, float z)
 	A.PD.GenericVector.x = x;
 	A.PD.GenericVector.y = y;
 	A.PD.GenericVector.z = z;
+	A.Empty = false;
 	_EQ->AddEvent(A);
 }
 bool GameObject::IsColliding()
@@ -147,28 +129,31 @@ bool GameObject::IsColliding()
 }
 void GameObject::ChangeTexture(std::string TextureName)
 {
-	event A;
-	A.SubSystemList.push_back(SubSystem_Renderer);
-	A.SubSystemList.push_back(SubSystem_Physics);
-	A.RenderEventType = Render_LOOKAT;
-	A.PD.Name = Name;
-	A.PD.Material = TextureName;
-	_EQ->AddEvent(A);
+	//event A;
+	//A.SubSystemList.push_back(SubSystem_Renderer);
+	//A.SubSystemList.push_back(SubSystem_Physics);
+	//A.RenderEventType = Render_LOOKAT;
+	//A.PD.Name = Name;
+	//A.PD.Material = TextureName;
+	//A.Empty = false;
+	//_EQ->AddEvent(A);
 }
 void GameObject::LookAt(float X,float Y,float Z)
 {
 	event A;
 	A.SubSystemList.push_back(SubSystem_Renderer);
-	A.SubSystemList.push_back(SubSystem_Physics);
 	A.RenderEventType = Render_LOOKAT;
-	A.PD.Name = Name;
-	A.PD.GenericVector.x = X;
-	A.PD.GenericVector.y = Y;
-	A.PD.GenericVector.z = Z;
+	A.RD.Name = Name;
+	A.RD.positions.x = X;
+	A.RD.positions.y = Y;
+	A.RD.positions.z = Z;
+	A.Empty = false;
 	_EQ->AddEvent(A);
 }
 void GameObject::CreateEntity(EventQueue* EQ, std::string EntityName,std::string MeshName,std::string MaterialName, int PosX, int PosY, int PosZ,int ColX, int ColY, int ColZ)
 {
+	this->Name = EntityName;
+	Etype = "Entity";
 	AttachSystems(EQ);
 	event A;
 	A.SubSystemList.push_back(SubSystem_Renderer);
@@ -176,17 +161,26 @@ void GameObject::CreateEntity(EventQueue* EQ, std::string EntityName,std::string
 	A.PhysicsEventType = Physics_CREATEENTITY;
 	A.RenderEventType = Render_CREATEENTITY;
 	A.PD.Name = EntityName;
+
 	A.PD.Colliders.x = ColX;
 	A.PD.Colliders.y = ColY;
 	A.PD.Colliders.z = ColZ;
+
 	A.PD.positions.x = PosX;
 	A.PD.positions.y = PosY;
 	A.PD.positions.z = PosZ;
+
+	A.PD.mass = 10;
+
+	A.RD.Name = EntityName;
 	A.RD.MeshName = MeshName;
+	A.Empty = false;
 	EQ->AddEvent(A);
 }
 void GameObject::CreateLight(EventQueue* EQ, std::string LightName, int PosX, int PosY, int PosZ)
 {
+	this->Name = LightName;
+	Etype = "Light";
 	AttachSystems(EQ);
 	event A;
 	A.SubSystemList.push_back(SubSystem_Renderer);
@@ -200,10 +194,16 @@ void GameObject::CreateLight(EventQueue* EQ, std::string LightName, int PosX, in
 	A.PD.Colliders.x = 0;
 	A.PD.Colliders.y = 0;
 	A.PD.Colliders.z = 0;
+	A.PD.mass = 10;
+
+	A.RD.Name = LightName;
+	A.Empty = false;
 	EQ->AddEvent(A);
 }
 void GameObject::CreateCamera(EventQueue*EQ,std::string CameraName, int PosX, int PosY, int PosZ)
 {
+	this->Name = CameraName;
+	Etype = "Camera";
 	AttachSystems(EQ);
 	event A;
 	A.SubSystemList.push_back(SubSystem_Renderer);
@@ -217,9 +217,12 @@ void GameObject::CreateCamera(EventQueue*EQ,std::string CameraName, int PosX, in
 	A.PD.Colliders.x = 0;
 	A.PD.Colliders.y = 0;
 	A.PD.Colliders.z = 0;
+	A.PD.mass = 10;
+
+	A.RD.Name = CameraName;
+	A.Empty = false;
 	EQ->AddEvent(A);
 }
-
 void GameObject::Teleport(double x, double y, double z)
 {
 	event A;
@@ -230,9 +233,29 @@ void GameObject::Teleport(double x, double y, double z)
 	A.PD.positions.x = x;
 	A.PD.positions.y = y;
 	A.PD.positions.z = z;
+	A.Empty = false;
 	_EQ->AddEvent(A);
 }
-
+void GameObject::Update()
+{
+	if (RigidBody3d != NULL && 
+				(Light != NULL || entity != NULL || Camera!=NULL))
+	{
+		if(Etype == "Entity")
+		{ 
+			RigidBody3d->setUserPointer(entity);
+		}
+		else if(Etype == "Light")
+		{
+			RigidBody3d->setUserPointer(Light);
+		}
+		else
+		{
+			RigidBody3d->setUserPointer(Camera);
+		}
+		
+	}
+}
 std::vector<double> GameObject::GetLinearVelocity()
 {
 	//btVector3 a = RigidBody3d->getLinearVelocity();
@@ -263,6 +286,7 @@ void GameObject::TranslateLocally(float X, float Y, float Z)
 	A.PD.GenericVector.x = X;
 	A.PD.GenericVector.y = Y;
 	A.PD.GenericVector.z = Z;
+	A.Empty = false;
 	_EQ->AddEvent(A);
 }
 void GameObject::SendToClient()

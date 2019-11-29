@@ -2,36 +2,33 @@
 #include "OgreApplicationContext.h"
 #include "Ogre.h"
 #include "EventSystem.h"
+#include "ObjectPool.h"
 #include <iostream>
-union OgreObject
+struct JoinedStore
 {
-	OgreObject() {};
-	~OgreObject() {};
+	Ogre::SceneNode* Node;
 	Ogre::Camera* Camera;
 	Ogre::Light* Light;
 	Ogre::Entity* Entity;
 };
-struct JoinedStore
-{
-	Ogre::SceneNode* Node;
-	OgreObject* Object;
-};
 
 class Renderer : public OgreBites::ApplicationContext
 {
+private:
+	ObjectPool* _OP;
 public:
 	Ogre::Root* root;
 	Ogre::SceneManager* scnMgr;
 	Ogre::RTShader::ShaderGenerator* shadergen;
 
 	std::map<std::string,JoinedStore> RendererAccessors;
-	Renderer();
+
+	Renderer(ObjectPool*OP);
 	~Renderer() {};
-	void Update();
+	void Update(EventQueue* EQ);
 	void setup();
 	void Start();
 	void End();
-
 	void Restart(RendererData RD);
 	void CreateEntity(RendererData RD);
 	void CreateCamera(RendererData RD);

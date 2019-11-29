@@ -26,28 +26,27 @@ extern "C" {
 struct GameObject
 {
 private:
-	bool Empty = true;
-	union StoredObj
-	{
-		StoredObj() {};
-		~StoredObj() {};
-		Ogre::Camera* Camera;
-		Ogre::Light* Light;
-		Ogre::Entity* entity;
-	};
+
+
 	//Propriatory
 	void AttachSystems(EventQueue*EQ);
 	//BULLET
-	btTransform Transform;
-
 	EventQueue* _EQ;
 	float _ColliderSize[3];
 	std::vector<std::string> CollidedObjects;
+
+
 public:
+	bool Empty = true;
+
+	Ogre::Camera* Camera;
+	Ogre::Light* Light;
+	Ogre::Entity* entity;
+	btRigidBody* RigidBody3d;
 
 	bool IsEmpty() { return Empty; };
 	void ClearObject();
-
+	std::string Etype;
 
 	//Propriatory
 	void SetTransform(double x,double y, double z);
@@ -72,9 +71,8 @@ public:
 	void CreateLight(EventQueue* EQ, std::string LightName, int PosX, int PosY, int PosZ);
 	void CreateCamera(EventQueue* EQ, std::string CameraName, int PosX, int PosY, int PosZ);
 	void Teleport(double x, double y, double z);
+	void Update();
 	std::vector<double> GetLinearVelocity();
-
-	GameObject CollideObject();
 
 	float Velocity[3] = {0,0,0};
 

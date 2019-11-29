@@ -31,9 +31,9 @@ public:
 	void LoadEntitiesIntoEngine(int Level);
 	EventQueue EQ;
 	ObjectPool OP = ObjectPool();
-	Renderer R = Renderer();
 	AudioManager AM;
-	Physics PM = Physics();
+	Physics PM = Physics(&OP);
+	Renderer R = Renderer(&OP);
 	KeyManager KM = KeyManager();
 	LuaHelper LH = LuaHelper();
 	NetworkManager NM = NetworkManager();

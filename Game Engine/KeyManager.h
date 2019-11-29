@@ -19,14 +19,16 @@ extern "C" {
 #include <lua.hpp>
 
 class KeyManager {
-public:
+
+private:
 	EventQueue* _EQ;
-	EventEnum MapConvert(SDL_Keycode KeyCode);
-	std::map<SDL_Keycode, EventEnum> EnumMap;
+public:
+	KeyManagerEnum MapConvert(SDL_Keycode KeyCode);
+	std::map<SDL_Keycode, KeyManagerEnum> EnumMap;
 	KeyManager();
 	~KeyManager() {};
 	void InputRead();
-	event CreateEvent(EventEnum KeyPressed);
+	event CreateEvent(KeyManagerEnum KeyPressed);
 	void Initiate(lua_State* F, EventQueue* EQ);
 	//LUA REGISTRATION AND FUNCTIONS
 	void register_lua(lua_State* L)

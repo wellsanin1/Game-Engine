@@ -26,6 +26,7 @@ void ObjectPool::ClearPool(EventQueue*EQ)
 	A.SubSystemList.push_back(SubSystem_Physics);
 	A.PhysicsEventType = Physics_RESTART;
 	A.RenderEventType = Render_RESTART;
+	A.Empty = false;
 	EQ->AddEvent(A);
 	Reinitialise();
 }
@@ -34,13 +35,32 @@ void ObjectPool::Update(EventQueue*EQ)
 {
 	EventQueue E = EventQueue();
 	E = EQ[0];
-	event EV = E.CheckQueueReturnEvent(SubSystem_ObjectPool);
-	for (int i = 0; i < EV.SubSystemList.size(); ++i)
+	for (int i = 0; i < EQ->Queue.size(); ++i)
 	{
-		if (EV.SubSystemList.at(i) == SubSystem_ObjectPool)
+		event EV = E.CheckQueueReturnEvent(SubSystem_ObjectPool);
+		if (EV.Empty == false)
 		{
-			Reactions A = EventReactions[(int)EV.EventType];
-			(this->*A)(EV.OD,EQ);
+			for (int i = 0; i < EV.SubSystemList.size(); ++i)
+			{
+				if (EV.SubSystemList.at(i) == SubSystem_ObjectPool)
+				{
+					Reactions A = EventReactions[(int)EV.ObjectPoolEventEnum];
+					(this->*A)(EV.OD, EQ);
+					EQ->RemoveFromQueue(SubSystem_ObjectPool);
+				}
+			}
+		}
+		else
+		{
+			break;
+		}
+	}
+
+	for (int i = 0;i<PoolSize;++i)
+	{
+		if (PoolStorage[i]->IsEmpty() == false)
+		{
+			PoolStorage[i]->Update();
 		}
 	}
 }

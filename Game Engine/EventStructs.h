@@ -8,8 +8,6 @@ struct PhysicsData
 {
 	std::string Name;
 	std::string Material;
-	int packetType = 1;
-	int clients;
 	int mass;
 	Vector3 positions;
 	Vector3 Colliders;
@@ -28,8 +26,6 @@ struct ObjectPoolData
 	std::string MeshName;
 	std::string e_type;
 	std::string Material;
-	int packetType = 1;
-	int clients;
 	int mass;
 	Vector3 positions;
 	Vector3 Colliders;
