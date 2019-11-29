@@ -20,7 +20,7 @@ void LuaHelper::LoadEntityData(int Level)
 	std::string checker;
 	for (int i = 0; i < elementList.size(); i++)
 	{
-		luabridge::LuaRef entityCheck = elementsRef[elementList.at(i)];
+		luabridge::LuaRef entityCheck = elementsRef[elementList[i]];
 		checker = entityCheck["e_type"].cast<std::string>();
 		if (checker == "Camera")
 		{
@@ -93,8 +93,8 @@ std::vector<std::string> LuaHelper::getElements(std::string& table, lua_State* L
 	std::vector<std::string> elements;
 	std::string temp = "";
 	for (unsigned int i = 0; i < ans.size(); i++) {
-		if (ans.at(i) != '|') {
-			temp += ans.at(i);
+		if (ans[i] != '|') {
+			temp += ans[i];
 		}
 		else {
 			elements.push_back(temp);

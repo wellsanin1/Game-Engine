@@ -120,10 +120,7 @@ void GameEngine::LuaIntOUT(int Value)
 }
 void GameEngine::CheckInput()
 {
-	if (1)
-	{
-		KM.InputRead();
-	}
+	KM.InputRead();
 }
 void GameEngine::Render()
 {

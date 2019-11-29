@@ -40,9 +40,9 @@ void KeyManager::InputRead()
 		event EV = E.CheckQueueReturnEvent(SubSystem_Input);
 		if (EV.Empty == false)
 		{
-			for (int i = 0; i < EV.SubSystemList.size(); ++i)
+			for (int j = 0; j < EV.SubSystemList.size(); ++j)
 			{
-				if (EV.SubSystemList.at(i) == SubSystem_Input)
+				if (EV.SubSystemList[j] == SubSystem_Input)
 				{
 					_EQ->RemoveFromQueue(SubSystem_Input);
 				}
@@ -83,7 +83,7 @@ bool KeyManager::GetKey(int Input)
 		{
 			for (int i = 0; i < EV.SubSystemList.size(); ++i)
 			{
-				if (EV.SubSystemList.at(i) == SubSystem_Input)
+				if (EV.SubSystemList[i] == SubSystem_Input)
 				{
 					_EQ->RemoveFromQueue(SubSystem_Input);
 					return true;

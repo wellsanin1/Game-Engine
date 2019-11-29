@@ -27,7 +27,7 @@ public:
 	btDiscreteDynamicsWorld* dynamicsWorld;
 	std::vector<btCollisionShape*> collisionShapes;
 	std::map<std::string, btRigidBody*> physicsAccessors;
-
+	std::map<btRigidBody*, std::string> ReversePhysicsAccessors;
 
 
 	void PhysicsUpdate(EventQueue* EQ);

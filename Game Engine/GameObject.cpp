@@ -86,8 +86,7 @@ void GameObject::SetMass(float NewMass)
 {
 	event A;
 	A.SubSystemList.push_back(SubSystem_Physics);
-	A.PhysicsEventType = Physics_CREATEENTITY;
-	A.RenderEventType = Render_CREATEENTITY;
+	A.PhysicsEventType = Physics_SETMASS;
 	A.PD.Name = Name;
 	A.PD.mass = NewMass;
 	A.Empty = false;
@@ -153,7 +152,8 @@ void GameObject::LookAt(float X,float Y,float Z)
 void GameObject::CreateEntity(EventQueue* EQ, std::string EntityName,std::string MeshName,std::string MaterialName, int PosX, int PosY, int PosZ,int ColX, int ColY, int ColZ)
 {
 	this->Name = EntityName;
-	Etype = "Entity";
+	this->Etype = "Entity";
+	this->Empty = false;
 	AttachSystems(EQ);
 	event A;
 	A.SubSystemList.push_back(SubSystem_Renderer);
@@ -180,7 +180,8 @@ void GameObject::CreateEntity(EventQueue* EQ, std::string EntityName,std::string
 void GameObject::CreateLight(EventQueue* EQ, std::string LightName, int PosX, int PosY, int PosZ)
 {
 	this->Name = LightName;
-	Etype = "Light";
+	this->Etype = "Light";
+	this->Empty = false;
 	AttachSystems(EQ);
 	event A;
 	A.SubSystemList.push_back(SubSystem_Renderer);
@@ -203,7 +204,8 @@ void GameObject::CreateLight(EventQueue* EQ, std::string LightName, int PosX, in
 void GameObject::CreateCamera(EventQueue*EQ,std::string CameraName, int PosX, int PosY, int PosZ)
 {
 	this->Name = CameraName;
-	Etype = "Camera";
+	this->Etype = "Camera";
+	this->Empty = false;
 	AttachSystems(EQ);
 	event A;
 	A.SubSystemList.push_back(SubSystem_Renderer);
@@ -226,7 +228,6 @@ void GameObject::CreateCamera(EventQueue*EQ,std::string CameraName, int PosX, in
 void GameObject::Teleport(double x, double y, double z)
 {
 	event A;
-	A.SubSystemList.push_back(SubSystem_Renderer);
 	A.SubSystemList.push_back(SubSystem_Physics);
 	A.PhysicsEventType = Physics_TELEPORT;
 	A.PD.Name = Name;
@@ -238,22 +239,43 @@ void GameObject::Teleport(double x, double y, double z)
 }
 void GameObject::Update()
 {
-	if (RigidBody3d != NULL && 
-				(Light != NULL || entity != NULL || Camera!=NULL))
+	if (PhysicsAttached == true && OgreAttached == true && _linked == false)
 	{
+		_linked = true;
+		std::cout << Name << ": IFcheck"<<std::endl;
 		if(Etype == "Entity")
 		{ 
-			RigidBody3d->setUserPointer(entity);
+			std::cout << Name << ": EntityLINKED" << std::endl;
+			RigidBody3d->setUserPointer(entity->getParentSceneNode());
+			std::cout << entity->getParentSceneNode()->getPosition().x;
+			std::cout << ":";
+			std::cout << entity->getParentSceneNode()->getPosition().y;
+			std::cout << ":";
+			std::cout << entity->getParentSceneNode()->getPosition().z;
+			std::cout << std::endl;
 		}
 		else if(Etype == "Light")
 		{
-			RigidBody3d->setUserPointer(Light);
+			std::cout << Name << ": LightLINKED" << std::endl;
+			RigidBody3d->setUserPointer(Light->getParentSceneNode());
+			std::cout << Light->getParentSceneNode()->getPosition().x;
+			std::cout << ":";
+			std::cout << Light->getParentSceneNode()->getPosition().y;
+			std::cout << ":";
+			std::cout << Light->getParentSceneNode()->getPosition().z;
+			std::cout << std::endl;
 		}
-		else
+		else if (Etype == "Camera")
 		{
-			RigidBody3d->setUserPointer(Camera);
+			std::cout << Name << ": CameraLINKED" << std::endl;
+			RigidBody3d->setUserPointer(Camera->getParentSceneNode());
+			std::cout << Camera->getParentSceneNode()->getPosition().x;
+			std::cout << ":";
+			std::cout << Camera->getParentSceneNode()->getPosition().y;
+			std::cout << ":";
+			std::cout << Camera->getParentSceneNode()->getPosition().z;
+			std::cout << std::endl;
 		}
-		
 	}
 }
 std::vector<double> GameObject::GetLinearVelocity()
@@ -279,7 +301,6 @@ void GameObject::ClearObject()
 void GameObject::TranslateLocally(float X, float Y, float Z)
 {
 	event A;
-	A.SubSystemList.push_back(SubSystem_Renderer);
 	A.SubSystemList.push_back(SubSystem_Physics);
 	A.PhysicsEventType = Physics_TRANSLATELOCALLY;
 	A.PD.Name = Name;

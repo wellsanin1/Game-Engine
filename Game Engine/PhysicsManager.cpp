@@ -25,6 +25,7 @@ void Physics::CreateEntity(PhysicsData PD)
 	btTransform NewTransform;
 	NewTransform.setIdentity();
 	NewTransform.setOrigin({ (btScalar)PD.positions.x,(btScalar)PD.positions.y,(btScalar)PD.positions.z});
+
 	btCollisionShape* newRigidShape = new btBoxShape({PD.Colliders.x,PD.Colliders.y,PD.Colliders.z});
 	newRigidShape->calculateLocalInertia(PD.mass, btVector3({ 0,0,0 }));
 	btMotionState* myMotionState = new btDefaultMotionState(NewTransform);
@@ -32,9 +33,13 @@ void Physics::CreateEntity(PhysicsData PD)
 	btRigidBody* Bdy = new btRigidBody(BodyInfo);
 	collisionShapes.push_back(newRigidShape);
 	dynamicsWorld->addRigidBody(Bdy);
+
 	physicsAccessors.insert({ PD.Name,Bdy });
+	ReversePhysicsAccessors.insert({ Bdy,PD.Name });
+
 	_OP->GetObjectFromPool(PD.Name)->RigidBody3d = Bdy;
-	_OP->GetObjectFromPool(PD.Name)->Empty = false;
+	_OP->GetObjectFromPool(PD.Name)->PhysicsAttached = true;
+	std::cout << "created Physics obj with name: " << PD.Name << std::endl;
 }
 
 void Physics::SetMass(PhysicsData PD)
@@ -78,9 +83,11 @@ void Physics::AddVelocity(PhysicsData PD)
 
 void Physics::Teleport(PhysicsData PD)
 {
-	btRigidBody* RB = physicsAccessors.at(PD.Name);
+
 	btTransform Transform;
 	Transform.setOrigin({ PD.positions.x,PD.positions.y,PD.positions.z });
+
+	btRigidBody* RB = physicsAccessors.at(PD.Name);
 	RB->setWorldTransform(Transform);
 	RB->getMotionState()->setWorldTransform(Transform);
 }
@@ -109,8 +116,8 @@ void Physics::CheckCollisions()
 		{
 			btRigidBody* bodyA = btRigidBody::upcast(obA);
 			btRigidBody* bodyB = btRigidBody::upcast(obB);
-			GameObject* A = _OP->GetObjectFromPool(bodyA);
-			GameObject* B = _OP->GetObjectFromPool(bodyB);
+			GameObject* A = _OP->GetObjectFromPool(ReversePhysicsAccessors.at(bodyA));
+			GameObject* B = _OP->GetObjectFromPool(ReversePhysicsAccessors.at(bodyB));
 			btManifoldPoint pt = contactManifold->getContactPoint(j);
 			if (pt.getDistance() < 0.0f)
 			{
@@ -131,16 +138,14 @@ void Physics::CheckCollisions()
 
 void Physics::PhysicsUpdate(EventQueue* EQ)
 {
-	EventQueue E = EventQueue();
-	E = EQ[0];
 	for (int i = 0;i<EQ->Queue.size();++i)
 	{
-		event EV = E.CheckQueueReturnEvent(SubSystem_Physics);
+		event EV = EQ->CheckQueueReturnEvent(SubSystem_Physics);
 		if (EV.Empty == false)
 		{
 			for (int j = 0; j < EV.SubSystemList.size(); ++j)
 			{
-				if (EV.SubSystemList.at(j) == SubSystem_Physics)
+				if (EV.SubSystemList[j] == SubSystem_Physics)
 				{
 					Reactions A = EventReactions[(int)EV.PhysicsEventType];
 					(this->*A)(EV.PD);
@@ -170,7 +175,7 @@ void Physics::PhysicsUpdate(EventQueue* EQ)
 			void* userPointer = body->getUserPointer();
 			if (userPointer) 
 			{
-				_OP->GetObjectFromPool(body)->SetTransform(trans.getOrigin().getX(), trans.getOrigin().getY(), trans.getOrigin().getZ());
+				_OP->GetObjectFromPool(ReversePhysicsAccessors.at(body))->SetTransform(trans.getOrigin().getX(), trans.getOrigin().getY(), trans.getOrigin().getZ());
 			}
 		}
 	}

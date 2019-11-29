@@ -33,16 +33,14 @@ void ObjectPool::ClearPool(EventQueue*EQ)
 
 void ObjectPool::Update(EventQueue*EQ)
 {
-	EventQueue E = EventQueue();
-	E = EQ[0];
 	for (int i = 0; i < EQ->Queue.size(); ++i)
 	{
-		event EV = E.CheckQueueReturnEvent(SubSystem_ObjectPool);
+		event EV = EQ->CheckQueueReturnEvent(SubSystem_ObjectPool);
 		if (EV.Empty == false)
 		{
-			for (int i = 0; i < EV.SubSystemList.size(); ++i)
+			for (int j = 0; j < EV.SubSystemList.size(); ++j)
 			{
-				if (EV.SubSystemList.at(i) == SubSystem_ObjectPool)
+				if (EV.SubSystemList[j] == SubSystem_ObjectPool)
 				{
 					Reactions A = EventReactions[(int)EV.ObjectPoolEventEnum];
 					(this->*A)(EV.OD, EQ);
@@ -58,7 +56,7 @@ void ObjectPool::Update(EventQueue*EQ)
 
 	for (int i = 0;i<PoolSize;++i)
 	{
-		if (PoolStorage[i]->IsEmpty() == false)
+		if (PoolStorage[i]->Empty== false)
 		{
 			PoolStorage[i]->Update();
 		}
@@ -90,23 +88,7 @@ GameObject* ObjectPool::GetObjectFromPool(std::string ObjectName)
 			return PoolStorage[i];
 		}
 	}
-	GameObject* GO = new GameObject();
-	return GO;
-};
-
-GameObject* ObjectPool::GetObjectFromPool(btRigidBody* RigidBody)
-{
-	int size = sizeof(PoolStorage) / sizeof(*PoolStorage);
-	for (int i = 0; i < size; i++)
-	{
-		if (PoolStorage[i]->RigidBody3d == RigidBody)
-		{
-
-			return PoolStorage[i];
-		}
-	}
-	GameObject* GO = new GameObject();
-	return GO;
+	return nullptr;
 };
 
 void ObjectPool::CreateCamera(ObjectPoolData OD, EventQueue* EQ)

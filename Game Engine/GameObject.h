@@ -34,16 +34,17 @@ private:
 	EventQueue* _EQ;
 	float _ColliderSize[3];
 	std::vector<std::string> CollidedObjects;
-
+	bool _linked = false;
 
 public:
+	bool PhysicsAttached;
+	bool OgreAttached;
 	bool Empty = true;
 
 	Ogre::Camera* Camera;
 	Ogre::Light* Light;
 	Ogre::Entity* entity;
 	btRigidBody* RigidBody3d;
-
 	bool IsEmpty() { return Empty; };
 	void ClearObject();
 	std::string Etype;

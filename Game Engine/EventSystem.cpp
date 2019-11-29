@@ -37,6 +37,7 @@ event EventQueue::CheckQueueReturnEvent(SubSystem CurrentEvent)
 		}
 	}
 	event empty = event();
+	empty.Empty = true;
 	return empty;
 }
 void EventQueue::RemoveFromQueue(SubSystem CurrentEvent)
@@ -51,7 +52,9 @@ void EventQueue::RemoveFromQueue(SubSystem CurrentEvent)
 				if (Queue[i].SubSystemList.empty())
 				{
 					Queue.erase(Queue.begin() + i);
+					return;
 				}
+				return;
 			}
 		}
 	}

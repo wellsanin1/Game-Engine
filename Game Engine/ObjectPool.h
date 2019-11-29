@@ -21,7 +21,6 @@ public:
 	virtual ~ObjectPool() {};
 	void StoreObject(GameObject* Object);
 	GameObject* GetObjectFromPool(std::string ObjectName);
-	GameObject* GetObjectFromPool(btRigidBody* RigidBody);
 	void CreateCamera(ObjectPoolData OP,EventQueue*EQ);
 	void CreateEntity(ObjectPoolData OP, EventQueue* EQ);
 	void CreateLight(ObjectPoolData OP, EventQueue* EQ);

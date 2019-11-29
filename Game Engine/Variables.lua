@@ -1,3 +1,5 @@
+ThisLevel = 0
+
 --Inputs
 UP = 1;
 DOWN = 2;
