@@ -21,14 +21,7 @@ void ObjectPool::Reinitialise()
 
 void ObjectPool::ClearPool(EventQueue*EQ)
 {
-	event A;
-	A.SubSystemList.push_back(SubSystem_Renderer);
-	A.SubSystemList.push_back(SubSystem_Physics);
-	A.PhysicsEventType = Physics_RESTART;
-	A.RenderEventType = Render_RESTART;
-	A.Empty = false;
-	EQ->AddEvent(A);
-	Reinitialise();
+
 }
 
 void ObjectPool::Update(EventQueue*EQ)

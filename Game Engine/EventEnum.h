@@ -7,14 +7,16 @@ enum PhysicsEnum
 	, Physics_SETVELOCITY
 	, Physics_ADDVELOCITY
 	, Physics_TELEPORT
-	, Physics_RESTART
+};
+enum AudioEnum
+{
+	Audio_PlaySound
 };
 enum RenderEnum
 {
 	Render_CREATEENTITY
 	, Render_CREATELIGHT
 	, Render_CREATECAMERA
-	, Render_RESTART
 	, Render_LOOKAT
 	, Render_SETPOSITION
 	, Render_SETORIENTATION

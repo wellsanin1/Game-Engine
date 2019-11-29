@@ -29,10 +29,13 @@ public:
 	lua_State* L();
 	std::vector<LuaGenStruct*> entityList;
 	LuaHelper();
-	void LoadEntityData(int Level);
+	void LoadEntityData(int Level,EventQueue*EQ);
 	~LuaHelper();
 	void ExecuteFile(const char* file);
 	void ExecuteString(const char* expression);
+
+	void Update(void* Engine);
+
 	LuaHelper(const LuaHelper& other);  //non-construction copy
 	LuaHelper& operator=(const LuaHelper&); //non-copy
 	void RegisterEventQueue(EventQueue* EQ);
@@ -60,6 +63,6 @@ public:
 	void SetFinished(bool Value);
 private:
 	int CurrentLevel = 0;
-	bool Finished = false;
+	bool Finished = true;
 };
 #endif

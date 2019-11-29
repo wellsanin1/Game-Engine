@@ -33,11 +33,9 @@ event KeyManager::CreateEvent(KeyManagerEnum KeyPressed)
 void KeyManager::InputRead()
 {
 	//clear queue of previous frames inputs before adding more
-	EventQueue E = EventQueue();
-	E = _EQ[0];
 	for (int i = 0; i < _EQ->Queue.size(); ++i)
 	{
-		event EV = E.CheckQueueReturnEvent(SubSystem_Input);
+		event EV = _EQ->CheckQueueReturnEvent(SubSystem_Input);
 		if (EV.Empty == false)
 		{
 			for (int j = 0; j < EV.SubSystemList.size(); ++j)
@@ -45,6 +43,7 @@ void KeyManager::InputRead()
 				if (EV.SubSystemList[j] == SubSystem_Input)
 				{
 					_EQ->RemoveFromQueue(SubSystem_Input);
+					break;
 				}
 			}
 		}

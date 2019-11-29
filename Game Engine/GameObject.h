@@ -35,6 +35,7 @@ private:
 	float _ColliderSize[3];
 	std::vector<std::string> CollidedObjects;
 	bool _linked = false;
+	Vector3 Transform;
 
 public:
 	bool PhysicsAttached;

@@ -4,13 +4,6 @@
 #include "EventSystem.h"
 #include "ObjectPool.h"
 #include <iostream>
-struct JoinedStore
-{
-	Ogre::SceneNode* Node;
-	Ogre::Camera* Camera;
-	Ogre::Light* Light;
-	Ogre::Entity* Entity;
-};
 
 class Renderer : public OgreBites::ApplicationContext
 {
@@ -21,7 +14,7 @@ public:
 	Ogre::SceneManager* scnMgr;
 	Ogre::RTShader::ShaderGenerator* shadergen;
 
-	std::map<std::string,JoinedStore> RendererAccessors;
+	std::unordered_map<std::string,Ogre::SceneNode*> RendererAccessors;
 
 	Renderer(ObjectPool*OP);
 	~Renderer() {};
@@ -29,7 +22,7 @@ public:
 	void setup();
 	void Start();
 	void End();
-	void Restart(RendererData RD);
+	void Restart();
 	void CreateEntity(RendererData RD);
 	void CreateCamera(RendererData RD);
 	void CreateLight(RendererData RD);
@@ -41,7 +34,6 @@ public:
 	Reactions EventReactions[7] = { &Renderer::CreateEntity
 									,&Renderer::CreateLight
 									,&Renderer::CreateCamera
-									,&Renderer::Restart
 									,&Renderer::LookAt
 									,&Renderer::SetPosition
 									,&Renderer::SetOrientation

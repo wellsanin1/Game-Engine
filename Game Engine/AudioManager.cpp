@@ -1,16 +1,16 @@
 #include "AudioManager.h"
 
-void AudioManager::PlaySound(std::string Name)
+void AudioManager::PlaySound(AudioData AD)
 {
 	for (int i = 0;i < SoundArraySize;++i)
 	{
-		if (SoundArray[i]->Name == Name)
+		if (SoundArray[i]->Name == AD.Name)
 		{
 			FmodSystem->playSound(SoundArray[i]->Clip, NULL, false, 0);
 			return;
 		}
 	}
-	std::cout << "Sound " + Name + " does not exist" << std::endl;
+	std::cout << "Sound " + AD.Name + " does not exist" << std::endl;
 }
 //Loads all files from the folder Project/Media/Audio
 void AudioManager::Loader()
@@ -26,6 +26,30 @@ void AudioManager::Loader()
 		++i;
 	}
 	std::cout << "Audio File Load Finished" << std::endl;
+}
+
+void AudioManager::Update(EventQueue* EQ)
+{
+	for (int i = 0; i < EQ->Queue.size(); ++i)
+	{
+		event EV = EQ->CheckQueueReturnEvent(SubSystem_Audio);
+		if (EV.Empty == false)
+		{
+			for (int j = 0; j < EV.SubSystemList.size(); ++j)
+			{
+				if (EV.SubSystemList[j] == SubSystem_Audio)
+				{
+					Reactions A = EventReactions[(int)EV.AudioEventType];
+					(this->*A)(EV.AD);
+					EQ->RemoveFromQueue(SubSystem_Audio);
+				}
+			}
+		}
+		else
+		{
+			break;
+		}
+	}
 }
 
 AudioManager::AudioManager()

@@ -4,6 +4,7 @@
 #include <filesystem>
 #include "GameEngineDefinitions.h"
 #include "AudioClip.h"
+#include "EventSystem.h"
 
 class AudioManager
 {
@@ -12,8 +13,13 @@ public:
 	FMOD::System* FmodSystem = NULL;
 	AudioManager();
 	~AudioManager() {};
-	void PlaySound(std::string);
+	void PlaySound(AudioData AD);
 	void Close();
 	void Loader();
+	void Update(EventQueue*EQ);
+
+	typedef void (AudioManager::* Reactions)(AudioData);
+	Reactions EventReactions[1] = { &AudioManager::PlaySound};
+
 };
 

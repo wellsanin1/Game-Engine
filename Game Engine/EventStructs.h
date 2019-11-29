@@ -34,5 +34,5 @@ struct ObjectPoolData
 };
 struct AudioData
 {
-
+	std::string Name;
 };

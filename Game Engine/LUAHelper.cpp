@@ -7,7 +7,7 @@ LuaHelper::LuaHelper()
 	register_lua(F);
 }
 
-void LuaHelper::LoadEntityData(int Level)
+void LuaHelper::LoadEntityData(int Level , EventQueue*EQ)
 {
 	entityList.clear();
 	elementList.clear();
@@ -64,6 +64,58 @@ void LuaHelper::LoadEntityData(int Level)
 			entityList.push_back(NewGeneric);
 		}
 	}
+
+	for (int i = 0; i < entityList.size(); ++i)
+	{
+		if (entityList[i]->UnionType == "Entity")
+		{
+			LuaGenStruct::LuaGeneric GenEnt = entityList[i]->GenericStore;
+			event E;
+			E.SubSystemList.push_back(SubSystem_ObjectPool);
+			E.ObjectPoolEventEnum = ObjectPool_CREATEENTITY;
+
+			E.OD.MeshName = GenEnt.Entity->Mesh;
+			E.OD.Name = GenEnt.Entity->Name;
+			E.OD.Material = GenEnt.Entity->Material;
+
+			E.OD.positions.x = GenEnt.Entity->x;
+			E.OD.positions.y = GenEnt.Entity->y;
+			E.OD.positions.z = GenEnt.Entity->z;
+
+			E.OD.Colliders.x = GenEnt.Entity->ColX;
+			E.OD.Colliders.y = GenEnt.Entity->ColY;
+			E.OD.Colliders.z = GenEnt.Entity->ColZ;
+			E.Empty = false;
+			EQ->AddEvent(E);
+		}
+		if (entityList[i]->UnionType == "Camera")
+		{
+			LuaGenStruct::LuaGeneric GenEnt = entityList[i]->GenericStore;
+			event E;
+			E.SubSystemList.push_back(SubSystem_ObjectPool);
+			E.ObjectPoolEventEnum = ObjectPool_CREATECAMERA;
+			E.OD.Name = GenEnt.Camera->Name;
+			E.OD.positions.x = GenEnt.Camera->x;
+			E.OD.positions.y = GenEnt.Camera->y;
+			E.OD.positions.z = GenEnt.Camera->z;
+			E.Empty = false;
+			EQ->AddEvent(E);
+		}
+		if (entityList[i]->UnionType == "Light")
+		{
+			LuaGenStruct::LuaGeneric GenEnt = entityList[i]->GenericStore;
+			event E;
+			E.SubSystemList.push_back(SubSystem_ObjectPool);
+			E.ObjectPoolEventEnum = ObjectPool_CREATELIGHT;
+			E.OD.Name = GenEnt.Light->Name;
+			E.OD.positions.x = GenEnt.Light->x;
+			E.OD.positions.y = GenEnt.Light->y;
+			E.OD.positions.z = GenEnt.Light->z;
+			E.Empty = false;
+			EQ->AddEvent(E);
+		}
+	}
+
 	return;
 }
 
@@ -151,6 +203,11 @@ void LuaHelper::ExecuteString(const char* expression)
 	report_errors(state);
 }
 
+void LuaHelper::Update(void* Engine)
+{
+
+}
+
 int LuaHelper::GetCurrentLevel()
 {
 	return CurrentLevel;
@@ -158,9 +215,7 @@ int LuaHelper::GetCurrentLevel()
 
 void LuaHelper::StartLevel(int Level)
 {
-	LoadEntityData(Level);
 	CurrentLevel = Level;
-	Finished = false;
 }
 bool LuaHelper::GetFinished()
 {

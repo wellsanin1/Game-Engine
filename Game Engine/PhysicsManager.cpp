@@ -9,7 +9,7 @@ void Physics::dealloc()
 	delete overlappingPairCache;
 }
 
-void Physics::Restart(PhysicsData PD)
+void Physics::Restart()
 {
 	collisionConfiguration = new btDefaultCollisionConfiguration();
 	dispatcher = new btCollisionDispatcher(collisionConfiguration);

@@ -1,67 +1,20 @@
 #include "GameEngine.h"
 void GameEngine::ExecuteLUA()
 {
-	luaL_openlibs(LH.L());
-	luabridge::LuaRef processFunc = luabridge::getGlobal(LH.L(), "GameEngine");
-	if (processFunc.isFunction()) 
+	//this is here because lua does not like void* passed through reference
+	if (LH.GetFinished() == true)
 	{
-		processFunc(this);
+		luaL_openlibs(LH.L());
+		luabridge::LuaRef processFunc = luabridge::getGlobal(LH.L(), "GameEngine");
+		if (processFunc.isFunction())
+		{
+			processFunc(this);
+		}
 	}
 }
 void GameEngine::LoadEntitiesIntoEngine(int Level)
 {
-	LH.LoadEntityData(Level);
-	OP.ClearPool(&EQ);
-	for (int i = 0; i < LH.entityList.size(); ++i)
-	{
-		if (LH.entityList[i]->UnionType == "Entity")
-		{
-			LuaGenStruct::LuaGeneric GenEnt = LH.entityList[i]->GenericStore;
-			event E;
-			E.SubSystemList.push_back(SubSystem_ObjectPool);
-			E.ObjectPoolEventEnum = ObjectPool_CREATEENTITY;
-
-			E.OD.MeshName = GenEnt.Entity->Mesh;
-			E.OD.Name = GenEnt.Entity->Name;
-			E.OD.Material = GenEnt.Entity->Material;
-
-			E.OD.positions.x = GenEnt.Entity->x;
-			E.OD.positions.y = GenEnt.Entity->y;
-			E.OD.positions.z = GenEnt.Entity->z;
-
-			E.OD.Colliders.x = GenEnt.Entity->ColX;
-			E.OD.Colliders.y = GenEnt.Entity->ColY;
-			E.OD.Colliders.z = GenEnt.Entity->ColZ;
-			E.Empty = false;
-			EQ.AddEvent(E);
-		}
-		if (LH.entityList[i]->UnionType == "Camera")
-		{
-			LuaGenStruct::LuaGeneric GenEnt = LH.entityList[i]->GenericStore;
-			event E;
-			E.SubSystemList.push_back(SubSystem_ObjectPool);
-			E.ObjectPoolEventEnum = ObjectPool_CREATECAMERA;
-			E.OD.Name = GenEnt.Camera->Name;
-			E.OD.positions.x = GenEnt.Camera->x;
-			E.OD.positions.y = GenEnt.Camera->y;
-			E.OD.positions.z = GenEnt.Camera->z;
-			E.Empty = false;
-			EQ.AddEvent(E);
-		}
-		if (LH.entityList[i]->UnionType == "Light")
-		{
-			LuaGenStruct::LuaGeneric GenEnt = LH.entityList[i]->GenericStore;
-			event E;
-			E.SubSystemList.push_back(SubSystem_ObjectPool);
-			E.ObjectPoolEventEnum = ObjectPool_CREATELIGHT;
-			E.OD.Name = GenEnt.Light->Name;
-			E.OD.positions.x = GenEnt.Light->x;
-			E.OD.positions.y = GenEnt.Light->y;
-			E.OD.positions.z = GenEnt.Light->z;
-			E.Empty = false;
-			EQ.AddEvent(E);
-		}
-	}
+	LH.LoadEntityData(Level,&EQ);
 }
 void GameEngine::Start()
 {
@@ -91,9 +44,14 @@ void GameEngine::ObjectPoolUpdate()
 }
 void GameEngine::Reload(int Level)
 {
+	LH.SetFinished(false);
+	NM.Restart();
+	PM.Restart();
+	R.Restart();
+	OP.Reinitialise();
 	LH.StartLevel(Level);
 	LoadEntitiesIntoEngine(Level);
-	NM.Restart();
+	LH.SetFinished(true);
 }
 void GameEngine::ExecuteEvents()
 {;

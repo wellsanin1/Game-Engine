@@ -27,6 +27,13 @@ void Renderer::Update(EventQueue* EQ)
 			break;
 		}
 	}
+	//General Render Update
+	for (std::unordered_map<std::string,Ogre::SceneNode*>::iterator it = RendererAccessors.begin(); it != RendererAccessors.end(); ++it)
+	{
+		std::vector<double> Vector =_OP->GetObjectFromPool(it->first)->GetTransform();
+		it->second->setPosition(Vector[0],Vector[1],Vector[2]);
+	}
+
 	root->renderOneFrame();
 }
 
@@ -50,7 +57,7 @@ void Renderer::End()
 	closeApp();
 }
 
-void Renderer::Restart(RendererData RD)
+void Renderer::Restart()
 {
 	scnMgr = root->createSceneManager();
 	shadergen->addSceneManager(scnMgr);
@@ -63,10 +70,7 @@ void Renderer::CreateEntity(RendererData RD)
 	Ogre::SceneNode* OgreNode = scnMgr->getRootSceneNode()->createChildSceneNode();
 	OgreNode->attachObject(OgreEntity);
 
-	JoinedStore* JS = new JoinedStore();
-	JS->Node = OgreNode;
-	JS->Entity = OgreEntity;
-	RendererAccessors.insert({ RD.Name, JS[0] });
+	RendererAccessors.insert({ RD.Name,OgreNode});
 
 	_OP->GetObjectFromPool(RD.Name)->entity = OgreEntity;
 	_OP->GetObjectFromPool(RD.Name)->OgreAttached = true;
@@ -85,10 +89,7 @@ void Renderer::CreateCamera(RendererData RD)
 	getRenderWindow()->removeAllViewports();
 	getRenderWindow()->addViewport(cam);
 
-	JoinedStore* JS = new JoinedStore();
-	JS->Node = camNode;
-	JS->Camera = cam;
-	RendererAccessors.insert({ RD.Name,JS[0] });
+	RendererAccessors.insert({ RD.Name,camNode });
 
 	_OP->GetObjectFromPool(RD.Name)->Camera = cam;
 	_OP->GetObjectFromPool(RD.Name)->OgreAttached = true;
@@ -101,10 +102,8 @@ void Renderer::CreateLight(RendererData RD)
 	Ogre::SceneNode* lightNode = scnMgr->getRootSceneNode()->createChildSceneNode();
 	lightNode->attachObject(light);
 
-	JoinedStore* JS = new JoinedStore();
-	JS->Node = lightNode;
-	JS->Light = light;
-	RendererAccessors.insert({ RD.Name, JS[0] });
+
+	RendererAccessors.insert({ RD.Name, lightNode });
 
 	_OP->GetObjectFromPool(RD.Name)->Light = light;
 	_OP->GetObjectFromPool(RD.Name)->OgreAttached = true;
@@ -113,19 +112,19 @@ void Renderer::CreateLight(RendererData RD)
 }
 void Renderer::LookAt(RendererData RD)
 {
-	Ogre::SceneNode* SN = RendererAccessors.at(RD.Name).Node;
+	Ogre::SceneNode* SN = RendererAccessors.at(RD.Name);
 	SN->lookAt(Ogre::Vector3(RD.positions.x, RD.positions.y, RD.positions.z), Ogre::Node::TS_WORLD, Ogre::Vector3::NEGATIVE_UNIT_Z);
 }
 
 void Renderer::SetPosition(RendererData RD)
 {
-	Ogre::SceneNode* SN = RendererAccessors.at(RD.Name).Node;
+	Ogre::SceneNode* SN = RendererAccessors.at(RD.Name);
 	SN->setPosition(RD.positions.x,RD.positions.y,RD.positions.z);
 }
 
 void Renderer::SetOrientation(RendererData RD)
 {
-	Ogre::SceneNode* SN = RendererAccessors.at(RD.Name).Node;
+	Ogre::SceneNode* SN = RendererAccessors.at(RD.Name);
 	SN->setOrientation(Ogre::Quaternion(RD.Orientation.w
 										,RD.Orientation.x
 										,RD.Orientation.y

@@ -9,7 +9,7 @@ void NetworkManager::ConnectHost()
 
 }
 
-void NetworkManager::Update(ObjectPool*OP,EventQueue* EQ)
+void NetworkManager::Update(ObjectPool* OP, EventQueue* EQ)
 {
 	while (enet_host_service(client, &enetEvent, 0) > 0)
 	{
@@ -26,7 +26,7 @@ void NetworkManager::Update(ObjectPool*OP,EventQueue* EQ)
 			}
 			else if (*packetType == 1)
 			{
-				memcpy(serverData, enetEvent.packet->data, sizeof(EntityData));
+				memcpy(serverData, enetEvent.packet->data, sizeof(EntityData)); 
 				GameObject* GO = OP->GetObjectFromPool(serverData->Name);
 				std::vector<std::string>::iterator it;
 				it = std::find(ConnectedObjectTempStore.begin(), ConnectedObjectTempStore.end(), serverData->Name);
@@ -52,10 +52,26 @@ void NetworkManager::Update(ObjectPool*OP,EventQueue* EQ)
 				}
 				else if(GO->IsEmpty() == false)
 				{
+					event E;
+					E.SubSystemList.push_back(SubSystem_Physics);
+					E.PhysicsEventType = Physics_SETVELOCITY;
+					E.PD.Name = serverData->Name;
+					E.PD.positions.x = serverData->Velocity.x;
+					E.PD.positions.y = serverData->Velocity.y;
+					E.PD.positions.z = serverData->Velocity.z;
+					EQ->AddEvent(E);
 
+					event E2;
+					E2.SubSystemList.push_back(SubSystem_Physics);
+					E2.PhysicsEventType = Physics_TELEPORT;
+					E2.PD.Name = serverData->Name;
+					E2.PD.positions.x = serverData->Positions.x;
+					E2.PD.positions.y = serverData->Positions.y;
+					E2.PD.positions.z = serverData->Positions.z;
+					EQ->AddEvent(E2);
 
-					GO->SetVelocity(serverData->Velocity.x, serverData->Velocity.y, serverData->Velocity.z);
-					GO->Teleport(serverData->Positions.x,serverData->Positions.y,serverData->Positions.z);
+					//GO->SetVelocity(serverData->Velocity.x, serverData->Velocity.y, serverData->Velocity.z);
+					//GO->Teleport(serverData->Positions.x,serverData->Positions.y,serverData->Positions.z);
 				}
 			}
 			break;

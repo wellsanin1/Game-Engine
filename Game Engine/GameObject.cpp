@@ -2,22 +2,13 @@
 
 void GameObject::SetTransform(double x, double y, double z)
 {
-	event A;
-	A.SubSystemList.push_back(SubSystem_Renderer);
-	A.RenderEventType = Render_SETPOSITION;
-	A.RD.Name = Name;
-	A.RD.positions = { (float)x,(float)y,(float)z };
-	A.Empty = false;
-	_EQ->AddEvent(A);
-
-	//Node->setPosition(x,y,z);
+	Transform = { (float)x,(float)y,(float)z };
 }
 std::vector<double> GameObject::GetTransform()
 {
-//	std::vector<double> ReturnTransform;
-//	Ogre::Vector3 Pos = Node->getPosition();//  Transform.getOrigin();
-//	ReturnTransform = {Pos.x,Pos.y,Pos.z};
-//	return ReturnTransform;
+	std::vector<double> ReturnTransform;
+	ReturnTransform = {Transform.x,Transform.y,Transform.z};
+	return ReturnTransform;
 }
 void GameObject::SetOrientation(double w, double x, double y, double z)
 {
