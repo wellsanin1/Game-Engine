@@ -2,12 +2,12 @@
 
 void GameObject::SetTransform(double x, double y, double z)
 {
-	Transform = { (float)x,(float)y,(float)z };
+	_Transform = { (float)x,(float)y,(float)z };
 }
 std::vector<double> GameObject::GetTransform()
 {
 	std::vector<double> ReturnTransform;
-	ReturnTransform = {Transform.x,Transform.y,Transform.z};
+	ReturnTransform = {_Transform.x,_Transform.y,_Transform.z};
 	return ReturnTransform;
 }
 void GameObject::SetOrientation(double w, double x, double y, double z)
@@ -85,6 +85,7 @@ void GameObject::SetMass(float NewMass)
 
 void GameObject::SetVelocity(float x, float y, float z)
 {
+	_Velocity = { x,y,z };
 	event A;
 	A.SubSystemList.push_back(SubSystem_Physics);
 	A.PhysicsEventType = Physics_SETVELOCITY;
@@ -98,6 +99,7 @@ void GameObject::SetVelocity(float x, float y, float z)
 
 void GameObject::AddVelocity(float x, float y, float z)
 {
+	_Velocity = {_Velocity.x+x,_Velocity.y+y,_Velocity.z+z};
 	event A;
 	A.SubSystemList.push_back(SubSystem_Physics);
 	A.PhysicsEventType = Physics_ADDVELOCITY;
@@ -217,6 +219,9 @@ void GameObject::CreateCamera(EventQueue*EQ,std::string CameraName, int PosX, in
 }
 void GameObject::Teleport(double x, double y, double z)
 {
+	_Transform.x = x;
+	_Transform.y = y;
+	_Transform.z = z;
 	event A;
 	A.SubSystemList.push_back(SubSystem_Physics);
 	A.PhysicsEventType = Physics_TELEPORT;
@@ -229,6 +234,7 @@ void GameObject::Teleport(double x, double y, double z)
 }
 void GameObject::Update()
 {
+	//Link ogre to bullet. Done because of time constraints easy to fix
 	if (PhysicsAttached == true && OgreAttached == true && _linked == false)
 	{
 		_linked = true;
@@ -237,34 +243,16 @@ void GameObject::Update()
 		{ 
 			std::cout << Name << ": EntityLINKED" << std::endl;
 			RigidBody3d->setUserPointer(entity->getParentSceneNode());
-			std::cout << entity->getParentSceneNode()->getPosition().x;
-			std::cout << ":";
-			std::cout << entity->getParentSceneNode()->getPosition().y;
-			std::cout << ":";
-			std::cout << entity->getParentSceneNode()->getPosition().z;
-			std::cout << std::endl;
 		}
 		else if(Etype == "Light")
 		{
 			std::cout << Name << ": LightLINKED" << std::endl;
 			RigidBody3d->setUserPointer(Light->getParentSceneNode());
-			std::cout << Light->getParentSceneNode()->getPosition().x;
-			std::cout << ":";
-			std::cout << Light->getParentSceneNode()->getPosition().y;
-			std::cout << ":";
-			std::cout << Light->getParentSceneNode()->getPosition().z;
-			std::cout << std::endl;
 		}
 		else if (Etype == "Camera")
 		{
 			std::cout << Name << ": CameraLINKED" << std::endl;
 			RigidBody3d->setUserPointer(Camera->getParentSceneNode());
-			std::cout << Camera->getParentSceneNode()->getPosition().x;
-			std::cout << ":";
-			std::cout << Camera->getParentSceneNode()->getPosition().y;
-			std::cout << ":";
-			std::cout << Camera->getParentSceneNode()->getPosition().z;
-			std::cout << std::endl;
 		}
 	}
 }
@@ -315,10 +303,19 @@ void GameObject::TranslateLocally(float X, float Y, float Z)
 }
 void GameObject::SendToClient()
 {
-	/*Vector3 a = Vector3{ Node->getPosition().x, Node->getPosition().y, Node->getPosition().z };
-	Vector3 b = Vector3{ _ColliderSize[0], _ColliderSize[1], _ColliderSize[2] };
-	std::vector<double> Vector = GetLinearVelocity();
-	Vector3 c = { Vector[0],Vector[1],Vector[2] };*/
-
-	//_NM->SendPacket(Name,_MeshName,_Material,a,b,c);
+	event A;
+	A.SubSystemList.push_back(SubSystem_Network);
+	A.NetworkEventType = Network_SENDPACKET;
+	A.ND.Name = Name;
+	A.ND.position.x = _Transform.x;
+	A.ND.position.y = _Transform.y;
+	A.ND.position.z = _Transform.z;
+	A.ND.collider.x = _ColliderSize[0];
+	A.ND.collider.y = _ColliderSize[1];
+	A.ND.collider.z = _ColliderSize[2];
+	A.ND.Velocity.x = _Velocity.x;
+	A.ND.Velocity.y = _Velocity.y;
+	A.ND.Velocity.z = _Velocity.z;
+	A.Empty = false;
+	_EQ->AddEvent(A);
 }

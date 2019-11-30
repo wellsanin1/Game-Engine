@@ -7,6 +7,7 @@ Renderer::Renderer(ObjectPool* OP) :OgreBites::ApplicationContext("GameEngine")
 
 void Renderer::Update(EventQueue* EQ)
 {
+	//run function pointers based on enum from EventEnum.h
 	for (int i = 0; i < EQ->Queue.size(); ++i)
 	{
 		event EV = EQ->CheckQueueReturnEvent(SubSystem_Renderer);
@@ -27,10 +28,14 @@ void Renderer::Update(EventQueue* EQ)
 			break;
 		}
 	}
-	//General Render Update
+	//General Render Update from gameobjects. Not using events to not clog up the queue
 	for (std::unordered_map<std::string,Ogre::SceneNode*>::iterator it = RendererAccessors.begin(); it != RendererAccessors.end(); ++it)
 	{
 		std::vector<double> Vector =_OP->GetObjectFromPool(it->first)->GetTransform();
+		//if (it->first == "OgreHead")
+		//{
+		//	std::cout << Vector[0] << " : " << Vector[1] << " : " << Vector[2] << std::endl;
+		//}
 		it->second->setPosition(Vector[0],Vector[1],Vector[2]);
 	}
 
@@ -39,6 +44,7 @@ void Renderer::Update(EventQueue* EQ)
 
 void Renderer::setup()
 {
+	//Ogre setup
 	OgreBites::ApplicationContext::setup();
 	root = getRoot();
 	scnMgr = root->createSceneManager();
@@ -59,6 +65,7 @@ void Renderer::End()
 
 void Renderer::Restart()
 {
+	//Restart renderer
 	scnMgr = root->createSceneManager();
 	shadergen->addSceneManager(scnMgr);
 	scnMgr->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
@@ -67,12 +74,14 @@ void Renderer::Restart()
 
 void Renderer::CreateEntity(RendererData RD)
 {
+	//Ogre requires both scene nodes and entities/cameras/lights
 	Ogre::Entity* OgreEntity = scnMgr->createEntity(RD.Name, RD.MeshName);
 	Ogre::SceneNode* OgreNode = scnMgr->getRootSceneNode()->createChildSceneNode();
 	OgreNode->attachObject(OgreEntity);
 
 	RendererAccessors.insert({ RD.Name,OgreNode});
 
+	//attach to gameobject. quick fix, can be removed with more time
 	_OP->GetObjectFromPool(RD.Name)->entity = OgreEntity;
 	_OP->GetObjectFromPool(RD.Name)->OgreAttached = true;
 
@@ -80,6 +89,7 @@ void Renderer::CreateEntity(RendererData RD)
 }
 void Renderer::CreateCamera(RendererData RD)
 {
+	//Ogre requires both scene nodes and entities/cameras/lights
 	Ogre::SceneNode* camNode = scnMgr->getRootSceneNode()->createChildSceneNode();
 	Ogre::Camera* cam = scnMgr->createCamera(RD.Name);
 	camNode->attachObject(cam);
@@ -92,6 +102,7 @@ void Renderer::CreateCamera(RendererData RD)
 
 	RendererAccessors.insert({ RD.Name,camNode });
 
+	//attach to gameobject. quick fix, can be removed with more time
 	_OP->GetObjectFromPool(RD.Name)->Camera = cam;
 	_OP->GetObjectFromPool(RD.Name)->OgreAttached = true;
 
@@ -99,6 +110,7 @@ void Renderer::CreateCamera(RendererData RD)
 }
 void Renderer::CreateLight(RendererData RD)
 {
+	//Ogre requires both scene nodes and entities/cameras/lights
 	Ogre::Light* light = scnMgr->createLight(RD.Name);
 	Ogre::SceneNode* lightNode = scnMgr->getRootSceneNode()->createChildSceneNode();
 	lightNode->attachObject(light);
@@ -106,6 +118,7 @@ void Renderer::CreateLight(RendererData RD)
 
 	RendererAccessors.insert({ RD.Name, lightNode });
 
+	//attach to gameobject. quick fix, can be removed with more time
 	_OP->GetObjectFromPool(RD.Name)->Light = light;
 	_OP->GetObjectFromPool(RD.Name)->OgreAttached = true;
 
@@ -113,18 +126,21 @@ void Renderer::CreateLight(RendererData RD)
 }
 void Renderer::LookAt(RendererData RD)
 {
+	//Look at object in scene at position
 	Ogre::SceneNode* SN = RendererAccessors.at(RD.Name);
 	SN->lookAt(Ogre::Vector3(RD.positions.x, RD.positions.y, RD.positions.z), Ogre::Node::TS_WORLD, Ogre::Vector3::NEGATIVE_UNIT_Z);
 }
 
 void Renderer::SetPosition(RendererData RD)
 {
+	//Teleport object to position using events
 	Ogre::SceneNode* SN = RendererAccessors.at(RD.Name);
 	SN->setPosition(RD.positions.x,RD.positions.y,RD.positions.z);
 }
 
 void Renderer::SetOrientation(RendererData RD)
 {
+	//Set orientation of object using events
 	Ogre::SceneNode* SN = RendererAccessors.at(RD.Name);
 	SN->setOrientation(Ogre::Quaternion(RD.Orientation.w
 										,RD.Orientation.x

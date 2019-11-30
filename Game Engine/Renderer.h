@@ -8,16 +8,23 @@
 class Renderer : public OgreBites::ApplicationContext
 {
 private:
+	//ObjectPool.h
 	ObjectPool* _OP;
+
+	//Nececcary Ogre objects
 public:
 	Ogre::Root* root;
 	Ogre::SceneManager* scnMgr;
 	Ogre::RTShader::ShaderGenerator* shadergen;
 
+	//to access Renderer objects by name
 	std::unordered_map<std::string,Ogre::SceneNode*> RendererAccessors;
 
+	//takes object pool to iterate through gameobjects
 	Renderer(ObjectPool*OP);
 	~Renderer() {};
+
+	//Bunch of self explanatory functions
 	void Update(EventQueue* EQ);
 	void setup();
 	void Start();
@@ -29,8 +36,9 @@ public:
 	void LookAt(RendererData RD);
 	void SetPosition(RendererData RD);
 	void SetOrientation(RendererData RD);
-	typedef void (Renderer::* Reactions)(RendererData);
 
+	//Array of function pointers
+	typedef void (Renderer::* Reactions)(RendererData);
 	Reactions EventReactions[7] = { &Renderer::CreateEntity
 									,&Renderer::CreateLight
 									,&Renderer::CreateCamera

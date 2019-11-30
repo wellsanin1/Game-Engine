@@ -11,27 +11,58 @@ void NetworkManager::ConnectHost()
 
 void NetworkManager::Update(ObjectPool* OP, EventQueue* EQ)
 {
+	for (int i = 0; i < EQ->Queue.size(); ++i)
+	{
+		event EV = EQ->CheckQueueReturnEvent(SubSystem_Network);
+		if (EV.Empty == false)
+		{
+			for (int j = 0; j < EV.SubSystemList.size(); ++j)
+			{
+				if (EV.SubSystemList[j] == SubSystem_Network)
+				{
+					Reactions A = EventReactions[(int)EV.NetworkEventType];
+					(this->*A)(EV.ND);
+					EQ->RemoveFromQueue(SubSystem_Network);
+				}
+			}
+		}
+		else
+		{
+			break;
+		}
+
+	}
+
+
+	//While enet has events
 	while (enet_host_service(client, &enetEvent, 0) > 0)
 	{
+		//For each event
 		switch (enetEvent.type) 
 		{
+		//when a recieve event
 		case ENET_EVENT_TYPE_RECEIVE:
 			memcpy(packetType, enetEvent.packet->data, sizeof(int));
 			if (*packetType == 0)
 			{
 				std::cout << "Packet Received!\n";
 				memcpy(clientData, enetEvent.packet->data, sizeof(ClientData));
+				//get client information for sending to server
 				clientIndex = clientData->clientIndex;
 
 			}
 			else if (*packetType == 1)
 			{
 				memcpy(serverData, enetEvent.packet->data, sizeof(EntityData)); 
+
+				//check object pool for gameobject by name
 				GameObject* GO = OP->GetObjectFromPool(serverData->Name);
 				std::vector<std::string>::iterator it;
 				it = std::find(ConnectedObjectTempStore.begin(), ConnectedObjectTempStore.end(), serverData->Name);
+				//If entity already exists
 				if (GO->IsEmpty() == true && it == ConnectedObjectTempStore.end())
 				{
+					//Create an entity event
 					ConnectedObjectTempStore.push_back(serverData->Name);
 					event E;
 					E.SubSystemList.push_back(SubSystem_ObjectPool);
@@ -52,6 +83,7 @@ void NetworkManager::Update(ObjectPool* OP, EventQueue* EQ)
 				}
 				else if(GO->IsEmpty() == false)
 				{
+					//Setvelocity Event
 					event E;
 					E.SubSystemList.push_back(SubSystem_Physics);
 					E.PhysicsEventType = Physics_SETVELOCITY;
@@ -69,9 +101,6 @@ void NetworkManager::Update(ObjectPool* OP, EventQueue* EQ)
 					E2.PD.positions.y = serverData->Positions.y;
 					E2.PD.positions.z = serverData->Positions.z;
 					EQ->AddEvent(E2);
-
-					//GO->SetVelocity(serverData->Velocity.x, serverData->Velocity.y, serverData->Velocity.z);
-					//GO->Teleport(serverData->Positions.x,serverData->Positions.y,serverData->Positions.z);
 				}
 			}
 			break;
@@ -79,32 +108,33 @@ void NetworkManager::Update(ObjectPool* OP, EventQueue* EQ)
 	}
 }
 
-void NetworkManager::SendPacket(std::string Name,std::string MeshName,std::string Material,Vector3 positions,Vector3 Colliders, Vector3 Velocity)
+void NetworkManager::SendPacket(NetworkData ND)
 {
 	EntityData* ED = new EntityData();
-	strcpy(ED->Name, Name.c_str());
-	strcpy(ED->MeshName, MeshName.c_str());
-	strcpy(ED->Material, Material.c_str());
+	strcpy(ED->Name, ND.Name.c_str());
+	strcpy(ED->MeshName, ND.MeshName.c_str());
+	strcpy(ED->Material, ND.Material.c_str());
 	ED->clientIndex = clientIndex;
-	ED->Positions.x = positions.x;
-	ED->Positions.y = positions.y;
-	ED->Positions.z = positions.z;
+	ED->Positions.x = ND.position.x;
+	ED->Positions.y = ND.position.y;
+	ED->Positions.z = ND.position.z;
 
-	ED->Colliders.x = Colliders.x;
-	ED->Colliders.y = Colliders.y;
-	ED->Colliders.z = Colliders.z;
+	ED->Colliders.x = ND.collider.x;
+	ED->Colliders.y = ND.collider.y;
+	ED->Colliders.z = ND.collider.z;
 
-	ED->Velocity.x = Velocity.x;
-	ED->Velocity.y = Velocity.y;
-	ED->Velocity.z = Velocity.z;
-
+	ED->Velocity.x = ND.Velocity.x;
+	ED->Velocity.y = ND.Velocity.y;
+	ED->Velocity.z = ND.Velocity.z;
+	//send packet
 	dataPacket = enet_packet_create(ED,sizeof(EntityData), ENET_PACKET_FLAG_RELIABLE);
+	//send to server
 	enet_peer_send(peer, 0, dataPacket);
-
 }
 
 void NetworkManager::Initiate()
 {
+	//Init enet
 	*packetType = -1;
 	if (enet_initialize() != 0)
 	{
@@ -127,6 +157,7 @@ void NetworkManager::Initiate()
 
 void NetworkManager::Restart()
 {
+	//remove all etities for new level
 	ConnectedObjectTempStore.clear();
 }
 

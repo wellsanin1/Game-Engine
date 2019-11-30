@@ -36,3 +36,13 @@ struct AudioData
 {
 	std::string Name;
 };
+struct NetworkData
+{
+	Vector3 position;// = Vector3{ Node->getPosition().x, Node->getPosition().y, Node->getPosition().z };
+	Vector3 collider;// = Vector3{ _ColliderSize[0], _ColliderSize[1], _ColliderSize[2] };
+	Vector3 Velocity;
+	std::string Name;
+	std::string MeshName;
+	std::string e_type;
+	std::string Material;
+};

@@ -36,7 +36,8 @@ private:
 	std::vector<std::string> CollidedObjects;
 	bool _linked = false;
 	bool _LuaRegistered = false;
-	Vector3 Transform;
+	Vector3 _Transform;
+	Vector3 _Velocity;
 
 public:
 	bool PhysicsAttached;

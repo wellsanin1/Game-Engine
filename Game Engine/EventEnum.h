@@ -38,6 +38,10 @@ enum KeyManagerEnum
 	KeyManager_QUIT,
 
 };
+enum NetworkEnum
+{
+	Network_SENDPACKET
+};
 enum SubSystem 
 { 
 	SubSystem_NONE, 
@@ -45,7 +49,7 @@ enum SubSystem
 	SubSystem_Renderer,
 	SubSystem_Audio,
 	SubSystem_Input,
-	SubSystem_Netcode,
+	SubSystem_Network,
 	SubSystem_Physics,
 	SubSystem_Load,
 	SubSystem_ObjectPool,

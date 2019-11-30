@@ -20,20 +20,26 @@ private:
 public:
 	Physics(ObjectPool* OP);
 	~Physics() {};
+
+	//Bullet specific structs.
 	btDefaultCollisionConfiguration* collisionConfiguration;
 	btCollisionDispatcher* dispatcher;
 	btBroadphaseInterface* overlappingPairCache;
 	btSequentialImpulseConstraintSolver* solver;
 	btDiscreteDynamicsWorld* dynamicsWorld;
 	std::vector<btCollisionShape*> collisionShapes;
+
+	//access physics object by name
+	//used when getting events
 	std::map<std::string, btRigidBody*> physicsAccessors;
+	//access name by physicsObject
+	//Used when sending events
 	std::map<btRigidBody*, std::string> ReversePhysicsAccessors;
 
-
+	//Self explanatory functions
 	void PhysicsUpdate(EventQueue* EQ);
 	void CheckCollisions();
 	void dealloc();
-
 	void Restart();
 	void CreateEntity(PhysicsData PD);
 	void SetMass(PhysicsData PD);
@@ -43,6 +49,7 @@ public:
 	void Teleport(PhysicsData PD);
 	void SetGravity(PhysicsData PD);
 
+	//Function pointers
 	typedef void (Physics::* Reactions)(PhysicsData);
 	Reactions EventReactions[7] = 
 	{
