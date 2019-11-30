@@ -10,6 +10,7 @@ KeyManager::KeyManager()
 	};
 };
 
+//Convert SDLKeycode to KeymanagerEnums
 KeyManagerEnum KeyManager::MapConvert(SDL_Keycode KeyCode)
 {
 	std::map<SDL_Keycode, KeyManagerEnum>::const_iterator it = EnumMap.find(KeyCode);
@@ -20,7 +21,7 @@ KeyManagerEnum KeyManager::MapConvert(SDL_Keycode KeyCode)
 	}
 	return KeyManager_NONE;
 };
-
+//create input event
 event KeyManager::CreateEvent(KeyManagerEnum KeyPressed)
 {
 	event E;
@@ -32,20 +33,13 @@ event KeyManager::CreateEvent(KeyManagerEnum KeyPressed)
 
 void KeyManager::InputRead()
 {
-	//clear queue of previous frames inputs before adding more
+	//clear queue of previous loops inputs before adding more
 	for (int i = 0; i < _EQ->Queue.size(); ++i)
 	{
 		event EV = _EQ->CheckQueueReturnEvent(SubSystem_Input);
 		if (EV.Empty == false)
 		{
-			for (int j = 0; j < EV.SubSystemList.size(); ++j)
-			{
-				if (EV.SubSystemList[j] == SubSystem_Input)
-				{
-					_EQ->RemoveFromQueue(SubSystem_Input);
-					break;
-				}
-			}
+			_EQ->RemoveFromQueue(SubSystem_Input);
 		}
 		else
 		{
@@ -53,7 +47,7 @@ void KeyManager::InputRead()
 		}
 	}
 
-	//add this frames inputs
+	//add this frames inputs through events
 	SDL_Event event;
 	while (SDL_PollEvent(&event))
 	{
@@ -72,21 +66,16 @@ void KeyManager::Initiate(lua_State* F,EventQueue* EQ)
 }
 bool KeyManager::GetKey(int Input)
 {
-	//Create Temp version of event queue to iterate on
-	EventQueue E =  EventQueue();
-	E = _EQ[0];
+	//return true of false based on if a key input is in the event queue
 	for (int i = 0; i < _EQ->Queue.size(); ++i)
 	{
-		event EV = E.CheckQueueReturnEvent(SubSystem_Input);
+		event EV = _EQ->CheckQueueReturnEvent(SubSystem_Input);
 		if (EV.Empty == false)
 		{
-			for (int i = 0; i < EV.SubSystemList.size(); ++i)
+			if (EV.InputEventEnum == Input)
 			{
-				if (EV.SubSystemList[i] == SubSystem_Input)
-				{
-					_EQ->RemoveFromQueue(SubSystem_Input);
-					return true;
-				}
+				_EQ->RemoveFromQueue(SubSystem_Input);
+				return true;
 			}
 		}
 	}

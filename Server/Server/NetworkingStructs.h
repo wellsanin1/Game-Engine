@@ -26,9 +26,3 @@ struct ClientData
 	int packetType = 0;
 	int clientIndex;
 };
-
-struct ClientPacket
-{
-	int clientIndex;
-	int direction;
-};

@@ -35,21 +35,18 @@ void AudioManager::Update(EventQueue* EQ)
 		event EV = EQ->CheckQueueReturnEvent(SubSystem_Audio);
 		if (EV.Empty == false)
 		{
-			for (int j = 0; j < EV.SubSystemList.size(); ++j)
-			{
-				if (EV.SubSystemList[j] == SubSystem_Audio)
-				{
-					Reactions A = EventReactions[(int)EV.AudioEventType];
-					(this->*A)(EV.AD);
-					EQ->RemoveFromQueue(SubSystem_Audio);
-				}
-			}
-		}
-		else
-		{
-			break;
+			Reactions A = EventReactions[(int)EV.AudioEventType];
+			(this->*A)(EV.AD);
+			EQ->RemoveFromQueue(SubSystem_Audio);
 		}
 	}
+}
+
+void AudioManager::Dealloc()
+{
+	delete SoundArray;
+	delete FmodSystem;
+	delete EventReactions;
 }
 
 AudioManager::AudioManager()

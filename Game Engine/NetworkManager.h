@@ -17,6 +17,7 @@ public:
 	void SendPacket(NetworkData ND);
 	void Initiate();
 	void Restart();
+	void Dealloc();
 	 std::vector<std::string>ConnectedObjectTempStore;
 private:
 	ENetAddress address;
@@ -26,7 +27,6 @@ private:
 
 	EntityData* serverData = new EntityData;
 	ClientData* clientData = new ClientData;
-	ClientPacket* clientPacket = new ClientPacket;
 	ENetPacket* dataPacket;
 	int* packetType = new int;
 	int clientIndex = -1;

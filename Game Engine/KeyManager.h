@@ -28,6 +28,7 @@ public:
 	KeyManager();
 	~KeyManager() {};
 	void InputRead();
+	void Dealloc();
 	event CreateEvent(KeyManagerEnum KeyPressed);
 	void Initiate(lua_State* F, EventQueue* EQ);
 	//LUA REGISTRATION AND FUNCTIONS

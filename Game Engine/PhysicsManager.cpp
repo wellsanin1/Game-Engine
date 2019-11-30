@@ -57,6 +57,7 @@ void Physics::SetMass(PhysicsData PD)
 	physicsAccessors.erase(PD.Name);
 	ReversePhysicsAccessors.erase(RB);
 	dynamicsWorld->removeRigidBody(RB);
+
 	for (int i = 0; i < collisionShapes.size(); ++i)
 	{
 		if (collisionShapes[i] == RB->getCollisionShape())
@@ -64,16 +65,20 @@ void Physics::SetMass(PhysicsData PD)
 			collisionShapes.erase(collisionShapes.begin() + i);
 		}
 	}
+
 	RB->getCollisionShape()->calculateLocalInertia(PD.mass, RB->getLocalInertia());
 	btRigidBody::btRigidBodyConstructionInfo BodyInfo(PD.mass, RB->getMotionState(), RB->getCollisionShape(),RB->getLocalInertia());
-	RB = new btRigidBody(BodyInfo);
 
-	collisionShapes.push_back(RB->getCollisionShape());
-	dynamicsWorld->addRigidBody(RB);
-	physicsAccessors.insert({PD.Name, RB});
-	ReversePhysicsAccessors.insert({ RB,PD.Name });
+	btRigidBody* RB2 = new btRigidBody(BodyInfo);
 
-	_OP->GetObjectFromPool(PD.Name)->RigidBody3d = RB;
+	collisionShapes.push_back(RB2->getCollisionShape());
+	dynamicsWorld->addRigidBody(RB2);
+	physicsAccessors.insert({PD.Name, RB2});
+	ReversePhysicsAccessors.insert({ RB2,PD.Name });
+
+	_OP->GetObjectFromPool(PD.Name)->RigidBody3d = RB2;
+	_OP->GetObjectFromPool(PD.Name)->linked = false;
+	_OP->GetObjectFromPool(PD.Name)->Update();
 }
 
 void Physics::TranslateLocally(PhysicsData PD)
@@ -150,16 +155,13 @@ void Physics::CheckCollisions()
 			if (pt.getDistance() < 0.0f)
 			{
 				//lets you see where an object has collided. Not currently using them
-				btVector3 ptA = pt.getPositionWorldOnA();
-				btVector3 ptB = pt.getPositionWorldOnB();
-				btVector3 normalOnB = pt.m_normalWorldOnB;
 				//basic collision
 				A->AddCollision(B->Name);
 				B->AddCollision(A->Name);
 			}
 			else
 			{
-			//if not collided
+				//if not collided
 				A->ClearCollision(B->Name);
 				B->ClearCollision(A->Name);
 			}
@@ -175,15 +177,9 @@ void Physics::PhysicsUpdate(EventQueue* EQ)
 		event EV = EQ->CheckQueueReturnEvent(SubSystem_Physics);
 		if (EV.Empty == false)
 		{
-			for (int j = 0; j < EV.SubSystemList.size(); ++j)
-			{
-				if (EV.SubSystemList[j] == SubSystem_Physics)
-				{
-					Reactions A = EventReactions[(int)EV.PhysicsEventType];
-					(this->*A)(EV.PD);
-					EQ->RemoveFromQueue(SubSystem_Physics);
-				}
-			}
+			Reactions A = EventReactions[(int)EV.PhysicsEventType];
+			(this->*A)(EV.PD);
+			EQ->RemoveFromQueue(SubSystem_Physics);
 		}
 		else
 		{
@@ -206,7 +202,7 @@ void Physics::PhysicsUpdate(EventQueue* EQ)
 			if (userPointer) 
 			{
 				//sets vector in gameobject
-				_OP->GetObjectFromPool(ReversePhysicsAccessors.at(body))->SetTransform(trans.getOrigin().getX(), trans.getOrigin().getY(), trans.getOrigin().getZ());
+				 _OP->GetObjectFromPool(ReversePhysicsAccessors.at(body))->SetTransform(trans.getOrigin().getX(), trans.getOrigin().getY(), trans.getOrigin().getZ());
 			}
 		}
 	}

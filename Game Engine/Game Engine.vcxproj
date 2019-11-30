@@ -178,7 +178,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AudioManager.cpp" />
-    <ClCompile Include="CollisionCallback.cpp" />
     <ClCompile Include="EventSystem.cpp" />
     <ClCompile Include="Game Engine.cpp" />
     <ClCompile Include="KeyManager.cpp" />

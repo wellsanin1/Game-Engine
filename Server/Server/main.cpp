@@ -38,6 +38,8 @@ void main()
 	EntityData* physicsData = new EntityData;
 	ClientData* clientData = new ClientData;
 
+
+	cout << "init finished"<< endl;
 	while (1)
 	{
 

@@ -20,16 +20,17 @@ public:
 	GameObject* PoolStorage[PoolSize];
 	virtual ~ObjectPool() {};
 	void StoreObject(GameObject* Object);
+	//same logic returns nullptr if doesn't exist
 	GameObject* GetObjectFromPool(std::string ObjectName);
+	//same logic returns blank GameObject if doesn't exist
+	GameObject* IfObjectExists(std::string ObjectName);
 	void CreateCamera(ObjectPoolData OP,EventQueue*EQ);
 	void CreateEntity(ObjectPoolData OP, EventQueue* EQ);
 	void CreateLight(ObjectPoolData OP, EventQueue* EQ);
 	void Reinitialise();
-	void ClearPool(EventQueue* EQ);
+	void DeallocPool();
 	void Update(EventQueue* EQ, void*LuaState);
-
 	typedef void (ObjectPool::* Reactions)(ObjectPoolData,EventQueue*);
-
 	Reactions EventReactions[3] = { &ObjectPool::CreateEntity
 									,& ObjectPool::CreateCamera
 									,& ObjectPool::CreateLight};

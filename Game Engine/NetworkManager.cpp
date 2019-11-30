@@ -16,15 +16,9 @@ void NetworkManager::Update(ObjectPool* OP, EventQueue* EQ)
 		event EV = EQ->CheckQueueReturnEvent(SubSystem_Network);
 		if (EV.Empty == false)
 		{
-			for (int j = 0; j < EV.SubSystemList.size(); ++j)
-			{
-				if (EV.SubSystemList[j] == SubSystem_Network)
-				{
-					Reactions A = EventReactions[(int)EV.NetworkEventType];
-					(this->*A)(EV.ND);
-					EQ->RemoveFromQueue(SubSystem_Network);
-				}
-			}
+			Reactions A = EventReactions[(int)EV.NetworkEventType];
+			(this->*A)(EV.ND);
+			EQ->RemoveFromQueue(SubSystem_Network);
 		}
 		else
 		{
@@ -56,7 +50,7 @@ void NetworkManager::Update(ObjectPool* OP, EventQueue* EQ)
 				memcpy(serverData, enetEvent.packet->data, sizeof(EntityData)); 
 
 				//check object pool for gameobject by name
-				GameObject* GO = OP->GetObjectFromPool(serverData->Name);
+				GameObject* GO = OP->IfObjectExists(serverData->Name);
 				std::vector<std::string>::iterator it;
 				it = std::find(ConnectedObjectTempStore.begin(), ConnectedObjectTempStore.end(), serverData->Name);
 				//If entity already exists
@@ -67,10 +61,12 @@ void NetworkManager::Update(ObjectPool* OP, EventQueue* EQ)
 					event E;
 					E.SubSystemList.push_back(SubSystem_ObjectPool);
 					E.ObjectPoolEventEnum = ObjectPool_CREATEENTITY;
-					E.OD.Name = serverData->Name;
-					E.OD.e_type = "entity";
+
 					E.OD.MeshName = serverData->MeshName;
+					E.OD.Name = serverData->Name;
 					E.OD.Material = serverData->Material;
+
+					E.OD.e_type = "entity";
 
 					E.OD.positions.x = serverData->Positions.x;
 					E.OD.positions.y = serverData->Positions.y;
@@ -80,6 +76,7 @@ void NetworkManager::Update(ObjectPool* OP, EventQueue* EQ)
 					E.OD.Colliders.y = serverData->Colliders.y;
 					E.OD.Colliders.z = serverData->Colliders.z;
 					EQ->AddEvent(E);
+					std::cout << "Created Event Named:"<<serverData->Name << std::endl;
 				}
 				else if(GO->IsEmpty() == false)
 				{
@@ -88,9 +85,9 @@ void NetworkManager::Update(ObjectPool* OP, EventQueue* EQ)
 					E.SubSystemList.push_back(SubSystem_Physics);
 					E.PhysicsEventType = Physics_SETVELOCITY;
 					E.PD.Name = serverData->Name;
-					E.PD.positions.x = serverData->Velocity.x;
-					E.PD.positions.y = serverData->Velocity.y;
-					E.PD.positions.z = serverData->Velocity.z;
+					E.PD.GenericVector.x = serverData->Velocity.x;
+					E.PD.GenericVector.y = serverData->Velocity.y;
+					E.PD.GenericVector.z = serverData->Velocity.z;
 					EQ->AddEvent(E);
 
 					event E2;
@@ -134,7 +131,6 @@ void NetworkManager::SendPacket(NetworkData ND)
 
 void NetworkManager::Initiate()
 {
-	//Init enet
 	*packetType = -1;
 	if (enet_initialize() != 0)
 	{
@@ -159,6 +155,16 @@ void NetworkManager::Restart()
 {
 	//remove all etities for new level
 	ConnectedObjectTempStore.clear();
+}
+
+void NetworkManager::Dealloc()
+{
+	delete client;
+	delete peer;
+	delete serverData;
+	delete clientData;
+	delete dataPacket;
+	delete packetType;
 }
 
 

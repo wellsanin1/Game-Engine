@@ -13,15 +13,9 @@ void Renderer::Update(EventQueue* EQ)
 		event EV = EQ->CheckQueueReturnEvent(SubSystem_Renderer);
 		if (EV.Empty == false)
 		{
-			for (int j = 0; j < EV.SubSystemList.size(); ++j)
-			{
-				if (EV.SubSystemList[j] == SubSystem_Renderer)
-				{
-					Reactions A = EventReactions[(int)EV.RenderEventType];
-					(this->*A)(EV.RD);
-					EQ->RemoveFromQueue(SubSystem_Renderer);
-				}
-			}
+			Reactions A = EventReactions[(int)EV.RenderEventType];
+			(this->*A)(EV.RD);
+			EQ->RemoveFromQueue(SubSystem_Renderer);
 		}
 		else
 		{
@@ -29,14 +23,10 @@ void Renderer::Update(EventQueue* EQ)
 		}
 	}
 	//General Render Update from gameobjects. Not using events to not clog up the queue
-	for (std::unordered_map<std::string,Ogre::SceneNode*>::iterator it = RendererAccessors.begin(); it != RendererAccessors.end(); ++it)
+	for (std::map<std::string, Ogre::SceneNode*>::iterator it = RendererAccessors.begin(); it != RendererAccessors.end(); ++it)
 	{
-		std::vector<double> Vector =_OP->GetObjectFromPool(it->first)->GetTransform();
-		//if (it->first == "OgreHead")
-		//{
-		//	std::cout << Vector[0] << " : " << Vector[1] << " : " << Vector[2] << std::endl;
-		//}
-		it->second->setPosition(Vector[0],Vector[1],Vector[2]);
+			std::vector<double> Vector = _OP->GetObjectFromPool(it->first)->GetTransform();
+			it->second->setPosition(Vector[0], Vector[1], Vector[2]);
 	}
 
 	root->renderOneFrame();
@@ -94,11 +84,13 @@ void Renderer::CreateCamera(RendererData RD)
 	Ogre::Camera* cam = scnMgr->createCamera(RD.Name);
 	camNode->attachObject(cam);
 
+	camNode->setFixedYawAxis(true);
 	cam->setAutoAspectRatio(true);
 	cam->setNearClipDistance(NearCamClipDistance);
 
 	getRenderWindow()->removeAllViewports();
 	getRenderWindow()->addViewport(cam);
+	
 
 	RendererAccessors.insert({ RD.Name,camNode });
 

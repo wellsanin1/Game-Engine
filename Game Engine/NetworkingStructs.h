@@ -33,9 +33,3 @@ struct ClientData
 	int clientIndex;
 	Vector3 position[3];
 };
-
-struct ClientPacket 
-{
-	int clientIndex;
-	int direction;
-};

@@ -2,6 +2,7 @@
 
 ObjectPool::ObjectPool()
 {
+	//initiate objectpool with empty objects
 	int size = sizeof(PoolStorage) / sizeof(*PoolStorage);
 	for (int i = 0; i < size; i++)
 	{
@@ -11,35 +12,33 @@ ObjectPool::ObjectPool()
 
 void ObjectPool::Reinitialise()
 {
+	//Empty objectpool and reload for new level
 	std::fill(PoolStorage, PoolStorage + PoolSize, nullptr);
-	int size = sizeof(PoolStorage) / sizeof(*PoolStorage);
-	for (int i = 0; i < size; i++)
+	for (int i = 0; i < PoolSize; i++)
 	{
 		PoolStorage[i] = new GameObject();
 	}
 }
 
-void ObjectPool::ClearPool(EventQueue*EQ)
+void ObjectPool::DeallocPool()
 {
-
+	for (int i = 0; i < PoolSize; i++)
+	{
+		delete PoolStorage[i];
+	}
 }
 
 void ObjectPool::Update(EventQueue*EQ,void*LuaState)
 {
+	//function pointer loop
 	for (int i = 0; i < EQ->Queue.size(); ++i)
 	{
 		event EV = EQ->CheckQueueReturnEvent(SubSystem_ObjectPool);
 		if (EV.Empty == false)
 		{
-			for (int j = 0; j < EV.SubSystemList.size(); ++j)
-			{
-				if (EV.SubSystemList[j] == SubSystem_ObjectPool)
-				{
-					Reactions A = EventReactions[(int)EV.ObjectPoolEventEnum];
-					(this->*A)(EV.OD, EQ);
-					EQ->RemoveFromQueue(SubSystem_ObjectPool);
-				}
-			}
+			Reactions A = EventReactions[(int)EV.ObjectPoolEventEnum];
+			(this->*A)(EV.OD, EQ);
+			EQ->RemoveFromQueue(SubSystem_ObjectPool);
 		}
 		else
 		{
@@ -47,9 +46,10 @@ void ObjectPool::Update(EventQueue*EQ,void*LuaState)
 		}
 	}
 
+	//some propriatory stuff, done here because of time but can probably be removed later
 	for (int i = 0;i<PoolSize;++i)
 	{
-		if (PoolStorage[i]->Empty== false)
+		if (PoolStorage[i]->Empty == false)
 		{
 			PoolStorage[i]->Update();
 			PoolStorage[i]->register_lua(LuaState);
@@ -57,6 +57,7 @@ void ObjectPool::Update(EventQueue*EQ,void*LuaState)
 	}
 }
 
+//Put Gameobject at first empty spot in objectpool
 void ObjectPool::StoreObject(GameObject* Object)
 {
 	int size = sizeof(PoolStorage) / sizeof(*PoolStorage);
@@ -72,10 +73,10 @@ void ObjectPool::StoreObject(GameObject* Object)
 	return;
 };
 
+//return GameObject by name, returns nullptr
 GameObject* ObjectPool::GetObjectFromPool(std::string ObjectName)
 {
-	int size = sizeof(PoolStorage) / sizeof(*PoolStorage);
-	for (int i = 0; i < size; i++)
+	for (int i = 0; i < PoolSize; i++)
 	{
 		if (PoolStorage[i]->Name == ObjectName)
 		{
@@ -83,8 +84,20 @@ GameObject* ObjectPool::GetObjectFromPool(std::string ObjectName)
 		}
 	}
 	return nullptr;
+}
+//return GameObject by name, returns Empty Gameobject
+GameObject* ObjectPool::IfObjectExists(std::string ObjectName)
+{
+	for (int i = 0; i < PoolSize; i++)
+	{
+		if (PoolStorage[i]->Name == ObjectName)
+		{
+			return PoolStorage[i];
+		}
+	}
+	GameObject* a = new GameObject();
+	return a;
 };
-
 void ObjectPool::CreateCamera(ObjectPoolData OD, EventQueue* EQ)
 {
 	GameObject* a = new GameObject();

@@ -18,7 +18,7 @@ public:
 	Ogre::RTShader::ShaderGenerator* shadergen;
 
 	//to access Renderer objects by name
-	std::unordered_map<std::string,Ogre::SceneNode*> RendererAccessors;
+	std::map<std::string,Ogre::SceneNode*> RendererAccessors;
 
 	//takes object pool to iterate through gameobjects
 	Renderer(ObjectPool*OP);

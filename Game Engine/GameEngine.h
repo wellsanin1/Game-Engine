@@ -10,6 +10,7 @@
 
 class GameEngine
 {
+	bool _Active = false;
 public:
 	GameEngine() {};
 	virtual ~GameEngine() {};
@@ -20,15 +21,14 @@ public:
 	void Close();
 	void Render();
 	void Start();
-	void Game();
-	void Audio();
+	void PlayAudio(std::string FileName);
 	void Network();
 	void ObjectPoolUpdate();
 	void Reload(int Level);
-	void ExecuteEvents();
-
 	void ExecuteLUA();
 	void LoadEntitiesIntoEngine(int Level);
+	void Quit();
+	bool IsActive();
 	EventQueue EQ;
 	ObjectPool OP = ObjectPool();
 	AudioManager AM;
@@ -51,6 +51,8 @@ public:
 			.addFunction("LuaStringOUT", &GameEngine::LuaStringOUT)
 			.addFunction("LuaIntOUT", &GameEngine::LuaIntOUT)
 			.addFunction("Reload", &GameEngine::Reload)
+			.addFunction("PlayAudio", &GameEngine::PlayAudio)
+			.addFunction("Quit", &GameEngine::Quit)
 			.endClass()
 			.endNamespace();
 	}

@@ -31,7 +31,7 @@ elementList = {
 		mesh = 'Barrel.mesh',
 		material = '',
 		PosX = -100,
-		PosY = 10,
+		PosY = 20,
 		PosZ = 0,
 		ColX = 15,
 		ColY = 15,
@@ -48,8 +48,43 @@ elementList = {
 		ColX = 10000,
 		ColY = 1,
 		ColZ = 10000
+	},
+	element6 = {
+		e_type = 'Entity',
+		name = 'Penguin',
+		mesh = 'penguin.mesh',
+		material = '',
+		PosX = 100,
+		PosY = 20,
+		PosZ = 0,
+		ColX = 15,
+		ColY = 15,
+		ColZ = 15
+	},
+	element7 = {
+		e_type = 'Entity',
+		name = 'Cube1',
+		mesh = 'cube.mesh',
+		material = '',
+		PosX = -100,
+		PosY = 20,
+		PosZ = -200,
+		ColX = 30,
+		ColY = 30,
+		ColZ = 30
+	},
+	element8 = {
+		e_type = 'Entity',
+		name = 'Cube2',
+		mesh = 'cube.mesh',
+		material = '',
+		PosX = -100,
+		PosY = 20,
+		PosZ = -400,
+		ColX = 30,
+		ColY = 30,
+		ColZ = 30
 	}
-
 }
 
 

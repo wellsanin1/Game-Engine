@@ -32,6 +32,7 @@ public:
 	LuaHelper();
 	void LoadEntityData(int Level,EventQueue*EQ);
 	~LuaHelper();
+	void Dealloc();
 	void ExecuteFile(const char* file);
 	void ExecuteString(const char* expression);
 	void Update(void* Engine);

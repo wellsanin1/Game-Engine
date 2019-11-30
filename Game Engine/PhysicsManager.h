@@ -13,7 +13,6 @@
 #include <map>
 
 
-
 class Physics {
 private:
 	ObjectPool* _OP;
@@ -36,11 +35,12 @@ public:
 	//Used when sending events
 	std::map<btRigidBody*, std::string> ReversePhysicsAccessors;
 
-	//Self explanatory functions
-	void PhysicsUpdate(EventQueue* EQ);
 	void CheckCollisions();
 	void dealloc();
 	void Restart();
+
+	//Self explanatory function pointers
+	void PhysicsUpdate(EventQueue* EQ);
 	void CreateEntity(PhysicsData PD);
 	void SetMass(PhysicsData PD);
 	void TranslateLocally(PhysicsData PD);

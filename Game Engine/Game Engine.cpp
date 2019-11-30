@@ -16,23 +16,32 @@ void GameEngine::LoadEntitiesIntoEngine(int Level)
 {
 	LH.LoadEntityData(Level,&EQ);
 }
+void GameEngine::Quit()
+{
+	_Active = false;
+}
+bool GameEngine::IsActive()
+{
+	return _Active;
+}
 void GameEngine::Start()
 {
 	register_lua(LH.L());
 	KM.Initiate(LH.L(),&EQ);
-	LoadEntitiesIntoEngine(0);
-}
-void GameEngine::Game()
-{
+	LH.LoadEntityData(0, &EQ);
 }
 void GameEngine::PhysicsUpdate()
 {
 	PM.CheckCollisions();
 	PM.PhysicsUpdate(&EQ);
 }
-void GameEngine::Audio()
+void GameEngine::PlayAudio(std::string FileName)
 {
-	//AM.PlaySound("rain.wav");
+	event A;
+	A.SubSystemList.push_back(SubSystem_Audio);
+	A.AudioEventType = Audio_PlaySound;
+	A.AD.Name = FileName;
+	EQ.AddEvent(A);
 }
 void GameEngine::Network()
 {
@@ -45,16 +54,14 @@ void GameEngine::ObjectPoolUpdate()
 void GameEngine::Reload(int Level)
 {
 	LH.SetFinished(false);
+	EQ.ClearEventQueue();
 	NM.Restart();
 	PM.Restart();
 	R.Restart();
 	OP.Reinitialise();
 	LH.StartLevel(Level);
-	LoadEntitiesIntoEngine(Level);
+	LH.LoadEntityData(Level, &EQ);
 	LH.SetFinished(true);
-}
-void GameEngine::ExecuteEvents()
-{;
 }
 LuaHelper* GameEngine::GetLevelManager()
 {
@@ -86,14 +93,13 @@ void GameEngine::Render()
 }
 void GameEngine::Update()
 {
-	Network();
-	CheckInput();
 	ObjectPoolUpdate();
 	PhysicsUpdate();
 	Render();
+	Network();
+	CheckInput();
 	ExecuteLUA();
 }
-
 void GameEngine::Initialise()
 {
 	NM.Initiate();
@@ -105,10 +111,15 @@ void GameEngine::Initialise()
 	}
 	AM.Loader();
 	Start();
+	_Active = true;
 }
 
 void GameEngine::Close()
 {
+	LH.Dealloc();
+	OP.DeallocPool();
+	R.End();
+	NM.Dealloc();
 	SDL_Quit();
 	PM.dealloc();
 }

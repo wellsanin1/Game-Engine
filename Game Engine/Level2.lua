@@ -5,12 +5,11 @@ elementList = {
 		PosX = 0,
 		PosY = 50,
 		PosZ = 200
-
 	},
 	element2 = {
 		e_type = 'Light',
 		name = 'mainLight',
-		PosX = 20,
+		PosX  = 20,
 		PosY = 50,
 		PosZ = 80
 	},
@@ -20,13 +19,25 @@ elementList = {
 		mesh = 'ogrehead.mesh',
 		material = '',
 		PosX = 0,
-		PosY = 100,
+		PosY = 200,
 		PosZ = 0,
 		ColX = 15,
 		ColY = 15,
 		ColZ = 15
 	},
 	element4 = {
+		e_type = 'Entity',
+		name = 'Barrel',
+		mesh = 'Barrel.mesh',
+		material = '',
+		PosX = -100,
+		PosY = 20,
+		PosZ = 0,
+		ColX = 15,
+		ColY = 15,
+		ColZ = 15
+	},
+	element5 = {
 		e_type = 'Entity',
 		name = 'plane',
 		mesh = 'planePlane001.mesh',
@@ -38,18 +49,18 @@ elementList = {
 		ColY = 1,
 		ColZ = 10000
 	},
-	element5 = {
+	element6 = {
 		e_type = 'Entity',
-		name = 'Barrel',
-		mesh = 'Barrel.mesh',
+		name = 'Penguin',
+		mesh = 'penguin.mesh',
 		material = '',
 		PosX = 100,
-		PosY = 10,
+		PosY = 20,
 		PosZ = 0,
 		ColX = 15,
 		ColY = 15,
 		ColZ = 15
-	},
+	}
 }
 
 

@@ -1,29 +1,16 @@
 #include "EventSystem.h"
-
+//completely empty event queue
 void EventQueue::ClearEventQueue()
 {
 	this->Queue.clear();
 }
-
+//add new event
 void EventQueue::AddEvent(event Evnt)
 {
+	Evnt.Empty = false;
 	Queue.push_back(Evnt);
 };
-
-void EventQueue::GetEvent()
-{
-
-};
-
-void EventQueue::PopEvent()
-{
-
-};
-
-void EventQueue::GetNextEvent()
-{
-
-};
+//returns an event based on subsystem, event is empty if it doesn't exist
 event EventQueue::CheckQueueReturnEvent(SubSystem CurrentEvent)
 {
 	for (int i = 0; i < Queue.size(); ++i)
@@ -40,6 +27,7 @@ event EventQueue::CheckQueueReturnEvent(SubSystem CurrentEvent)
 	empty.Empty = true;
 	return empty;
 }
+//Remove Subsystem from event, if event is finished remove event
 void EventQueue::RemoveFromQueue(SubSystem CurrentEvent)
 {
 	for (int i = 0; i < Queue.size(); ++i)

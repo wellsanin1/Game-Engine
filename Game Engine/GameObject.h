@@ -26,43 +26,61 @@ extern "C" {
 struct GameObject
 {
 private:
-
-
-	//Propriatory
-	void AttachSystems(EventQueue*EQ);
-	//BULLET
+	//Set _EQ
 	EventQueue* _EQ;
 	float _ColliderSize[3];
+	//vector of objects cilliding with *this* by name
 	std::vector<std::string> CollidedObjects;
-	bool _linked = false;
+
+	bool _Enabled = true;
 	bool _LuaRegistered = false;
 	Vector3 _Transform;
 	Vector3 _Velocity;
+	std::string _MeshName = "";
+	int _Mass = 0;
 
 public:
 	bool PhysicsAttached;
 	bool OgreAttached;
+	//Has object been initialised
 	bool Empty = true;
+	bool linked = false;
 
+
+	/*OGRE entity data, here beacuse of time*/
 	Ogre::Camera* Camera;
 	Ogre::Light* Light;
 	Ogre::Entity* entity;
+	/*BULLET rigidbody, here because of time*/
 	btRigidBody* RigidBody3d;
-	bool IsEmpty() { return Empty; };
-	void ClearObject();
+	/**/
 	std::string Etype;
+	float Velocity[3] = { 0,0,0 };
+	std::string Name = "";
+
+
+	GameObject() {};
+	~GameObject() {};
+	void Update();
+	void AttachSystems(EventQueue* EQ);
 
 	//Propriatory
+	//returns vectors to interface with lua
 	void SetTransform(double x,double y, double z);
 	std::vector<double> GetTransform();
 	void SetOrientation(double w, double x, double y, double z);
 	std::vector<double> GetOrientation();
+
+	//collison functions
+	int GetMass();
 
 	void AddCollision(std::string ObjName);
 	void RemoveCollision(std::string ObjName);
 	bool GetCollision(std::string ObjName);
 	void ClearCollision(std::string ObjName);
 
+	//All of these functions create related events for their respective subsystems 
+	//Some are obsolete and aren't being used but they remain in case they are needed
 	void SetMass(float NewMass);
 	void SetVelocity(float x, float y, float z);
 	void AddVelocity(float x, float y, float z);
@@ -75,18 +93,13 @@ public:
 	void CreateLight(EventQueue* EQ, std::string LightName, int PosX, int PosY, int PosZ);
 	void CreateCamera(EventQueue* EQ, std::string CameraName, int PosX, int PosY, int PosZ);
 	void Teleport(double x, double y, double z);
-	void Update();
 	void SetGravity(float x,float y,float z);
+
+	bool IsEmpty() { return Empty; };
+	void ClearObject();
 	std::vector<double> GetLinearVelocity();
 
-	float Velocity[3] = {0,0,0};
-
-	std::string Name = "";
-
-	GameObject() {};
-	~GameObject() {};
-
-	//LUA Interface
+	//LUA Interface here because lua needs to access specific GameObjects
 	void register_lua(void* L)
 	{
 		if (_LuaRegistered == false)
@@ -110,6 +123,7 @@ public:
 				.addFunction("SendToClient", &GameObject::SendToClient)
 				.addFunction("LookAt", &GameObject::LookAt)
 				.addFunction("SetGravity",&GameObject::SetGravity)
+				.addFunction("Teleport", &GameObject::Teleport)
 				.endClass()
 				.endNamespace();
 		}

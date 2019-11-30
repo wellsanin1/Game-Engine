@@ -84,9 +84,6 @@
     <ClCompile Include="KeyManager.cpp">
       <Filter>Source Files\UI</Filter>
     </ClCompile>
-    <ClCompile Include="CollisionCallback.cpp">
-      <Filter>Source Files\Physics</Filter>
-    </ClCompile>
     <ClCompile Include="PhysicsManager.cpp">
       <Filter>Source Files\Physics</Filter>
     </ClCompile>

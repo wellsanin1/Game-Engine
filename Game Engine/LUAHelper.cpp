@@ -74,6 +74,10 @@ void LuaHelper::LoadEntityData(int Level , EventQueue*EQ)
 
 LuaHelper::~LuaHelper()
 {
+}
+
+void LuaHelper::Dealloc()
+{
 	lua_close(F);
 }
 
