@@ -7,6 +7,7 @@ enum PhysicsEnum
 	, Physics_SETVELOCITY
 	, Physics_ADDVELOCITY
 	, Physics_TELEPORT
+	, Physics_SETGRAVITY
 };
 enum AudioEnum
 {

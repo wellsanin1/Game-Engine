@@ -40,7 +40,7 @@ void GameEngine::Network()
 }
 void GameEngine::ObjectPoolUpdate()
 {
-	OP.Update(&EQ);
+	OP.Update(&EQ,LH.GetStateVoid());
 }
 void GameEngine::Reload(int Level)
 {
@@ -88,9 +88,9 @@ void GameEngine::Update()
 {
 	Network();
 	CheckInput();
+	ObjectPoolUpdate();
 	PhysicsUpdate();
 	Render();
-	ObjectPoolUpdate();
 	ExecuteLUA();
 }
 

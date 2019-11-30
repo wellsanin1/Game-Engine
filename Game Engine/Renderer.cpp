@@ -62,6 +62,7 @@ void Renderer::Restart()
 	scnMgr = root->createSceneManager();
 	shadergen->addSceneManager(scnMgr);
 	scnMgr->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
+	RendererAccessors.erase(RendererAccessors.begin(),RendererAccessors.end());
 }
 
 void Renderer::CreateEntity(RendererData RD)

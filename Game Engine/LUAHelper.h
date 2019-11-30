@@ -27,13 +27,13 @@ private:
 	EventQueue* _EQ;
 public:
 	lua_State* L();
+	void * GetStateVoid();
 	std::vector<LuaGenStruct*> entityList;
 	LuaHelper();
 	void LoadEntityData(int Level,EventQueue*EQ);
 	~LuaHelper();
 	void ExecuteFile(const char* file);
 	void ExecuteString(const char* expression);
-
 	void Update(void* Engine);
 
 	LuaHelper(const LuaHelper& other);  //non-construction copy

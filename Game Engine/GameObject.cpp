@@ -22,9 +22,8 @@ void GameObject::SetOrientation(double w, double x, double y, double z)
 }
 std::vector<double> GameObject::GetOrientation()
 {
-	//Ogre::Quaternion Orien = Node->getOrientation();
-	//std::vector<double> ReturnQuat = {Orien.w,Orien.x,Orien.y,Orien.z};
-	//return ReturnQuat;
+	std::vector<double> ReturnQuat = {0,0,0,0};
+	return ReturnQuat;
 }
 
 void GameObject::AddCollision(std::string ObjName)
@@ -269,6 +268,19 @@ void GameObject::Update()
 		}
 	}
 }
+void GameObject::SetGravity(float x, float y, float z)
+{
+	event A;
+	A.SubSystemList.push_back(SubSystem_Physics);
+	A.PhysicsEventType = Physics_SETGRAVITY;
+	A.PD.Name = Name;
+	A.PD.GenericVector.x = x;
+	A.PD.GenericVector.y = y;
+	A.PD.GenericVector.z = z;
+	A.Empty = false;
+	_EQ->AddEvent(A);
+}
+
 std::vector<double> GameObject::GetLinearVelocity()
 {
 	//btVector3 a = RigidBody3d->getLinearVelocity();

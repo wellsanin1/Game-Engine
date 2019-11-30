@@ -35,6 +35,7 @@ private:
 	float _ColliderSize[3];
 	std::vector<std::string> CollidedObjects;
 	bool _linked = false;
+	bool _LuaRegistered = false;
 	Vector3 Transform;
 
 public:
@@ -74,6 +75,7 @@ public:
 	void CreateCamera(EventQueue* EQ, std::string CameraName, int PosX, int PosY, int PosZ);
 	void Teleport(double x, double y, double z);
 	void Update();
+	void SetGravity(float x,float y,float z);
 	std::vector<double> GetLinearVelocity();
 
 	float Velocity[3] = {0,0,0};
@@ -84,25 +86,31 @@ public:
 	~GameObject() {};
 
 	//LUA Interface
-	void register_lua(lua_State* L)
+	void register_lua(void* L)
 	{
-		using namespace luabridge;
-		getGlobalNamespace(L)
-			.beginNamespace("GObject")
-			.beginClass<GameObject>("GameObject")
-			.addFunction("SetMass", &GameObject::SetMass)
-			.addFunction("SetVelocity", &GameObject::SetVelocity)
-			.addFunction("AddVelocity", &GameObject::AddVelocity)
-			.addFunction("IsColliding", &GameObject::IsColliding)
-			.addFunction("GetCollision", &GameObject::GetCollision)
-			.addFunction("ChangeTexture", &GameObject::ChangeTexture)
-			.addFunction("GetTransform", &GameObject::GetTransform)
-			.addFunction("SetTransform", &GameObject::SetTransform)
-			.addFunction("GetOrientation", &GameObject::GetOrientation)
-			.addFunction("TranslateLocally", &GameObject::TranslateLocally)
-			.addFunction("SendToClient", &GameObject::SendToClient)
-			.addFunction("LookAt", &GameObject::LookAt)
-			.endClass()
-			.endNamespace();
+		if (_LuaRegistered == false)
+		{
+			_LuaRegistered = true;
+			using namespace luabridge;
+			lua_State* LS = static_cast<lua_State*>(L);
+			getGlobalNamespace(LS)
+				.beginNamespace("GObject")
+				.beginClass<GameObject>("GameObject")
+				.addFunction("SetMass", &GameObject::SetMass)
+				.addFunction("SetVelocity", &GameObject::SetVelocity)
+				.addFunction("AddVelocity", &GameObject::AddVelocity)
+				.addFunction("IsColliding", &GameObject::IsColliding)
+				.addFunction("GetCollision", &GameObject::GetCollision)
+				.addFunction("ChangeTexture", &GameObject::ChangeTexture)
+				.addFunction("GetTransform", &GameObject::GetTransform)
+				.addFunction("SetTransform", &GameObject::SetTransform)
+				.addFunction("GetOrientation", &GameObject::GetOrientation)
+				.addFunction("TranslateLocally", &GameObject::TranslateLocally)
+				.addFunction("SendToClient", &GameObject::SendToClient)
+				.addFunction("LookAt", &GameObject::LookAt)
+				.addFunction("SetGravity",&GameObject::SetGravity)
+				.endClass()
+				.endNamespace();
+		}
 	}
 };

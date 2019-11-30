@@ -24,93 +24,46 @@ void LuaHelper::LoadEntityData(int Level , EventQueue*EQ)
 		checker = entityCheck["e_type"].cast<std::string>();
 		if (checker == "Camera")
 		{
-			LuaCamera* NewCamera = new LuaCamera();
-			NewCamera->Name = entityCheck["name"].cast<std::string>();
-			NewCamera->x = entityCheck["PosX"].cast<int>();
-			NewCamera->y = entityCheck["PosY"].cast<int>();
-			NewCamera->z = entityCheck["PosZ"].cast<int>();
-			LuaGenStruct* NewGeneric = new LuaGenStruct();
-			NewGeneric->UnionType = checker;
-			NewGeneric->GenericStore.Camera = NewCamera;
-			entityList.push_back(NewGeneric);
-		}
-		if (checker == "Light")
-		{
-			LuaLight* NewLight = new LuaLight();
-			NewLight->Name = entityCheck["name"].cast<std::string>();
-			NewLight->x = entityCheck["PosX"].cast<int>();
-			NewLight->y = entityCheck["PosY"].cast<int>();
-			NewLight->z = entityCheck["PosZ"].cast<int>();
-			LuaGenStruct* NewGeneric = new LuaGenStruct();
-			NewGeneric->UnionType = checker;
-			NewGeneric->GenericStore.Light = NewLight;
-			entityList.push_back(NewGeneric);
-		}
-		if (checker == "Entity")
-		{
-			LuaEntity* NewEntity = new LuaEntity();
-			NewEntity->Material = entityCheck["material"].cast<std::string>();
-			NewEntity->Name = entityCheck["name"].cast<std::string>();
-			NewEntity->Mesh = entityCheck["mesh"].cast<std::string>();
-			NewEntity->x = entityCheck["PosX"].cast<int>();
-			NewEntity->y = entityCheck["PosY"].cast<int>();
-			NewEntity->z = entityCheck["PosZ"].cast<int>();
-			NewEntity->ColX = entityCheck["ColX"].cast<int>();
-			NewEntity->ColY = entityCheck["ColY"].cast<int>();
-			NewEntity->ColZ = entityCheck["ColZ"].cast<int>();
-			LuaGenStruct* NewGeneric = new LuaGenStruct();
-			NewGeneric->UnionType = checker;
-			NewGeneric->GenericStore.Entity = NewEntity;
-			entityList.push_back(NewGeneric);
-		}
-	}
-
-	for (int i = 0; i < entityList.size(); ++i)
-	{
-		if (entityList[i]->UnionType == "Entity")
-		{
-			LuaGenStruct::LuaGeneric GenEnt = entityList[i]->GenericStore;
-			event E;
-			E.SubSystemList.push_back(SubSystem_ObjectPool);
-			E.ObjectPoolEventEnum = ObjectPool_CREATEENTITY;
-
-			E.OD.MeshName = GenEnt.Entity->Mesh;
-			E.OD.Name = GenEnt.Entity->Name;
-			E.OD.Material = GenEnt.Entity->Material;
-
-			E.OD.positions.x = GenEnt.Entity->x;
-			E.OD.positions.y = GenEnt.Entity->y;
-			E.OD.positions.z = GenEnt.Entity->z;
-
-			E.OD.Colliders.x = GenEnt.Entity->ColX;
-			E.OD.Colliders.y = GenEnt.Entity->ColY;
-			E.OD.Colliders.z = GenEnt.Entity->ColZ;
-			E.Empty = false;
-			EQ->AddEvent(E);
-		}
-		if (entityList[i]->UnionType == "Camera")
-		{
-			LuaGenStruct::LuaGeneric GenEnt = entityList[i]->GenericStore;
 			event E;
 			E.SubSystemList.push_back(SubSystem_ObjectPool);
 			E.ObjectPoolEventEnum = ObjectPool_CREATECAMERA;
-			E.OD.Name = GenEnt.Camera->Name;
-			E.OD.positions.x = GenEnt.Camera->x;
-			E.OD.positions.y = GenEnt.Camera->y;
-			E.OD.positions.z = GenEnt.Camera->z;
+			E.OD.Name = entityCheck["name"].cast<std::string>();
+			E.OD.positions.x = entityCheck["PosX"].cast<int>();
+			E.OD.positions.y = entityCheck["PosY"].cast<int>();
+			E.OD.positions.z = entityCheck["PosZ"].cast<int>();
 			E.Empty = false;
 			EQ->AddEvent(E);
 		}
-		if (entityList[i]->UnionType == "Light")
+		if (checker == "Light")
 		{
 			LuaGenStruct::LuaGeneric GenEnt = entityList[i]->GenericStore;
 			event E;
 			E.SubSystemList.push_back(SubSystem_ObjectPool);
 			E.ObjectPoolEventEnum = ObjectPool_CREATELIGHT;
-			E.OD.Name = GenEnt.Light->Name;
-			E.OD.positions.x = GenEnt.Light->x;
-			E.OD.positions.y = GenEnt.Light->y;
-			E.OD.positions.z = GenEnt.Light->z;
+			E.OD.Name = entityCheck["name"].cast<std::string>();
+			E.OD.positions.x = entityCheck["PosX"].cast<int>();
+			E.OD.positions.y = entityCheck["PosY"].cast<int>();
+			E.OD.positions.z = entityCheck["PosZ"].cast<int>();
+			E.Empty = false;
+			EQ->AddEvent(E);
+		}
+		if (checker == "Entity")
+		{
+			event E;
+			E.SubSystemList.push_back(SubSystem_ObjectPool);
+			E.ObjectPoolEventEnum = ObjectPool_CREATEENTITY;
+
+			E.OD.MeshName = entityCheck["mesh"].cast<std::string>();
+			E.OD.Name = entityCheck["name"].cast<std::string>();
+			E.OD.Material = entityCheck["material"].cast<std::string>();
+
+			E.OD.positions.x = entityCheck["PosX"].cast<int>();
+			E.OD.positions.y = entityCheck["PosY"].cast<int>();
+			E.OD.positions.z = entityCheck["PosZ"].cast<int>();
+
+			E.OD.Colliders.x = entityCheck["ColX"].cast<int>();
+			E.OD.Colliders.y = entityCheck["ColY"].cast<int>();
+			E.OD.Colliders.z = entityCheck["ColZ"].cast<int>();
 			E.Empty = false;
 			EQ->AddEvent(E);
 		}
@@ -166,6 +119,11 @@ std::vector<std::string> LuaHelper::getElements(std::string& table, lua_State* L
 
 //returns lua state object
 lua_State* LuaHelper::L()
+{
+	return F;
+}
+
+void* LuaHelper::GetStateVoid()
 {
 	return F;
 }

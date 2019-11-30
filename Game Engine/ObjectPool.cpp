@@ -24,7 +24,7 @@ void ObjectPool::ClearPool(EventQueue*EQ)
 
 }
 
-void ObjectPool::Update(EventQueue*EQ)
+void ObjectPool::Update(EventQueue*EQ,void*LuaState)
 {
 	for (int i = 0; i < EQ->Queue.size(); ++i)
 	{
@@ -52,6 +52,7 @@ void ObjectPool::Update(EventQueue*EQ)
 		if (PoolStorage[i]->Empty== false)
 		{
 			PoolStorage[i]->Update();
+			PoolStorage[i]->register_lua(LuaState);
 		}
 	}
 }

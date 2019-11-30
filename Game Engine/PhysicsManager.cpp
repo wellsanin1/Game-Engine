@@ -17,6 +17,8 @@ void Physics::Restart()
 	solver = new btSequentialImpulseConstraintSolver();
 	dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, overlappingPairCache, solver, collisionConfiguration);
 	dynamicsWorld->setGravity(btVector3(0, -Gravity, 0));
+	physicsAccessors.erase(physicsAccessors.begin(), physicsAccessors.end());
+	ReversePhysicsAccessors.erase(ReversePhysicsAccessors.begin(), ReversePhysicsAccessors.end());
 	collisionShapes.clear();
 }
 
@@ -45,14 +47,26 @@ void Physics::CreateEntity(PhysicsData PD)
 void Physics::SetMass(PhysicsData PD)
 {
 	btRigidBody* RB = physicsAccessors.at(PD.Name);
+
+	physicsAccessors.erase(PD.Name);
+	ReversePhysicsAccessors.erase(RB);
 	dynamicsWorld->removeRigidBody(RB);
-	RB->getCollisionShape()->calculateLocalInertia(PD.mass,btVector3({0,0,0}));
-	btRigidBody::btRigidBodyConstructionInfo BodyInfo(PD.mass, RB->getMotionState(), RB->getCollisionShape(), btVector3({ 0,0,0 }));
+	for (int i = 0; i < collisionShapes.size(); ++i)
+	{
+		if (collisionShapes[i] == RB->getCollisionShape())
+		{
+			collisionShapes.erase(collisionShapes.begin() + i);
+		}
+	}
+
+	RB->getCollisionShape()->calculateLocalInertia(PD.mass, RB->getLocalInertia());
+	btRigidBody::btRigidBodyConstructionInfo BodyInfo(PD.mass, RB->getMotionState(), RB->getCollisionShape(),RB->getLocalInertia());
 	RB = new btRigidBody(BodyInfo);
-	//RigidBody3d->setUserPointer(Node);
+
 	collisionShapes.push_back(RB->getCollisionShape());
 	dynamicsWorld->addRigidBody(RB);
-	physicsAccessors.at(PD.Name) = RB;
+	physicsAccessors.insert({PD.Name, RB});
+	ReversePhysicsAccessors.insert({ RB,PD.Name });
 
 	_OP->GetObjectFromPool(PD.Name)->RigidBody3d = RB;
 }
@@ -90,6 +104,11 @@ void Physics::Teleport(PhysicsData PD)
 	btRigidBody* RB = physicsAccessors.at(PD.Name);
 	RB->setWorldTransform(Transform);
 	RB->getMotionState()->setWorldTransform(Transform);
+}
+
+void Physics::SetGravity(PhysicsData PD)
+{
+	physicsAccessors.at(PD.Name)->setGravity({ PD.GenericVector.x,PD.GenericVector.y,PD.GenericVector.z });
 }
 
 Physics::Physics(ObjectPool* OP)

@@ -5,7 +5,6 @@ elementList = {
 		PosX = 0,
 		PosY = 50,
 		PosZ = 200
-
 	},
 	element2 = {
 		e_type = 'Light',

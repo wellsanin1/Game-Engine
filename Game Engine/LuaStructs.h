@@ -7,9 +7,9 @@ struct LuaEntity
 	std::string Name;
 	std::string Mesh;
 	std::string Material;
-	int x = 0;
-	int y = 0;
-	int z = 0;
+	int PosX = 0;
+	int PosY = 0;
+	int PosZ = 0;
 	int ColX = 0;
 	int ColY = 0;
 	int ColZ = 0;
@@ -19,18 +19,18 @@ struct LuaLight
 	LuaLight() {};
 	~LuaLight() {};
 	std::string Name;
-	int x = 0;
-	int y = 0;
-	int z = 0;
+	int PosX = 0;
+	int PosY = 0;
+	int PosZ = 0;
 };
 struct LuaCamera
 {
 	LuaCamera() {};
 	~LuaCamera() {};
 	std::string Name;
-	int x = 0;
-	int y = 0;
-	int z = 0;
+	int PosX = 0;
+	int PosY = 0;
+	int PosZ = 0;
 };
 struct LuaGenStruct
 {

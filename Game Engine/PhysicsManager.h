@@ -26,8 +26,8 @@ public:
 	btSequentialImpulseConstraintSolver* solver;
 	btDiscreteDynamicsWorld* dynamicsWorld;
 	std::vector<btCollisionShape*> collisionShapes;
-	std::unordered_map<std::string, btRigidBody*> physicsAccessors;
-	std::unordered_map<btRigidBody*, std::string> ReversePhysicsAccessors;
+	std::map<std::string, btRigidBody*> physicsAccessors;
+	std::map<btRigidBody*, std::string> ReversePhysicsAccessors;
 
 
 	void PhysicsUpdate(EventQueue* EQ);
@@ -41,13 +41,18 @@ public:
 	void SetVelocity(PhysicsData PD);
 	void AddVelocity(PhysicsData PD);
 	void Teleport(PhysicsData PD);
+	void SetGravity(PhysicsData PD);
 
 	typedef void (Physics::* Reactions)(PhysicsData);
-	Reactions EventReactions[6] = {&Physics::CreateEntity
-									,&Physics::SetMass
-									,&Physics::TranslateLocally
-									,&Physics::SetVelocity
-									,&Physics::AddVelocity
-									,& Physics::Teleport};
+	Reactions EventReactions[7] = 
+	{
+		&Physics::CreateEntity
+		,&Physics::SetMass
+		,&Physics::TranslateLocally
+		,&Physics::SetVelocity
+		,&Physics::AddVelocity
+		,&Physics::Teleport
+		,&Physics::SetGravity
+	};
 
 };

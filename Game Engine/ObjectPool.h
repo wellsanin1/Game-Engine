@@ -26,7 +26,7 @@ public:
 	void CreateLight(ObjectPoolData OP, EventQueue* EQ);
 	void Reinitialise();
 	void ClearPool(EventQueue* EQ);
-	void Update(EventQueue* EQ);
+	void Update(EventQueue* EQ, void*LuaState);
 
 	typedef void (ObjectPool::* Reactions)(ObjectPoolData,EventQueue*);
 
