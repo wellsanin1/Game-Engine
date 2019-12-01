@@ -2,7 +2,7 @@
 
 LuaHelper::LuaHelper()
 {
-	luaL_dofile(F, "Game.lua");
+	luaL_dofile(F, "LUA/Game.lua");
 	luaL_openlibs(F);
 	register_lua(F);
 }
@@ -11,7 +11,7 @@ void LuaHelper::LoadEntityData(int Level , EventQueue*EQ)
 {
 	entityList.clear();
 	elementList.clear();
-	std::string LevelString = std::string("Level") + std::to_string(Level)+std::string(".lua");
+	std::string LevelString = std::string("LUA/Level") + std::to_string(Level)+std::string(".lua");
 	luaL_dofile(F, LevelString.c_str());
 	luaL_openlibs(F);
 	lua_pcall(F, 0, 0, 0);
