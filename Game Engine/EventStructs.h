@@ -19,6 +19,11 @@ struct RendererData
 	std::string MeshName;
 	Vector3 positions;
 	Vector4 Orientation;
+	std::string Text;
+	int TextPosX;
+	int TextPosY;
+	int Width;
+	int Height;
 };
 struct ObjectPoolData
 {

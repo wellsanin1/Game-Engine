@@ -8,6 +8,7 @@ function GameEngine(Engine)
 	end
 	if(Engine:GetLevelManager():GetCurrentLevel() == 1)
 	then
+		Engine:EngineDrawText(0,0,"HelloWorld","TextBox1")
 		require("Level1Variables")
 		Engine:GetGameObjectWithName("plane"):SetMass(0)
 		Engine:GetGameObjectWithName("Barrel"):SetMass(0)

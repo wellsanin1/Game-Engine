@@ -21,6 +21,9 @@ enum RenderEnum
 	, Render_LOOKAT
 	, Render_SETPOSITION
 	, Render_SETORIENTATION
+	, Render_CREATETEXTBOX
+	, Render_REMOVETEXTBOX
+	, Render_SETTEXT
 };
 enum ObjectPoolEnum
 {

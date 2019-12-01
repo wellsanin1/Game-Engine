@@ -24,6 +24,24 @@ bool GameEngine::IsActive()
 {
 	return _Active;
 }
+void GameEngine::EngineDrawText(int x,int y, std::string TEXT,std::string Name)
+{
+	event E;
+	E.SubSystemList.push_back(SubSystem_Renderer);
+	E.RenderEventType = Render_CREATETEXTBOX;
+	E.RD.Text = TEXT;
+	E.RD.TextPosX = x;
+	E.RD.TextPosY = y;
+	E.RD.Width = 100;
+	E.RD.Height = 10;
+}
+void GameEngine::EngineStopDrawingText(std::string Name)
+{
+	event E;
+	E.SubSystemList.push_back(SubSystem_Renderer);
+	E.RenderEventType = Render_REMOVETEXTBOX;
+	E.RD.Name = Name;
+}
 void GameEngine::Start()
 {
 	register_lua(LH.L());

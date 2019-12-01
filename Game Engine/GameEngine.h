@@ -29,6 +29,8 @@ public:
 	void LoadEntitiesIntoEngine(int Level);
 	void Quit();
 	bool IsActive();
+	void EngineDrawText(int x, int y, std::string TEXT,std::string Name);
+	void EngineStopDrawingText(std::string Name);
 	EventQueue EQ;
 	ObjectPool OP = ObjectPool();
 	AudioManager AM;
@@ -53,6 +55,8 @@ public:
 			.addFunction("Reload", &GameEngine::Reload)
 			.addFunction("PlayAudio", &GameEngine::PlayAudio)
 			.addFunction("Quit", &GameEngine::Quit)
+			.addFunction("EngineDrawText", &GameEngine::EngineDrawText)
+			.addFunction("EngineStopDrawingText", &GameEngine::EngineStopDrawingText)
 			.endClass()
 			.endNamespace();
 	}

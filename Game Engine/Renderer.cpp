@@ -35,12 +35,23 @@ void Renderer::Update(EventQueue* EQ)
 void Renderer::setup()
 {
 	//Ogre setup
+
+
+
 	OgreBites::ApplicationContext::setup();
 	root = getRoot();
 	scnMgr = root->createSceneManager();
 	shadergen = Ogre::RTShader::ShaderGenerator::getSingletonPtr();
 	shadergen->addSceneManager(scnMgr);
 	scnMgr->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
+
+	OverlayMgr = Ogre::OverlayManager::getSingletonPtr();
+	Overlay = OverlayMgr->create("overlay1");
+	panel = static_cast<Ogre::OverlayContainer*>(OverlayMgr->createOverlayElement("Panel", "container1"));
+	panel->setDimensions(1, 1);
+	panel->setPosition(0, 0);
+	Overlay->add2D(panel);
+	Overlay->show();
 }
 
 void Renderer::Start()
@@ -60,6 +71,41 @@ void Renderer::Restart()
 	shadergen->addSceneManager(scnMgr);
 	scnMgr->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
 	RendererAccessors.erase(RendererAccessors.begin(),RendererAccessors.end());
+}
+
+void Renderer::CreateTextBox(RendererData RD)
+{
+	if (!panel->getChild(RD.Name))
+	{
+		Ogre::OverlayElement* textBox = OverlayMgr->createOverlayElement("TextArea", RD.Name);
+		textBox->setDimensions(RD.Width, RD.Height);
+		textBox->setMetricsMode(Ogre::GMM_PIXELS);
+		textBox->setPosition(RD.TextPosX, RD.TextPosY);
+		textBox->setWidth(RD.Width);
+		textBox->setHeight(RD.Height);
+		textBox->setParameter("font_name", "MyFont");
+		textBox->setParameter("char_height", "0.3");
+		textBox->setColour(Ogre::ColourValue::Blue);
+		textBox->setCaption(RD.Text);
+		panel->addChild(textBox);
+	}
+}
+void Renderer::RemoveTextBox(RendererData RD)
+{
+	panel->removeChild(RD.Name);
+	OverlayMgr->destroyOverlayElement(RD.Name);
+}
+
+void Renderer::SetText(RendererData RD)
+{
+	Ogre::OverlayElement* textBox = OverlayMgr->getOverlayElement(RD.Name);
+	textBox->setCaption(RD.Text);
+}
+
+std::string Renderer::GetText(std::string Name)
+{
+	Ogre::OverlayElement* textBox = OverlayMgr->getOverlayElement(Name);
+	return textBox->getCaption();
 }
 
 void Renderer::CreateEntity(RendererData RD)
