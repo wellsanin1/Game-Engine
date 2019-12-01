@@ -1,18 +1,25 @@
 #include "Renderer.h"
 
-Renderer::Renderer(ObjectPool* OP) :OgreBites::ApplicationContext("GameEngine")
+Renderer::Renderer(ObjectPool* OP) : OgreBites::ApplicationContext("GameEngine")
 {
 	_OP = OP;
 }
 
 void Renderer::Update(EventQueue* EQ)
 {
+	FrameTimer.reset();
+	root->renderOneFrame();
 	//run function pointers based on enum from EventEnum.h
 	for (int i = 0; i < EQ->Queue.size(); ++i)
 	{
 		event EV = EQ->CheckQueueReturnEvent(SubSystem_Renderer);
 		if (EV.Empty == false)
 		{
+			if (EV.RenderEventType == Render_REMOVETEXTBOX)
+			{
+				std::cout << "TEST" << std::endl;
+			}
+
 			Reactions A = EventReactions[(int)EV.RenderEventType];
 			(this->*A)(EV.RD);
 			EQ->RemoveFromQueue(SubSystem_Renderer);
@@ -29,15 +36,12 @@ void Renderer::Update(EventQueue* EQ)
 			it->second->setPosition(Vector[0], Vector[1], Vector[2]);
 	}
 
-	root->renderOneFrame();
+
 }
 
 void Renderer::setup()
 {
 	//Ogre setup
-
-
-
 	OgreBites::ApplicationContext::setup();
 	root = getRoot();
 	scnMgr = root->createSceneManager();
@@ -45,13 +49,11 @@ void Renderer::setup()
 	shadergen->addSceneManager(scnMgr);
 	scnMgr->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
 
-	OverlayMgr = Ogre::OverlayManager::getSingletonPtr();
-	Overlay = OverlayMgr->create("overlay1");
-	panel = static_cast<Ogre::OverlayContainer*>(OverlayMgr->createOverlayElement("Panel", "container1"));
-	panel->setDimensions(1, 1);
-	panel->setPosition(0, 0);
-	Overlay->add2D(panel);
-	Overlay->show();
+	//OverlayMgr = OGRE_NEW Ogre::OverlayManager();
+	Traymgr = new OgreBites::TrayManager("InterfaceName", getRenderWindow());
+	addInputListener(Traymgr);
+	scnMgr->addRenderQueueListener(getOverlaySystem());
+	Traymgr->hideCursor();
 }
 
 void Renderer::Start()
@@ -61,6 +63,7 @@ void Renderer::Start()
 
 void Renderer::End()
 {
+	delete Traymgr;
 	closeApp();
 }
 
@@ -71,41 +74,67 @@ void Renderer::Restart()
 	shadergen->addSceneManager(scnMgr);
 	scnMgr->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
 	RendererAccessors.erase(RendererAccessors.begin(),RendererAccessors.end());
+	Traymgr->destroyAllWidgets();
+	addInputListener(Traymgr);
+	scnMgr->addRenderQueueListener(getOverlaySystem());
+	Traymgr->hideCursor();
+}
+
+void Renderer::Animation(RendererData RD)
+{
+	Ogre::Entity* MO = static_cast<Ogre::Entity*>(RendererAccessors.at(RD.Name)->getAttachedObject(0));
+	Ogre::AnimationState* AS = MO->getAnimationState(RD.AnimationName);
+	if (!AS->getEnabled())
+	{
+		AS->setLoop(true);
+		AS->setEnabled(true);
+	}
+	AS->addTime(FrameTimer.getMilliseconds());
+}
+
+float Renderer::GetFPS()
+{
+	return getRenderWindow()->getStatistics().avgFPS;
 }
 
 void Renderer::CreateTextBox(RendererData RD)
 {
-	if (!panel->getChild(RD.Name))
+	if (TextAccessors.find(RD.Name) == TextAccessors.end()) 
 	{
-		Ogre::OverlayElement* textBox = OverlayMgr->createOverlayElement("TextArea", RD.Name);
-		textBox->setDimensions(RD.Width, RD.Height);
-		textBox->setMetricsMode(Ogre::GMM_PIXELS);
-		textBox->setPosition(RD.TextPosX, RD.TextPosY);
-		textBox->setWidth(RD.Width);
-		textBox->setHeight(RD.Height);
-		textBox->setParameter("font_name", "MyFont");
-		textBox->setParameter("char_height", "0.3");
-		textBox->setColour(Ogre::ColourValue::Blue);
-		textBox->setCaption(RD.Text);
-		panel->addChild(textBox);
+		OgreBites::TextBox* TB = Traymgr->createTextBox((OgreBites::TrayLocation)RD.TextPosition, RD.Name, RD.Text, RD.Width, RD.Height);
+		TextAccessors.insert({ RD.Name,TB });
+	}
+	else 
+	{
+		Traymgr->destroyWidget(RD.Name);
+		TextAccessors.erase(RD.Name);
+		OgreBites::TextBox* TB = Traymgr->createTextBox((OgreBites::TrayLocation)RD.TextPosition, RD.Name, RD.Text, RD.Width, RD.Height);
+		TextAccessors.insert({ RD.Name,TB });
 	}
 }
 void Renderer::RemoveTextBox(RendererData RD)
 {
-	panel->removeChild(RD.Name);
-	OverlayMgr->destroyOverlayElement(RD.Name);
+	if (TextAccessors.find(RD.Name) == TextAccessors.end())
+	{
+		Traymgr->destroyWidget(RD.Name);
+		TextAccessors.erase(RD.Name);
+	}
+	else
+	{
+		std::cout << "TextBox with name:" << RD.Name << "does not exist" << std::endl;
+	}
 }
 
 void Renderer::SetText(RendererData RD)
 {
-	Ogre::OverlayElement* textBox = OverlayMgr->getOverlayElement(RD.Name);
-	textBox->setCaption(RD.Text);
+	//Ogre::OverlayElement* textBox = OverlayMgr->getOverlayElement(RD.Name);
+	//textBox->setCaption(RD.Text);
 }
 
 std::string Renderer::GetText(std::string Name)
 {
-	Ogre::OverlayElement* textBox = OverlayMgr->getOverlayElement(Name);
-	return textBox->getCaption();
+	//Ogre::OverlayElement* textBox = OverlayMgr->getOverlayElement(Name);
+	//return textBox->getCaption();
 }
 
 void Renderer::CreateEntity(RendererData RD)
@@ -136,8 +165,8 @@ void Renderer::CreateCamera(RendererData RD)
 
 	getRenderWindow()->removeAllViewports();
 	getRenderWindow()->addViewport(cam);
+	getRenderWindow()->getViewport(0)->setOverlaysEnabled(true);
 	
-
 	RendererAccessors.insert({ RD.Name,camNode });
 
 	//attach to gameobject. quick fix, can be removed with more time

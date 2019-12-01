@@ -1,19 +1,15 @@
 #pragma once
 #include "OgreApplicationContext.h"
 #include "Ogre.h"
-
-#include "Overlay/OgreOverlayManager.h"
-#include <Overlay/OgreOverlayContainer.h>
-#include <Overlay/OgreOverlay.h>
-
+#include "OgreTrays.h"
 #include "EventSystem.h"
 #include "ObjectPool.h"
+#include <OgreTimer.h>
 #include <iostream>
 
 //Ogre uses depricated string iterator, required or wont run
 //Define done in Properties->C++->commandline
 //#define _SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING
-
 
 class Renderer : public OgreBites::ApplicationContext
 {
@@ -23,13 +19,11 @@ private:
 	Ogre::Root* root;
 	Ogre::SceneManager* scnMgr;
 	Ogre::RTShader::ShaderGenerator* shadergen;
-
+	Ogre::Timer FrameTimer;
 	//Text related
-	Ogre::OverlayManager* OverlayMgr;
-	Ogre::Overlay* Overlay;
-	Ogre::OverlayContainer* panel;
-
+	OgreBites::TrayManager* Traymgr;
 	std::map<std::string, Ogre::SceneNode*> RendererAccessors;
+	std::map<std::string, OgreBites::TextBox*> TextAccessors;
 
 	//Nececcary Ogre objects
 public:
@@ -49,6 +43,8 @@ public:
 	void Start();
 	void End();
 	void Restart();
+	void Animation(RendererData RD);
+	float GetFPS();
 
 	//Text related
 	void CreateTextBox(RendererData RD);
@@ -65,14 +61,15 @@ public:
 
 	//Array of function pointers
 	typedef void (Renderer::* Reactions)(RendererData);
-	Reactions EventReactions[9] = { &Renderer::CreateEntity
+	Reactions EventReactions[10] = { &Renderer::CreateEntity
 									,&Renderer::CreateLight
 									,&Renderer::CreateCamera
 									,&Renderer::LookAt
 									,&Renderer::SetPosition
 									,&Renderer::SetOrientation
 									,&Renderer::CreateTextBox
-									,& Renderer::RemoveTextBox
-									,& Renderer::SetText
+									,&Renderer::RemoveTextBox
+									,&Renderer::SetText
+									,&Renderer::Animation
 									};
 };

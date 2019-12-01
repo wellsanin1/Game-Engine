@@ -29,12 +29,11 @@
 #define __SdkTrays_H__
 
 #include "OgreBitesPrerequisites.h"
-#include "OgreOverlay.h"
-#include "OgreOverlaySystem.h"
-#include "OgreOverlayManager.h"
-#include "OgreBorderPanelOverlayElement.h"
-#include "OgreTextAreaOverlayElement.h"
-#include "OgreFontManager.h"
+#include "Overlay/OgreOverlay.h"
+#include "Overlay/OgreOverlaySystem.h"
+#include "Overlay/OgreOverlayManager.h"
+#include "Overlay/OgreBorderPanelOverlayElement.h"
+#include "Overlay/OgreTextAreaOverlayElement.h"
 #include "OgreTimer.h"
 #include "OgreRoot.h"
 #include "OgreCamera.h"

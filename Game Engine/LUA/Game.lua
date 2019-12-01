@@ -8,8 +8,8 @@ function GameEngine(Engine)
 	end
 	if(Engine:GetLevelManager():GetCurrentLevel() == 1)
 	then
-		Engine:EngineDrawText(0,0,"HelloWorld","TextBox1")
 		require("Level1Variables")
+		Engine:EngineDrawText(0,Engine:GetFPS(),"TextBox1")
 		Engine:GetGameObjectWithName("plane"):SetMass(0)
 		Engine:GetGameObjectWithName("Barrel"):SetMass(0)
 		Engine:GetGameObjectWithName("myCam"):SetGravity(0,0,0)
@@ -17,6 +17,8 @@ function GameEngine(Engine)
 		local a = Engine:GetGameObjectWithName("OgreHead"):GetTransform()
 		Engine:GetGameObjectWithName("myCam"):LookAt(a[1],a[2],a[3])
 		
+		Engine:PlayAnimation("Robot","Idle")
+
 		local KeyManager = Engine:GetKeyManager()
 		if (KeyManager:GetKey(UP) == true)
 		then
@@ -57,7 +59,7 @@ function GameEngine(Engine)
 		end
 		if (Engine:GetGameObjectWithName("OgreHead"):GetCollision("Cube2") and cube2 == false)
 		then
-		cube2 = true
+			cube2 = true
 			CollectableCount = CollectableCount+1
 			Engine:GetGameObjectWithName("Cube2"):Teleport(0,-1100,0)
 			Engine:LuaStringOUT("CUBE2")

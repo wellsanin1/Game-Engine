@@ -24,6 +24,8 @@ struct RendererData
 	int TextPosY;
 	int Width;
 	int Height;
+	int TextPosition;
+	std::string AnimationName;
 };
 struct ObjectPoolData
 {

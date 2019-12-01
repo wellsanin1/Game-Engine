@@ -24,6 +24,7 @@ enum RenderEnum
 	, Render_CREATETEXTBOX
 	, Render_REMOVETEXTBOX
 	, Render_SETTEXT
+	, Render_PLAYANIMATION
 };
 enum ObjectPoolEnum
 {
