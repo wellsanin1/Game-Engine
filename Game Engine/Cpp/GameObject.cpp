@@ -140,12 +140,12 @@ void GameObject::LookAt(float X,float Y,float Z)
 	
 	_EQ->AddEvent(A);
 }
-void GameObject::CreateEntity(EventQueue* EQ, std::string EntityName,std::string MeshName,std::string MaterialName, int PosX, int PosY, int PosZ,int ColX, int ColY, int ColZ)
+void GameObject::CreateEntity(EventQueue* EQ, std::string EntityName,std::string MeshName,std::string MaterialName,int mass, int PosX, int PosY, int PosZ,int ColX, int ColY, int ColZ)
 {
 	this->Name = EntityName;
 	this->Etype = "Entity";
 	this->Empty = false;
-	this->_Mass = 10;
+	this->_Mass = mass;
 	_MeshName = MeshName;
 	AttachSystems(EQ);
 	event A;
@@ -163,19 +163,19 @@ void GameObject::CreateEntity(EventQueue* EQ, std::string EntityName,std::string
 	A.PD.positions.y = PosY;
 	A.PD.positions.z = PosZ;
 
-	A.PD.mass = 10;
+	A.PD.mass = mass;
 
 	A.RD.Name = EntityName;
 	A.RD.MeshName = MeshName;
 	
 	EQ->AddEvent(A);
 }
-void GameObject::CreateLight(EventQueue* EQ, std::string LightName, int PosX, int PosY, int PosZ)
+void GameObject::CreateLight(EventQueue* EQ, std::string LightName, int mass, int PosX, int PosY, int PosZ)
 {
 	this->Name = LightName;
 	this->Etype = "Light";
 	this->Empty = false;
-	this->_Mass = 10;
+	this->_Mass = mass;
 	AttachSystems(EQ);
 	event A;
 	A.SubSystemList.push_back(SubSystem_Renderer);
@@ -183,6 +183,7 @@ void GameObject::CreateLight(EventQueue* EQ, std::string LightName, int PosX, in
 	A.PhysicsEventType = Physics_CREATEENTITY;
 	A.RenderEventType = Render_CREATELIGHT;
 	A.PD.Name = LightName;
+	A.PD.mass = mass;
 	A.PD.positions.x = PosX;
 	A.PD.positions.y = PosY;
 	A.PD.positions.z = PosZ;
@@ -195,12 +196,12 @@ void GameObject::CreateLight(EventQueue* EQ, std::string LightName, int PosX, in
 	
 	EQ->AddEvent(A);
 }
-void GameObject::CreateCamera(EventQueue*EQ,std::string CameraName, int PosX, int PosY, int PosZ)
+void GameObject::CreateCamera(EventQueue*EQ,std::string CameraName, int mass, int PosX, int PosY, int PosZ)
 {
 	this->Name = CameraName;
 	this->Etype = "Camera";
 	this->Empty = false;
-	this->_Mass = 10;
+	this->_Mass = mass;
 	AttachSystems(EQ);
 	event A;
 	A.SubSystemList.push_back(SubSystem_Renderer);
@@ -208,6 +209,7 @@ void GameObject::CreateCamera(EventQueue*EQ,std::string CameraName, int PosX, in
 	A.PhysicsEventType = Physics_CREATEENTITY;
 	A.RenderEventType = Render_CREATECAMERA;
 	A.PD.Name = CameraName;
+	A.PD.mass = mass;
 	A.PD.positions.x = PosX;
 	A.PD.positions.y = PosY;
 	A.PD.positions.z = PosZ;

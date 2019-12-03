@@ -101,13 +101,13 @@ GameObject* ObjectPool::IfObjectExists(std::string ObjectName)
 void ObjectPool::CreateCamera(ObjectPoolData OD, EventQueue* EQ)
 {
 	GameObject* a = new GameObject();
-	a->CreateCamera(EQ,OD.Name, OD.positions.x, OD.positions.z, OD.positions.z);
+	a->CreateCamera(EQ,OD.Name,OD.mass, OD.positions.x, OD.positions.z, OD.positions.z);
 	StoreObject(a);
 }
 void ObjectPool::CreateEntity(ObjectPoolData OD, EventQueue* EQ)
 {
 	GameObject* a = new GameObject();
-	a->CreateEntity(EQ,OD.Name, OD.MeshName,OD.Material
+	a->CreateEntity(EQ,OD.Name, OD.MeshName,OD.Material,OD.mass
 				, OD.positions.x, OD.positions.y, OD.positions.z
 				, OD.Colliders.x, OD.Colliders.y, OD.Colliders.z);
 	StoreObject(a);
@@ -115,6 +115,6 @@ void ObjectPool::CreateEntity(ObjectPoolData OD, EventQueue* EQ)
 void ObjectPool::CreateLight(ObjectPoolData OD, EventQueue* EQ)
 {
 	GameObject* a = new GameObject();
-	a->CreateLight(EQ,OD.Name, OD.positions.x, OD.positions.y, OD.positions.z);
+	a->CreateLight(EQ,OD.Name, OD.mass, OD.positions.x, OD.positions.y, OD.positions.z);
 	StoreObject(a);
 }

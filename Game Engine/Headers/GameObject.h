@@ -89,9 +89,9 @@ public:
 	void LookAt(float X, float Y, float Z);
 	void TranslateLocally(float X, float Y, float Z);
 	void SendToClient();
-	void CreateEntity(EventQueue* EQ, std::string EntityName, std::string MeshName,std::string MaterialName, int PosX, int PosY, int PosZ,int ColX,int ColY,int ColZ);
-	void CreateLight(EventQueue* EQ, std::string LightName, int PosX, int PosY, int PosZ);
-	void CreateCamera(EventQueue* EQ, std::string CameraName, int PosX, int PosY, int PosZ);
+	void CreateEntity(EventQueue* EQ, std::string EntityName,std::string MeshName,std::string MaterialName, int mass, int PosX, int PosY, int PosZ,int ColX,int ColY,int ColZ);
+	void CreateLight(EventQueue* EQ, std::string LightName, int mass, int PosX, int PosY, int PosZ);
+	void CreateCamera(EventQueue* EQ, std::string CameraName, int mass, int PosX, int PosY, int PosZ);
 	void Teleport(double x, double y, double z);
 	void SetGravity(float x,float y,float z);
 

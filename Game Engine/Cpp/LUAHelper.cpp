@@ -31,6 +31,7 @@ void LuaHelper::LoadEntityData(int Level , EventQueue*EQ)
 			E.OD.positions.x = entityCheck["PosX"].cast<int>();
 			E.OD.positions.y = entityCheck["PosY"].cast<int>();
 			E.OD.positions.z = entityCheck["PosZ"].cast<int>();
+			E.OD.mass = entityCheck["mass"].cast<int>();
 			E.Empty = false;
 			EQ->AddEvent(E);
 		}
@@ -44,6 +45,7 @@ void LuaHelper::LoadEntityData(int Level , EventQueue*EQ)
 			E.OD.positions.x = entityCheck["PosX"].cast<int>();
 			E.OD.positions.y = entityCheck["PosY"].cast<int>();
 			E.OD.positions.z = entityCheck["PosZ"].cast<int>();
+			E.OD.mass = entityCheck["mass"].cast<int>();
 			E.Empty = false;
 			EQ->AddEvent(E);
 		}
@@ -64,6 +66,7 @@ void LuaHelper::LoadEntityData(int Level , EventQueue*EQ)
 			E.OD.Colliders.x = entityCheck["ColX"].cast<int>();
 			E.OD.Colliders.y = entityCheck["ColY"].cast<int>();
 			E.OD.Colliders.z = entityCheck["ColZ"].cast<int>();
+			E.OD.mass = entityCheck["mass"].cast<int>();
 			E.Empty = false;
 			EQ->AddEvent(E);
 		}
