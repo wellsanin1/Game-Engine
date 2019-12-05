@@ -10,11 +10,9 @@ function GameEngine(Engine)
 	then
 		require("Level1Variables")
 		Engine:EngineDrawText(0,Engine:GetFPS(),"TextBox1")
-		Engine:GetGameObjectWithName("plane"):SetMass(0)
-		Engine:GetGameObjectWithName("Barrel"):SetMass(0)
 		Engine:GetGameObjectWithName("myCam"):SetGravity(0,0,0)
 
-		local a = Engine:GetGameObjectWithName("OgreHead"):GetTransform()
+		local a = Engine:GetGameObjectWithName("Character"):GetTransform()
 		Engine:GetGameObjectWithName("myCam"):LookAt(a[1],a[2],a[3])
 		
 		Engine:PlayAnimation("Robot","Idle")
@@ -22,47 +20,46 @@ function GameEngine(Engine)
 		local KeyManager = Engine:GetKeyManager()
 		if (KeyManager:GetKey(UP) == true)
 		then
-			Engine:GetGameObjectWithName("OgreHead"):TranslateLocally(0,0,-100);
+			Engine:GetGameObjectWithName("Character"):TranslateLocally(0,0,-100);
 		end
 		if (KeyManager:GetKey(DOWN) == true)
 		then
-			Engine:GetGameObjectWithName("OgreHead"):TranslateLocally(0,0,100);
+			Engine:GetGameObjectWithName("Character"):TranslateLocally(0,0,100);
 		end
 		if (KeyManager:GetKey(LEFT) == true)
 		then
-			Engine:GetGameObjectWithName("OgreHead"):TranslateLocally(-100,0,0);
+			Engine:GetGameObjectWithName("Character"):TranslateLocally(-100,0,0);
 		end
 		if (KeyManager:GetKey(RIGHT) == true)
 		then
-			Engine:GetGameObjectWithName("OgreHead"):TranslateLocally(100,0,0);
+			Engine:GetGameObjectWithName("Character"):TranslateLocally(100,0,0);
 		end
 		if (KeyManager:GetKey(QUIT) == true)
 		then
 			Engine:Quit()
 		end
 
-		if (Engine:GetGameObjectWithName("OgreHead"):GetCollision("Barrel"))
+		if (Engine:GetGameObjectWithName("Character"):GetCollision("Camera1"))
 		then
 			SendData = true
 		end
 		if(SendData == true)
 		then
-			Engine:GetGameObjectWithName("OgreHead"):SendToClient()
+			Engine:GetGameObjectWithName("Character"):SendToClient()
 		end
-		
-		if (Engine:GetGameObjectWithName("OgreHead"):GetCollision("Cube1") and cube1 == false )
+		if (Engine:GetGameObjectWithName("Character"):GetCollision("Camera1") and cube1 == false )
 		then
 			cube1 = true
-			Engine:LuaStringOUT("CUBE1")
+			Engine:LuaStringOUT("Camera1")
 			CollectableCount = CollectableCount+1
-			Engine:GetGameObjectWithName("Cube1"):Teleport(0,-1000,0)
+			Engine:GetGameObjectWithName("Camera1"):Teleport(0,-1000,0)
 		end
-		if (Engine:GetGameObjectWithName("OgreHead"):GetCollision("Cube2") and cube2 == false)
+		if (Engine:GetGameObjectWithName("Character"):GetCollision("Camera2") and cube2 == false)
 		then
 			cube2 = true
 			CollectableCount = CollectableCount+1
-			Engine:GetGameObjectWithName("Cube2"):Teleport(0,-1100,0)
-			Engine:LuaStringOUT("CUBE2")
+			Engine:GetGameObjectWithName("Camera2"):Teleport(0,-1100,0)
+			Engine:LuaStringOUT("Camera2")
 		end
 		if (CollectableCount == 2)
 		then
@@ -73,45 +70,69 @@ function GameEngine(Engine)
 		
 		
 	end
-	if(Engine:GetLevelManager():GetCurrentLevel() ==2)
+	if(Engine:GetLevelManager():GetCurrentLevel() == 2)
 	then
-		Engine:GetGameObjectWithName("plane"):SetMass(0)
-		Engine:GetGameObjectWithName("Barrel"):SetMass(0)
+		require("Level2Variables")
+		Engine:EngineDrawText(0,Engine:GetFPS(),"TextBox1")
 		Engine:GetGameObjectWithName("myCam"):SetGravity(0,0,0)
 
-		local a = Engine:GetGameObjectWithName("OgreHead"):GetTransform()
+		local a = Engine:GetGameObjectWithName("Character"):GetTransform()
 		Engine:GetGameObjectWithName("myCam"):LookAt(a[1],a[2],a[3])
 		
+		Engine:PlayAnimation("Robot","Idle")
+
 		local KeyManager = Engine:GetKeyManager()
-		
 		if (KeyManager:GetKey(UP) == true)
 		then
-			Engine:GetGameObjectWithName("OgreHead"):TranslateLocally(0,0,-100);
+			Engine:GetGameObjectWithName("Character"):TranslateLocally(0,0,-100);
 		end
 		if (KeyManager:GetKey(DOWN) == true)
 		then
-			Engine:GetGameObjectWithName("OgreHead"):TranslateLocally(0,0,100);
+			Engine:GetGameObjectWithName("Character"):TranslateLocally(0,0,100);
 		end
 		if (KeyManager:GetKey(LEFT) == true)
 		then
-			Engine:GetGameObjectWithName("OgreHead"):TranslateLocally(-100,0,0);
+			Engine:GetGameObjectWithName("Character"):TranslateLocally(-100,0,0);
 		end
 		if (KeyManager:GetKey(RIGHT) == true)
 		then
-			Engine:GetGameObjectWithName("OgreHead"):TranslateLocally(100,0,0);
+			Engine:GetGameObjectWithName("Character"):TranslateLocally(100,0,0);
 		end
 		if (KeyManager:GetKey(QUIT) == true)
 		then
 			Engine:Quit()
 		end
-		if (Engine:GetGameObjectWithName("OgreHead"):GetCollision("Barrel"))
+
+		if (Engine:GetGameObjectWithName("Character"):GetCollision("Camera1"))
 		then
 			SendData = true
 		end
 		if(SendData == true)
 		then
-			Engine:GetGameObjectWithName("OgreHead"):SendToClient()
+			Engine:GetGameObjectWithName("Character"):SendToClient()
 		end
+		if (Engine:GetGameObjectWithName("Character"):GetCollision("Camera1") and cube1 == false )
+		then
+			cube1 = true
+			Engine:LuaStringOUT("Camera1")
+			CollectableCount = CollectableCount+1
+			Engine:GetGameObjectWithName("Camera1"):Teleport(0,-1000,0)
+		end
+		if (Engine:GetGameObjectWithName("Character"):GetCollision("Camera2") and cube2 == false)
+		then
+			cube2 = true
+			CollectableCount = CollectableCount+1
+			Engine:GetGameObjectWithName("Camera2"):Teleport(0,-1100,0)
+			Engine:LuaStringOUT("Camera2")
+		end
+		if (CollectableCount == 2)
+		then
+			SendData = false
+			--Engine:Reload(3)
+			Engine:Quit()
+			return
+		end
+		
 		
 	end
 	

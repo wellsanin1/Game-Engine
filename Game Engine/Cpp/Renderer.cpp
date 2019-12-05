@@ -74,6 +74,7 @@ void Renderer::Restart()
 	shadergen->addSceneManager(scnMgr);
 	scnMgr->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
 	RendererAccessors.erase(RendererAccessors.begin(),RendererAccessors.end());
+	TextAccessors.erase(TextAccessors.begin(), TextAccessors.end());
 	Traymgr->destroyAllWidgets();
 	addInputListener(Traymgr);
 	scnMgr->addRenderQueueListener(getOverlaySystem());
