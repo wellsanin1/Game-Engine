@@ -67,11 +67,15 @@ void GameEngine::PhysicsUpdate()
 	PM.CheckCollisions();
 	PM.PhysicsUpdate(&EQ);
 }
+void GameEngine::Audio()
+{
+	AM.Update(&EQ);
+}
 void GameEngine::PlayAudio(std::string FileName)
 {
 	event A;
 	A.SubSystemList.push_back(SubSystem_Audio);
-	A.AudioEventType = Audio_PlaySound;
+	A.AudioEventType = Audio_PLAYSOUND;
 	A.AD.Name = FileName;
 	EQ.AddEvent(A);
 }
@@ -131,6 +135,7 @@ void GameEngine::Update()
 	Network();
 	CheckInput();
 	ExecuteLUA();
+	Audio();
 }
 void GameEngine::Initialise()
 {

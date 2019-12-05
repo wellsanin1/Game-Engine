@@ -7,6 +7,7 @@ void AudioManager::PlaySound(AudioData AD)
 		if (SoundArray[i]->Name == AD.Name)
 		{
 			FmodSystem->playSound(SoundArray[i]->Clip, NULL, false, 0);
+			std::cout << "Sound Played: "<< SoundArray[i]->Name<<std::endl;
 			return;
 		}
 	}
@@ -38,6 +39,10 @@ void AudioManager::Update(EventQueue* EQ)
 			Reactions A = EventReactions[(int)EV.AudioEventType];
 			(this->*A)(EV.AD);
 			EQ->RemoveFromQueue(SubSystem_Audio);
+		}
+		else
+		{
+			break;
 		}
 	}
 }

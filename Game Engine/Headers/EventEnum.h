@@ -11,7 +11,7 @@ enum PhysicsEnum
 };
 enum AudioEnum
 {
-	Audio_PlaySound
+	Audio_PLAYSOUND
 };
 enum RenderEnum
 {
