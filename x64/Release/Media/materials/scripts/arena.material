@@ -1,0 +1,264 @@
+material "planeStands"
+{
+	technique planeStands_technique
+	{
+		pass planeStands_standard
+		{
+			ambient 0.588235 0.588235 0.588235 1
+			diffuse 1 1 1 1
+			specular 0.4 0.4 0.4 1 0
+			emissive 0 0 0 1
+			vertex_program_ref planevsLightGEN0
+			{
+			}
+			fragment_program_ref planefpLightGENDIFF0
+			{
+			}
+
+			texture_unit planeStands_Diffuse#0
+			{
+				texture Stands.DDS
+				tex_coord_set 0
+				colour_op modulate
+			}
+		}
+	}
+	technique planeStands_basic_technique
+	{
+	scheme basic_mat
+		pass planeStands_standard
+		{
+			ambient 0.588235 0.588235 0.588235 1
+			diffuse 1 1 1 1
+			specular 0.4 0.4 0.4 1 0
+			emissive 0 0 0 1
+
+			texture_unit planeStands_Diffuse#1
+			{
+				texture Stands.DDS
+				tex_coord_set 0
+				colour_op modulate
+			}
+		}
+	}
+}
+material "planeEntrance"
+{
+	technique planeEntrance_technique
+	{
+		pass planeEntrance_standard
+		{
+			ambient 0.588235 0.588235 0.588235 1
+			diffuse 1 1 1 1
+			specular 0.4 0.4 0.4 1 0
+			emissive 0 0 0 1
+			vertex_program_ref planevsLightGEN0
+			{
+			}
+			fragment_program_ref planefpLightGENDIFF0
+			{
+			}
+
+			texture_unit planeEntrance_Diffuse#0
+			{
+				texture Entrance.DDS
+				tex_coord_set 0
+				colour_op modulate
+			}
+		}
+	}
+	technique planeEntrance_basic_technique
+	{
+	scheme basic_mat
+		pass planeEntrance_standard
+		{
+			ambient 0.588235 0.588235 0.588235 1
+			diffuse 1 1 1 1
+			specular 0.4 0.4 0.4 1 0
+			emissive 0 0 0 1
+
+			texture_unit planeEntrance_Diffuse#1
+			{
+				texture Entrance.DDS
+				tex_coord_set 0
+				colour_op modulate
+			}
+		}
+	}
+}
+material "planePlane"
+{
+	technique planePlane_technique
+	{
+		pass planePlane_standard
+		{
+			ambient 0.588235 0.588235 0.588235 1
+			diffuse 1 1 1 1
+			specular 0.4 0.4 0.4 1 0
+			emissive 0 0 0 1
+			vertex_program_ref planevsLightGEN0
+			{
+			}
+			fragment_program_ref planefpLightGENDIFF0
+			{
+			}
+
+			texture_unit planePlane_Diffuse#0
+			{
+				texture Plane.DDS
+				tex_coord_set 0
+				colour_op modulate
+			}
+		}
+	}
+	technique planePlane_basic_technique
+	{
+	scheme basic_mat
+		pass planePlane_standard
+		{
+			ambient 0.588235 0.588235 0.588235 1
+			diffuse 1 1 1 1
+			specular 0.4 0.4 0.4 1 0
+			emissive 0 0 0 1
+
+			texture_unit planePlane_Diffuse#1
+			{
+				texture Plane.DDS
+				tex_coord_set 0
+				colour_op modulate
+			}
+		}
+	}
+}
+material "planeChair"
+{
+	technique planeChair_technique
+	{
+		pass planeChair_standard
+		{
+			ambient 0.588235 0.588235 0.588235 1
+			diffuse 1 1 1 1
+			specular 0.4 0.4 0.4 1 0
+			emissive 0 0 0 1
+			vertex_program_ref planevsLightGEN0
+			{
+			}
+			fragment_program_ref planefpLightGENDIFF0
+			{
+			}
+
+			texture_unit planeChair_Diffuse#0
+			{
+				texture Chair.DDS
+				tex_coord_set 0
+				colour_op modulate
+			}
+		}
+	}
+	technique planeChair_basic_technique
+	{
+	scheme basic_mat
+		pass planeChair_standard
+		{
+			ambient 0.588235 0.588235 0.588235 1
+			diffuse 1 1 1 1
+			specular 0.4 0.4 0.4 1 0
+			emissive 0 0 0 1
+
+			texture_unit planeChair_Diffuse#1
+			{
+				texture Chair.DDS
+				tex_coord_set 0
+				colour_op modulate
+			}
+		}
+	}
+}
+material "planeArena"
+{
+	technique planeArena_technique
+	{
+		pass planeArena_standard
+		{
+			ambient 0.588235 0.588235 0.588235 1
+			diffuse 1 1 1 1
+			specular 0.4 0.4 0.4 1 0
+			emissive 0 0 0 1
+			vertex_program_ref planevsLightGEN0
+			{
+			}
+			fragment_program_ref planefpLightGENDIFF0
+			{
+			}
+
+			texture_unit planeArena_Diffuse#0
+			{
+				texture Arena.DDS
+				tex_coord_set 0
+				colour_op modulate
+			}
+		}
+	}
+	technique planeArena_basic_technique
+	{
+	scheme basic_mat
+		pass planeArena_standard
+		{
+			ambient 0.588235 0.588235 0.588235 1
+			diffuse 1 1 1 1
+			specular 0.4 0.4 0.4 1 0
+			emissive 0 0 0 1
+
+			texture_unit planeArena_Diffuse#1
+			{
+				texture Arena.DDS
+				tex_coord_set 0
+				colour_op modulate
+			}
+		}
+	}
+}
+material "planeCamera"
+{
+	technique planeCamera_technique
+	{
+		pass planeCamera_standard
+		{
+			ambient 0.588235 0.588235 0.588235 1
+			diffuse 1 1 1 1
+			specular 0.4 0.4 0.4 1 0
+			emissive 0 0 0 1
+			vertex_program_ref planevsLightGEN0
+			{
+			}
+			fragment_program_ref planefpLightGENDIFF0
+			{
+			}
+
+			texture_unit planeCamera_Diffuse#0
+			{
+				texture Camera.DDS
+				tex_coord_set 0
+				colour_op modulate
+			}
+		}
+	}
+	technique planeCamera_basic_technique
+	{
+	scheme basic_mat
+		pass planeCamera_standard
+		{
+			ambient 0.588235 0.588235 0.588235 1
+			diffuse 1 1 1 1
+			specular 0.4 0.4 0.4 1 0
+			emissive 0 0 0 1
+
+			texture_unit planeCamera_Diffuse#1
+			{
+				texture Camera.DDS
+				tex_coord_set 0
+				colour_op modulate
+			}
+		}
+	}
+}

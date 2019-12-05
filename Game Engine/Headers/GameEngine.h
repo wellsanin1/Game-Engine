@@ -28,6 +28,7 @@ public:
 	void ExecuteLUA();
 	void LoadEntitiesIntoEngine(int Level);
 	void Quit();
+	void Audio();
 	bool IsActive();
 	void EngineDrawText(int position, std::string TEXT,std::string Name);
 	void EngineStopDrawingText(std::string Name);

@@ -9,6 +9,13 @@ function GameEngine(Engine)
 	if(Engine:GetLevelManager():GetCurrentLevel() == 1)
 	then
 		require("Level1Variables")
+		
+		if(BackgroundMusic == false)
+		then
+			Engine:PlayAudio("WayBackHome.wav")
+			BackgroundMusic = true
+		end
+		
 		Engine:EngineDrawText(0,Engine:GetFPS(),"TextBox1")
 		Engine:GetGameObjectWithName("myCam"):SetGravity(0,0,0)
 
@@ -49,6 +56,7 @@ function GameEngine(Engine)
 		end
 		if (Engine:GetGameObjectWithName("Character"):GetCollision("Camera1") and cube1 == false )
 		then
+			Engine:PlayAudio("Audio1.wav")
 			cube1 = true
 			Engine:LuaStringOUT("Camera1")
 			CollectableCount = CollectableCount+1
@@ -56,6 +64,7 @@ function GameEngine(Engine)
 		end
 		if (Engine:GetGameObjectWithName("Character"):GetCollision("Camera2") and cube2 == false)
 		then
+			Engine:PlayAudio("Audio2.wav")
 			cube2 = true
 			CollectableCount = CollectableCount+1
 			Engine:GetGameObjectWithName("Camera2"):Teleport(0,-1100,0)
@@ -73,6 +82,12 @@ function GameEngine(Engine)
 	if(Engine:GetLevelManager():GetCurrentLevel() == 2)
 	then
 		require("Level2Variables")
+		if(BackgroundMusic == false)
+		then
+			Engine:PlayAudio("WayBackHome.wav")
+			BackgroundMusic = true
+		end
+		
 		Engine:EngineDrawText(0,Engine:GetFPS(),"TextBox1")
 		Engine:GetGameObjectWithName("myCam"):SetGravity(0,0,0)
 
@@ -113,6 +128,7 @@ function GameEngine(Engine)
 		end
 		if (Engine:GetGameObjectWithName("Character"):GetCollision("Camera1") and cube1 == false )
 		then
+			Engine:PlayAudio("Audio1.wav")
 			cube1 = true
 			Engine:LuaStringOUT("Camera1")
 			CollectableCount = CollectableCount+1
@@ -120,6 +136,7 @@ function GameEngine(Engine)
 		end
 		if (Engine:GetGameObjectWithName("Character"):GetCollision("Camera2") and cube2 == false)
 		then
+			Engine:PlayAudio("Audio2.wav")
 			cube2 = true
 			CollectableCount = CollectableCount+1
 			Engine:GetGameObjectWithName("Camera2"):Teleport(0,-1100,0)
@@ -129,6 +146,7 @@ function GameEngine(Engine)
 		then
 			SendData = false
 			Engine:Reload(3)
+			Engine:Quit()
 			return
 		end
 		

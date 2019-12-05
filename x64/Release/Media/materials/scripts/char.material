@@ -1,0 +1,44 @@
+material "planeCharacter"
+{
+	technique planeCharacter_technique
+	{
+		pass planeCharacter_standard
+		{
+			ambient 0.588235 0.588235 0.588235 1
+			diffuse 1 1 1 1
+			specular 0.4 0.4 0.4 1 0
+			emissive 0 0 0 1
+			vertex_program_ref planevsLightGEN0
+			{
+			}
+			fragment_program_ref planefpLightGENDIFF0
+			{
+			}
+
+			texture_unit planeCharacter_Diffuse#0
+			{
+				texture Character.DDS
+				tex_coord_set 0
+				colour_op modulate
+			}
+		}
+	}
+	technique planeCharacter_basic_technique
+	{
+	scheme basic_mat
+		pass planeCharacter_standard
+		{
+			ambient 0.588235 0.588235 0.588235 1
+			diffuse 1 1 1 1
+			specular 0.4 0.4 0.4 1 0
+			emissive 0 0 0 1
+
+			texture_unit planeCharacter_Diffuse#1
+			{
+				texture plane_1001_Base_Color.DDS
+				tex_coord_set 0
+				colour_op modulate
+			}
+		}
+	}
+}
