@@ -1,0 +1,149 @@
+material "planeWheel"
+{
+	technique planeWheel_technique
+	{
+		pass planeWheel_standard
+		{
+			ambient 1 1 1 1
+			diffuse 1 1 1 1
+			specular 0 0 0 0 25.5
+			emissive 0 0 0 1
+			vertex_program_ref planevsLightGENNORM0
+			{
+			}
+			fragment_program_ref planefpLightGENDIFF0NORM0FresnelREF
+			{
+				param_named normalMul float 0.3
+				param_named reflectivity float 1
+				param_named fresnelMul float 1
+				param_named fresnelPow float 0.4
+			}
+
+			texture_unit planeWheel_Diffuse#0
+			{
+				texture plane_1001_Base_Color.DDS
+				tex_coord_set 0
+				colour_op modulate
+			}
+
+			texture_unit planeWheel_Normal#1
+			{
+				texture plane_1001_Normal_OpenGL.DDS
+				tex_coord_set 0
+				colour_op modulate
+			}
+
+			texture_unit planeWheel_Reflect#2
+			{
+				texture plane_1001_Metallic.DDS
+				tex_coord_set 0
+				colour_op modulate
+				env_map planar
+			}
+		}
+	}
+	technique planeWheel_basic_technique
+	{
+	scheme basic_mat
+		pass planeWheel_standard
+		{
+			ambient 1 1 1 1
+			diffuse 1 1 1 1
+			specular 0 0 0 0 25.5
+			emissive 0 0 0 1
+
+			texture_unit planeWheel_Diffuse#3
+			{
+				texture plane_1001_Base_Color.DDS
+				tex_coord_set 0
+				colour_op modulate
+			}
+
+			texture_unit planeWheel_Reflect#4
+			{
+				texture plane_1001_Metallic.DDS
+				tex_coord_set 0
+				colour_op modulate
+				env_map planar
+			}
+		}
+	}
+}
+material "planepickup"
+{
+	technique planepickup_technique
+	{
+		pass planepickup_standard
+		{
+			ambient 1 1 1 1
+			diffuse 1 1 1 1
+			specular 1 1 1 0 25.5
+			emissive 0 0 0 1
+			vertex_program_ref planevsLightGENNORM0
+			{
+			}
+			fragment_program_ref planefpLightGENDIFF0SPEC0NORM0FresnelREF
+			{
+				param_named normalMul float 0.3
+				param_named reflectivity float 1
+				param_named fresnelMul float 1
+				param_named fresnelPow float 0.4
+			}
+
+			texture_unit planepickup_Diffuse#0
+			{
+				texture plane_1001_Base_Color_1.DDS
+				tex_coord_set 0
+				colour_op modulate
+			}
+
+			texture_unit planepickup_Specular#1
+			{
+				texture plane_1001_Base_Color_1.DDS
+				tex_coord_set 0
+				colour_op modulate
+			}
+
+			texture_unit planepickup_Normal#2
+			{
+				texture plane_1001_Normal_OpenGL.DDS
+				tex_coord_set 0
+				colour_op modulate
+			}
+
+			texture_unit planepickup_Reflect#3
+			{
+				texture plane_1001_Base_Color_1.DDS
+				tex_coord_set 0
+				colour_op modulate
+				env_map planar
+			}
+		}
+	}
+	technique planepickup_basic_technique
+	{
+	scheme basic_mat
+		pass planepickup_standard
+		{
+			ambient 1 1 1 1
+			diffuse 1 1 1 1
+			specular 1 1 1 0 25.5
+			emissive 0 0 0 1
+
+			texture_unit planepickup_Diffuse#4
+			{
+				texture plane_1001_Base_Color_1.DDS
+				tex_coord_set 0
+				colour_op modulate
+			}
+
+			texture_unit planepickup_Reflect#5
+			{
+				texture plane_1001_Base_Color_1.DDS
+				tex_coord_set 0
+				colour_op modulate
+				env_map planar
+			}
+		}
+	}
+}

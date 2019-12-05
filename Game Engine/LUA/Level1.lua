@@ -184,6 +184,19 @@ elementList = {
 		ColZ = 0,
 		mass = 0
 	}
+	,element16 = {
+		e_type = 'Entity',
+		name = 'Wheel',
+		mesh = 'planewheel.mesh',
+		material = '',
+		PosX = 200,
+		PosY = -300,
+		PosZ = -200,
+		ColX = 0,
+		ColY = 0,
+		ColZ = 0,
+		mass = 0
+	}
 }
 
 
