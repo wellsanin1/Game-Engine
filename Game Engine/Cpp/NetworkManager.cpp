@@ -80,6 +80,14 @@ void NetworkManager::Update(ObjectPool* OP, EventQueue* EQ)
 				}
 				else if(GO->IsEmpty() == false)
 				{
+					event E2;
+					E2.SubSystemList.push_back(SubSystem_Physics);
+					E2.PhysicsEventType = Physics_TELEPORT;
+					E2.PD.Name = serverData->Name;
+					E2.PD.positions.x = serverData->Positions.x;
+					E2.PD.positions.y = serverData->Positions.y;
+					E2.PD.positions.z = serverData->Positions.z;
+					EQ->AddEvent(E2);
 					//Setvelocity Event
 					event E;
 					E.SubSystemList.push_back(SubSystem_Physics);
@@ -89,15 +97,6 @@ void NetworkManager::Update(ObjectPool* OP, EventQueue* EQ)
 					E.PD.GenericVector.y = serverData->Velocity.y;
 					E.PD.GenericVector.z = serverData->Velocity.z;
 					EQ->AddEvent(E);
-
-					event E2;
-					E2.SubSystemList.push_back(SubSystem_Physics);
-					E2.PhysicsEventType = Physics_TELEPORT;
-					E2.PD.Name = serverData->Name;
-					E2.PD.positions.x = serverData->Positions.x;
-					E2.PD.positions.y = serverData->Positions.y;
-					E2.PD.positions.z = serverData->Positions.z;
-					EQ->AddEvent(E2);
 				}
 			}
 			break;
