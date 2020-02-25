@@ -1,5 +1,5 @@
 # Game-Engine
-Game Engine in C++ for demonstration purposes
+Game Engine in C++ for demonstration purposes. There are some unneccecary Dlls/code in here that will be cleaned up with further work.
 
 To run, run the exe from here on a windows pc.
 https://github.com/wellsanin1/Game-Engine/tree/master/x64/Release
