@@ -1,6 +1,8 @@
 # Game-Engine
 Game Engine in C++ for demonstration purposes. 
+
 Main code in Game Engine folder
+
 Server code in server folder 
 
 To run, run the exe from here on a windows pc.
