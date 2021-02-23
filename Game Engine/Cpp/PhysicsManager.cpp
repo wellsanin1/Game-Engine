@@ -44,8 +44,6 @@ void Physics::CreateEntity(PhysicsData PD)
 	ReversePhysicsAccessors.insert({ Bdy,PD.Name });
 
 	//attach to gameobject. done this way because of time constraints
-	_OP->GetObjectFromPool(PD.Name)->RigidBody3d = Bdy;
-	_OP->GetObjectFromPool(PD.Name)->PhysicsAttached = true;
 	std::cout << "created Physics obj with name: " << PD.Name << std::endl;
 }
 
@@ -75,16 +73,14 @@ void Physics::SetMass(PhysicsData PD)
 	dynamicsWorld->addRigidBody(RB2);
 	physicsAccessors.insert({PD.Name, RB2});
 	ReversePhysicsAccessors.insert({ RB2,PD.Name });
-
-	_OP->GetObjectFromPool(PD.Name)->RigidBody3d = RB2;
-	_OP->GetObjectFromPool(PD.Name)->linked = false;
-	_OP->GetObjectFromPool(PD.Name)->Update();
 }
 
 void Physics::TranslateLocally(PhysicsData PD)
 {
 	physicsAccessors.at(PD.Name)->activate();
 	physicsAccessors.at(PD.Name)->applyCentralImpulse({PD.GenericVector.x,PD.GenericVector.y,PD.GenericVector.z});
+	
+
 }
 
 void Physics::SetVelocity(PhysicsData PD)
@@ -119,9 +115,10 @@ void Physics::SetGravity(PhysicsData PD)
 	physicsAccessors.at(PD.Name)->setGravity({ PD.GenericVector.x,PD.GenericVector.y,PD.GenericVector.z });
 }
 
-Physics::Physics(ObjectPool* OP)
+Physics::Physics(ObjectPool* OP,EventQueue*EQ)
 {
 	//takes in object pool for interfacing with gameobject
+	_EQ = EQ;
 	_OP = OP;
 	collisionConfiguration = new btDefaultCollisionConfiguration();
 	dispatcher = new btCollisionDispatcher(collisionConfiguration);
@@ -199,11 +196,9 @@ void Physics::PhysicsUpdate(EventQueue* EQ)
 			btTransform trans;
 			body->getMotionState()->getWorldTransform(trans);
 			void* userPointer = body->getUserPointer();
-			if (userPointer) 
-			{
-				//sets vector in gameobject
-				 _OP->GetObjectFromPool(ReversePhysicsAccessors.at(body))->SetTransform(trans.getOrigin().getX(), trans.getOrigin().getY(), trans.getOrigin().getZ());
-			}
+			//sets vector in gameobject
+			_OP->GetObjectFromPool(ReversePhysicsAccessors.at(body))->SetTransform(trans.getOrigin().getX(), trans.getOrigin().getY(), trans.getOrigin().getZ());
+			std::cout << "test";
 		}
 	}
 }

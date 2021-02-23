@@ -148,8 +148,6 @@ void Renderer::CreateEntity(RendererData RD)
 	RendererAccessors.insert({ RD.Name,OgreNode});
 
 	//attach to gameobject. quick fix, can be removed with more time
-	_OP->GetObjectFromPool(RD.Name)->entity = OgreEntity;
-	_OP->GetObjectFromPool(RD.Name)->OgreAttached = true;
 
 	std::cout << "created renderer obj with name: " << RD.Name << std::endl;
 }
@@ -171,8 +169,6 @@ void Renderer::CreateCamera(RendererData RD)
 	RendererAccessors.insert({ RD.Name,camNode });
 
 	//attach to gameobject. quick fix, can be removed with more time
-	_OP->GetObjectFromPool(RD.Name)->Camera = cam;
-	_OP->GetObjectFromPool(RD.Name)->OgreAttached = true;
 
 	std::cout << "created renderer obj with name: " << RD.Name << std::endl;
 }
@@ -187,8 +183,6 @@ void Renderer::CreateLight(RendererData RD)
 	RendererAccessors.insert({ RD.Name, lightNode });
 
 	//attach to gameobject. quick fix, can be removed with more time
-	_OP->GetObjectFromPool(RD.Name)->Light = light;
-	_OP->GetObjectFromPool(RD.Name)->OgreAttached = true;
 
 	std::cout << "created renderer obj with name: " << RD.Name << std::endl;
 }
@@ -202,7 +196,7 @@ void Renderer::LookAt(RendererData RD)
 void Renderer::SetPosition(RendererData RD)
 {
 	//Teleport object to position using events
-	Ogre::SceneNode* SN = RendererAccessors.at(RD.Name);
+	Ogre::SceneNode* SN = RendererAccessors.at(RD.Name);	
 	SN->setPosition(RD.positions.x,RD.positions.y,RD.positions.z);
 }
 

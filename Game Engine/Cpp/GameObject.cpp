@@ -3,6 +3,17 @@
 void GameObject::SetTransform(double x, double y, double z)
 {
 	_Transform = { (float)x,(float)y,(float)z };
+	
+	event A;
+	A.SubSystemList.push_back(SubSystem_Renderer);
+	A.RenderEventType = Render_SETPOSITION;
+	A.RD.Name = Name;
+	A.RD.positions.x = _Transform.x;
+	A.RD.positions.y = _Transform.y;
+	A.RD.positions.z = _Transform.z;
+	_EQ->AddEvent(A);
+
+
 }
 std::vector<double> GameObject::GetTransform()
 {
@@ -239,26 +250,7 @@ void GameObject::Teleport(double x, double y, double z)
 }
 void GameObject::Update()
 {
-	//Link ogre to bullet. Done because of time constraints easy to fix
-	if (PhysicsAttached == true && OgreAttached == true && linked == false)
-	{
-		linked = true;
-		if(Etype == "Entity")
-		{ 
-			//std::cout << Name << ": EntityLINKED" << std::endl;
-			RigidBody3d->setUserPointer(entity->getParentSceneNode());
-		}
-		else if(Etype == "Light")
-		{
-			//std::cout << Name << ": LightLINKED" << std::endl;
-			RigidBody3d->setUserPointer(Light->getParentSceneNode());
-		}
-		else if (Etype == "Camera")
-		{
-			//std::cout << Name << ": CameraLINKED" << std::endl;
-			RigidBody3d->setUserPointer(Camera->getParentSceneNode());
-		}
-	}
+
 }
 void GameObject::SetGravity(float x, float y, float z)
 {

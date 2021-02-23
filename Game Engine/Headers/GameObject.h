@@ -29,7 +29,7 @@ private:
 	//Set _EQ
 	EventQueue* _EQ;
 	float _ColliderSize[3];
-	//vector of objects cilliding with *this* by name
+	//vector of objects colliding with *this* by name
 	std::vector<std::string> CollidedObjects;
 
 	bool _Enabled = true;
@@ -40,20 +40,10 @@ private:
 	int _Mass = 0;
 
 public:
-	bool PhysicsAttached;
-	bool OgreAttached;
 	//Has object been initialised
 	bool Empty = true;
 	bool linked = false;
 
-
-	/*OGRE entity data, here beacuse of time*/
-	Ogre::Camera* Camera;
-	Ogre::Light* Light;
-	Ogre::Entity* entity;
-	/*BULLET rigidbody, here because of time*/
-	btRigidBody* RigidBody3d;
-	/**/
 	std::string Etype;
 	float Velocity[3] = { 0,0,0 };
 	std::string Name = "";

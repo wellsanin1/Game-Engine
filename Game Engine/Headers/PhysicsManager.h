@@ -16,10 +16,10 @@
 class Physics {
 private:
 	ObjectPool* _OP;
+	EventQueue* _EQ;
 public:
-	Physics(ObjectPool* OP);
+	Physics(ObjectPool* OP,EventQueue *EQ);
 	~Physics() {};
-
 	//Bullet specific structs.
 	btDefaultCollisionConfiguration* collisionConfiguration;
 	btCollisionDispatcher* dispatcher;

@@ -39,7 +39,7 @@ public:
 	EventQueue EQ;
 	ObjectPool OP = ObjectPool();
 	AudioManager AM;
-	Physics PM = Physics(&OP);
+	Physics PM = Physics(&OP,&EQ);
 	Renderer R = Renderer(&OP);
 	KeyManager KM = KeyManager();
 	LuaHelper LH = LuaHelper();
